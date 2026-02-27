@@ -1,0 +1,100 @@
+name: ClickHouse
+description: ClickHouse is a fast open-source column-oriented database management system that allows generating analytical data reports in real-time using SQL queries.
+image: https://clickhouse.com/images/ch-logo.svg
+url: https://clickhouse.com
+created: '2024-01-01'
+modified: '2024-01-01'
+tags:
+- Database
+- Analytics
+- OLAP
+- SQL
+- Real-time
+- Column-oriented
+apis:
+- name: ClickHouse HTTP Interface
+  description: HTTP interface for executing queries and managing ClickHouse database
+  baseURL: https://clickhouse.example.com:8123
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  properties:
+  - type: Documentation
+    url: https://clickhouse.com/docs/en/interfaces/http
+  - type: OpenAPI
+    url: https://clickhouse.com/docs/en/interfaces/http
+  tags:
+  - HTTP
+  - REST
+  - Queries
+- name: ClickHouse Native TCP Interface
+  description: Native protocol for client-server communication with optimal performance
+  baseURL: clickhouse.example.com:9000
+  humanURL: https://clickhouse.com/docs/en/interfaces/tcp
+  properties:
+  - type: Documentation
+    url: https://clickhouse.com/docs/en/interfaces/tcp
+  tags:
+  - TCP
+  - Native
+  - Protocol
+- name: ClickHouse MySQL Interface
+  description: MySQL wire protocol compatibility for connecting MySQL clients
+  baseURL: clickhouse.example.com:9004
+  humanURL: https://clickhouse.com/docs/en/interfaces/mysql
+  properties:
+  - type: Documentation
+    url: https://clickhouse.com/docs/en/interfaces/mysql
+  tags:
+  - MySQL
+  - Compatibility
+- name: ClickHouse PostgreSQL Interface
+  description: PostgreSQL wire protocol compatibility for connecting PostgreSQL clients
+  baseURL: clickhouse.example.com:9005
+  humanURL: https://clickhouse.com/docs/en/interfaces/postgresql
+  properties:
+  - type: Documentation
+    url: https://clickhouse.com/docs/en/interfaces/postgresql
+  tags:
+  - PostgreSQL
+  - Compatibility
+- name: ClickHouse gRPC Interface
+  description: gRPC interface for efficient binary communication
+  baseURL: clickhouse.example.com:9100
+  humanURL: https://clickhouse.com/docs/en/interfaces/grpc
+  properties:
+  - type: Documentation
+    url: https://clickhouse.com/docs/en/interfaces/grpc
+  - type: Protocol Buffers
+    url: https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
+  tags:
+  - gRPC
+  - Binary
+  - Protocol Buffers
+common:
+- type: Documentation
+  url: https://clickhouse.com/docs
+- type: Getting Started
+  url: https://clickhouse.com/docs/en/getting-started
+- type: GitHub Repository
+  url: https://github.com/ClickHouse/ClickHouse
+- type: Blog
+  url: https://clickhouse.com/blog
+- type: Community
+  url: https://clickhouse.com/community
+- type: Slack
+  url: https://clickhouse.com/slack
+- type: Cloud Service
+  url: https://clickhouse.com/cloud
+- type: Downloads
+  url: https://clickhouse.com/downloads
+- type: Pricing
+  url: https://clickhouse.com/pricing
+- type: Support
+  url: https://clickhouse.com/support
+- type: Privacy Policy
+  url: https://clickhouse.com/legal/privacy-policy
+- type: Terms of Service
+  url: https://clickhouse.com/legal/terms-of-service
+maintainers:
+- name: ClickHouse Inc.
+  email: support@clickhouse.com
+  url: https://clickhouse.com
