@@ -1,0 +1,89 @@
+# Naftiko capabilities profile for ClickHouse.
+# Capabilities are derived from ClickHouse documentation including the
+# HTTP interface and the ClickHouse Cloud OpenAPI spec at
+# api.clickhouse.cloud/v1.
+provider: clickhouse
+name: ClickHouse
+description: >-
+  ClickHouse is a fast open-source column-oriented database for OLAP
+  workloads, with multiple wire interfaces and a managed cloud control
+  plane.
+capabilities:
+  - id: clickhouse.http.query
+    name: Run SQL query over HTTP
+    description: Submit a SELECT statement via GET or DDL/DML via POST through the HTTP interface.
+    inputs:
+      - sql
+      - format
+      - database
+    outputs:
+      - rows
+  - id: clickhouse.http.ping
+    name: Health check
+    description: Probe the ClickHouse HTTP interface readiness.
+    inputs: []
+    outputs:
+      - status
+  - id: clickhouse.cloud.organization.list
+    name: List Cloud organizations
+    description: List ClickHouse Cloud organizations associated with the API key.
+    inputs:
+      - api-key
+    outputs:
+      - organizations
+  - id: clickhouse.cloud.service.create
+    name: Create Cloud service
+    description: Provision a new ClickHouse Cloud service in an organization.
+    inputs:
+      - api-key
+      - organization-id
+      - service
+    outputs:
+      - service-id
+  - id: clickhouse.cloud.service.scale
+    name: Scale Cloud service
+    description: Adjust replica scaling settings on an existing ClickHouse Cloud service.
+    inputs:
+      - api-key
+      - organization-id
+      - service-id
+      - scaling
+    outputs:
+      - status
+  - id: clickhouse.cloud.service.state
+    name: Start or stop Cloud service
+    description: Change the running state of a ClickHouse Cloud service.
+    inputs:
+      - api-key
+      - organization-id
+      - service-id
+      - desired-state
+    outputs:
+      - status
+  - id: clickhouse.cloud.service.backup
+    name: Manage Cloud service backups
+    description: List, create, or restore backups for a ClickHouse Cloud service.
+    inputs:
+      - api-key
+      - organization-id
+      - service-id
+      - action
+    outputs:
+      - backup
+  - id: clickhouse.cloud.member.list
+    name: List Cloud organization members
+    description: List members of a ClickHouse Cloud organization.
+    inputs:
+      - api-key
+      - organization-id
+    outputs:
+      - members
+  - id: clickhouse.cloud.api-key.create
+    name: Create Cloud API key
+    description: Provision a new API key under a ClickHouse Cloud organization.
+    inputs:
+      - api-key
+      - organization-id
+      - permissions
+    outputs:
+      - new-api-key

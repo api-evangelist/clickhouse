@@ -1,0 +1,73 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "ch": "https://clickhouse.com/ns/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+
+    "Organization": {
+      "@id": "ch:Organization",
+      "@context": {
+        "id": "schema:identifier",
+        "name": "schema:name",
+        "tier": "ch:tier",
+        "createdAt": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Service": {
+      "@id": "ch:Service",
+      "@context": {
+        "id": "schema:identifier",
+        "name": "schema:name",
+        "provider": "ch:cloudProvider",
+        "region": "ch:region",
+        "tier": "ch:tier",
+        "state": "ch:state",
+        "endpoint": "schema:url",
+        "minReplicaMemoryGb": "ch:minReplicaMemoryGb",
+        "maxReplicaMemoryGb": "ch:maxReplicaMemoryGb"
+      }
+    },
+
+    "ApiKey": {
+      "@id": "ch:ApiKey",
+      "@context": {
+        "id": "schema:identifier",
+        "name": "schema:name",
+        "roles": "ch:roles",
+        "expireAt": {
+          "@id": "dcterms:valid",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Member": {
+      "@id": "schema:Person",
+      "@context": {
+        "userId": "schema:identifier",
+        "email": "schema:email",
+        "role": "ch:role"
+      }
+    },
+
+    "Backup": {
+      "@id": "ch:Backup",
+      "@context": {
+        "id": "schema:identifier",
+        "status": "ch:status",
+        "serviceId": "ch:serviceId",
+        "size": "ch:sizeBytes",
+        "startedAt": {
+          "@id": "schema:startTime",
+          "@type": "xsd:dateTime"
+        }
+      }
+    }
+  }
+}
