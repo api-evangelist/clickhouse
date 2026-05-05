@@ -1,0 +1,13 @@
+{
+  "repo": "clickhouse",
+  "feeds": [
+    {
+      "source": "https://clickhouse.com/blog",
+      "feed_url": "https://clickhouse.com/rss.xml",
+      "saved": 10,
+      "title": "ClickHouse Blog"
+    }
+  ],
+  "post_count": 10,
+  "fetched": "2026-05-03T23:25:16Z"
+}
