@@ -147,6 +147,40 @@ common:
     url: rules/clickhouse-rules.yml
   - type: Naftiko Capabilities
     url: capabilities/clickhouse-capabilities.yml
+  - type: Integrations
+    url: https://clickhouse.com/integrations
+integrations:
+  - name: Airbyte
+  - name: Amazon S3
+  - name: CloudQuery
+  - name: Confluent Cloud
+  - name: Google Cloud Storage (GCS)
+  - name: Kafka
+  - name: MySQL
+  - name: PostgreSQL
+  - name: Prequel
+  - name: new Streamkap
+  - name: Vector
+  - name: Deepnote
+  - name: Grafana
+  - name: Hex
+  - name: Metabase
+  - name: Splunk
+  - name: Superset
+  - name: Tableau
+  - name: DataGrip
+  - name: DBeaver
+  - name: 'C#'
+  - name: Java
+  - name: Node.js
+  - name: Python
+  - name: dbt
+  - name: Microsoft Azure Data Factory
+  - name: Microsoft Azure Synapse
+  - name: pg_clickhouse
+  - name: AWS
+  - name: Azure
+  - name: Google Cloud
 maintainers:
   - FN: Kin Lane
     email: kinlane@gmail.com
