@@ -8,7 +8,7 @@ access: 3rd-Party
 position: Consumer
 specificationVersion: '0.19'
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
-x-type: opensource
+kind: opensource
 tags:
   - Analytics
   - Cloud Database
@@ -121,7 +121,7 @@ common:
     url: https://clickhouse.com/
   - type: Documentation
     url: https://clickhouse.com/docs
-  - type: Getting Started
+  - type: GettingStarted
     url: https://clickhouse.com/docs/en/getting-started
   - type: GitHub
     url: https://github.com/ClickHouse/ClickHouse
@@ -135,13 +135,13 @@ common:
     url: https://clickhouse.com/pricing
   - type: Support
     url: https://clickhouse.com/support
-  - type: Status
+  - type: StatusPage
     url: https://status.clickhouse.com/
-  - type: Privacy Policy
+  - type: PrivacyPolicy
     url: https://clickhouse.com/legal/privacy-policy
-  - type: Terms of Service
+  - type: TermsOfService
     url: https://clickhouse.com/legal/terms-of-service
-  - type: JSON-LD
+  - type: JSONLD
     url: json-ld/clickhouse-context.jsonld
   - type: Spectral
     url: rules/clickhouse-rules.yml
