@@ -117,6 +117,8 @@ apis:
       gRPC interface defined by clickhouse_grpc.proto for efficient binary
       communication.
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/clickhouseinc
   - type: Website
     url: https://clickhouse.com/
   - type: Documentation
