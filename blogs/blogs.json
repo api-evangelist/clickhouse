@@ -2,12 +2,13 @@
   "repo": "clickhouse",
   "feeds": [
     {
-      "source": "https://clickhouse.com/blog",
-      "feed_url": "https://clickhouse.com/blog/index.xml",
-      "title": "ClickHouse Blog",
-      "saved": 41
+      "source": "https://github.com/ClickHouse/ClickHouse",
+      "feed_url": "https://github.com/ClickHouse/ClickHouse",
+      "title": "",
+      "saved": 0,
+      "method": "none"
     }
   ],
   "post_count": 57,
-  "fetched": "2026-05-17T20:20:35Z"
+  "fetched": "2026-06-01T23:35:02Z"
 }

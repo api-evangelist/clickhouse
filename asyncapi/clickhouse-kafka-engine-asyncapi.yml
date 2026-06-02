@@ -1,0 +1,230 @@
+asyncapi: 3.0.0
+info:
+  title: ClickHouse Kafka Table Engine (Consumer-Side Streaming)
+  version: '1.0.0'
+  description: >-
+    AsyncAPI description of the documented streaming surface that
+    ClickHouse offers through the Kafka table engine. ClickHouse itself
+    does NOT publish a public WebSocket, Server-Sent Events, or push-style
+    streaming endpoint. Instead, ClickHouse (self-managed and ClickHouse
+    Cloud) acts as a Kafka *consumer*: a CREATE TABLE statement using the
+    Kafka() engine subscribes the ClickHouse server to one or more topics
+    on an externally hosted Kafka-compatible broker (Apache Kafka,
+    Confluent Cloud, Redpanda, AWS MSK, Azure Event Hubs, WarpStream).
+    Messages pulled from those topics are then typically routed into a
+    MergeTree table via a MATERIALIZED VIEW. This AsyncAPI document models
+    that consumer-side contract: the channel the operator declares, the
+    Kafka engine parameters used to bind to it, the virtual columns
+    exposed on the resulting ClickHouse table, and the supported message
+    formats. The same consumer-side model applies to ClickPipes in
+    ClickHouse Cloud, which is a managed wrapper around equivalent
+    ingestion sources.
+  contact:
+    name: ClickHouse Documentation
+    url: https://clickhouse.com/docs
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  tags:
+    - name: kafka
+      description: Apache Kafka and Kafka-protocol-compatible brokers
+    - name: consumer
+      description: ClickHouse acts as a client-side consumer
+    - name: ingestion
+      description: Streaming data ingestion into ClickHouse tables
+    - name: table-engine
+      description: ClickHouse table engine integration
+  externalDocs:
+    description: ClickHouse Kafka table engine documentation
+    url: https://clickhouse.com/docs/en/engines/table-engines/integrations/kafka
+servers:
+  externalKafkaBroker:
+    host: '{broker_host}:{broker_port}'
+    protocol: kafka
+    description: >-
+      Externally hosted Kafka-compatible broker that ClickHouse connects
+      to as a consumer. ClickHouse Cloud does NOT host this broker; the
+      operator supplies it. Examples include Apache Kafka, Confluent
+      Cloud, Redpanda, AWS MSK, Azure Event Hubs and WarpStream.
+    variables:
+      broker_host:
+        default: localhost
+        description: Hostname or IP of the Kafka broker
+      broker_port:
+        default: '9092'
+        description: TCP port of the Kafka broker
+    security:
+      - $ref: '#/components/securitySchemes/saslPlain'
+      - $ref: '#/components/securitySchemes/saslScramSha256'
+      - $ref: '#/components/securitySchemes/saslScramSha512'
+defaultContentType: application/json
+channels:
+  kafkaTopic:
+    address: '{kafka_topic}'
+    title: Kafka Topic Subscribed by ClickHouse
+    description: >-
+      A Kafka topic listed in the Kafka() engine's kafka_topic_list
+      parameter. ClickHouse opens a consumer (or kafka_num_consumers
+      parallel consumers) against this topic under the consumer group
+      named in kafka_group_name and decodes each message using the
+      format named in kafka_format.
+    servers:
+      - $ref: '#/servers/externalKafkaBroker'
+    parameters:
+      kafka_topic:
+        description: Name of the Kafka topic being consumed
+    messages:
+      kafkaRecord:
+        $ref: '#/components/messages/KafkaRecord'
+operations:
+  consumeFromKafka:
+    action: receive
+    channel:
+      $ref: '#/channels/kafkaTopic'
+    title: Consume messages from a Kafka topic into a ClickHouse table
+    summary: >-
+      ClickHouse, on behalf of a CREATE TABLE ... ENGINE = Kafka(...)
+      definition, polls the configured topic(s) and decodes each record
+      according to kafka_format. A downstream MATERIALIZED VIEW typically
+      moves the rows into a MergeTree table.
+    description: >-
+      This operation captures the documented behavior of the Kafka table
+      engine. Offsets are tracked per consumer group. Records that fail
+      to decode are handled according to kafka_handle_error_mode (default
+      | stream | dead_letter_queue) and kafka_skip_broken_messages.
+    bindings:
+      kafka:
+        groupId:
+          type: string
+          description: Maps to the kafka_group_name engine parameter
+        clientId:
+          type: string
+          description: Optional Kafka client identifier
+    messages:
+      - $ref: '#/channels/kafkaTopic/messages/kafkaRecord'
+components:
+  messages:
+    KafkaRecord:
+      name: KafkaRecord
+      title: Kafka record decoded by ClickHouse
+      summary: >-
+        A single Kafka record consumed by the ClickHouse Kafka engine and
+        exposed as a row with virtual columns.
+      contentType: application/octet-stream
+      headers:
+        type: object
+        properties:
+          _headers.name:
+            type: array
+            items:
+              type: string
+            description: Virtual column - Kafka header keys
+          _headers.value:
+            type: array
+            items:
+              type: string
+            description: Virtual column - Kafka header values
+      payload:
+        $ref: '#/components/schemas/KafkaRecordPayload'
+  schemas:
+    KafkaRecordPayload:
+      type: object
+      description: >-
+        Logical view of a Kafka record as seen by a ClickHouse Kafka()
+        table. The body of the record is interpreted by kafka_format
+        (JSONEachRow, CSV, TabSeparated, Avro, Protobuf, CapnProto,
+        RawBLOB, and other ClickHouse-supported formats). The remaining
+        properties correspond to documented virtual columns exposed on
+        the table.
+      properties:
+        _topic:
+          type: string
+          description: Virtual column - source topic name (LowCardinality String in ClickHouse)
+        _key:
+          type: string
+          description: Virtual column - Kafka message key
+        _offset:
+          type: integer
+          format: int64
+          description: Virtual column - message offset within the partition
+        _partition:
+          type: integer
+          format: int64
+          description: Virtual column - partition number
+        _timestamp:
+          type: string
+          format: date-time
+          description: Virtual column - message timestamp (Nullable DateTime)
+        body:
+          description: >-
+            Record body decoded according to kafka_format. Schema is
+            user-defined by the CREATE TABLE column list.
+  securitySchemes:
+    saslPlain:
+      type: scramSha256
+      description: >-
+        SASL/PLAIN authentication. Configured via kafka_security_protocol
+        (sasl_plaintext or sasl_ssl) plus kafka_sasl_username and
+        kafka_sasl_password.
+    saslScramSha256:
+      type: scramSha256
+      description: >-
+        SASL/SCRAM-SHA-256 authentication. Selected via
+        kafka_security_protocol and kafka_sasl_mechanism.
+    saslScramSha512:
+      type: scramSha512
+      description: >-
+        SASL/SCRAM-SHA-512 authentication. Selected via
+        kafka_security_protocol and kafka_sasl_mechanism.
+  parameters:
+    kafka_broker_list:
+      description: >-
+        Comma-separated list of host:port pairs for the external Kafka
+        brokers. Required engine parameter.
+    kafka_topic_list:
+      description: Comma-separated list of Kafka topics to subscribe to. Required.
+    kafka_group_name:
+      description: >-
+        Kafka consumer group name. Offsets are tracked per group.
+        Required.
+    kafka_format:
+      description: >-
+        ClickHouse format used to decode each Kafka record (for example
+        JSONEachRow, CSV, TabSeparated, Avro, Protobuf, CapnProto,
+        RawBLOB). Required.
+    kafka_row_delimiter:
+      description: Optional row delimiter character for line-oriented formats.
+    kafka_schema:
+      description: >-
+        Schema definition path; required for formats such as Cap'n Proto
+        or Protobuf that depend on an external schema.
+    kafka_num_consumers:
+      description: >-
+        Number of consumer threads the table should run in parallel.
+        Should not exceed the number of partitions in the topic.
+    kafka_max_block_size:
+      description: Maximum number of messages polled into a single block.
+    kafka_skip_broken_messages:
+      description: >-
+        Number of messages per block that may fail to decode without
+        aborting the block.
+    kafka_commit_every_batch:
+      description: >-
+        Commit Kafka offsets after every batch instead of after a full
+        block has been flushed.
+    kafka_thread_per_consumer:
+      description: >-
+        Run each consumer in its own thread, enabling parallel flushing
+        of independent blocks.
+    kafka_handle_error_mode:
+      description: >-
+        Error-handling strategy for malformed records. Values - default,
+        stream, dead_letter_queue.
+    kafka_security_protocol:
+      description: >-
+        Connection security profile - plaintext, ssl, sasl_plaintext,
+        sasl_ssl.
+    kafka_sasl_username:
+      description: SASL username when an authenticated security_protocol is used.
+    kafka_sasl_password:
+      description: SASL password when an authenticated security_protocol is used.
