@@ -19,13 +19,11 @@ tags:
   - Real-Time
   - SQL
 description: >-
-  ClickHouse is a fast open-source column-oriented database management system
-  that enables real-time analytical reporting using SQL. ClickHouse exposes
-  multiple interfaces - an HTTP interface for SQL queries, native TCP, MySQL
-  and PostgreSQL wire-compatible interfaces, and a gRPC interface - and the
-  ClickHouse Cloud management plane offers a public OpenAPI-described REST
-  API for provisioning and managing services, organizations, members, API
-  keys, backups, and private endpoints.
+  ClickHouse is a fast open-source column-oriented database management system that enables real-time analytical
+  reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface for SQL queries, native TCP, MySQL and
+  PostgreSQL wire-compatible interfaces, and a gRPC interface - and the ClickHouse Cloud management plane offers a
+  public OpenAPI-described REST API for provisioning and managing services, organizations, members, API keys, backups,
+  and private endpoints.
 apis:
   - aid: clickhouse:clickhouse-http-interface
     name: ClickHouse HTTP Interface
@@ -39,12 +37,10 @@ apis:
       - url: https://clickhouse.com/docs/en/interfaces/http
         type: Documentation
     description: >-
-      HTTP interface (default port 8123, HTTPS 8443) for executing SQL
-      queries against ClickHouse. Supports SELECT via GET, mutations via
-      POST, multiple output formats (JSON, CSV, XML, TabSeparated), and
-      authentication via HTTP Basic, URL parameters, or
-      X-ClickHouse-User/X-ClickHouse-Key headers. Helper paths include
-      /ping and /replicas_status.
+      HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse. Supports SELECT via
+      GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated), and authentication via HTTP
+      Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers. Helper paths include /ping and
+      /replicas_status.
   - aid: clickhouse:clickhouse-cloud-api
     name: ClickHouse Cloud API
     tags:
@@ -61,11 +57,9 @@ apis:
       - url: https://api.clickhouse.cloud/v1
         type: OpenAPI
     description: >-
-      OpenAPI 3.1-described REST API for managing ClickHouse Cloud
-      organizations, services, API keys, members, backups, private
-      endpoints, and ClickHouse settings. Endpoints under /v1 with
-      consistent envelope responses (status, requestId, result, error)
-      and authentication via API key.
+      OpenAPI 3.1-described REST API for managing ClickHouse Cloud organizations, services, API keys, members, backups,
+      private endpoints, and ClickHouse settings. Endpoints under /v1 with consistent envelope responses (status,
+      requestId, result, error) and authentication via API key.
   - aid: clickhouse:clickhouse-native
     name: ClickHouse Native TCP Interface
     tags:
@@ -76,8 +70,8 @@ apis:
       - url: https://clickhouse.com/docs/en/interfaces/tcp
         type: Documentation
     description: >-
-      Native binary TCP protocol used by ClickHouse client libraries for
-      maximum throughput between client and server (default port 9000).
+      Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between client and server
+      (default port 9000).
   - aid: clickhouse:clickhouse-mysql
     name: ClickHouse MySQL Interface
     tags:
@@ -88,8 +82,8 @@ apis:
       - url: https://clickhouse.com/docs/en/interfaces/mysql
         type: Documentation
     description: >-
-      MySQL wire protocol compatibility allowing existing MySQL clients
-      and BI tools to query ClickHouse without driver changes.
+      MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query ClickHouse without driver
+      changes.
   - aid: clickhouse:clickhouse-postgresql
     name: ClickHouse PostgreSQL Interface
     tags:
@@ -99,9 +93,7 @@ apis:
     properties:
       - url: https://clickhouse.com/docs/en/interfaces/postgresql
         type: Documentation
-    description: >-
-      PostgreSQL wire protocol compatibility for connecting psql, JDBC
-      and other PostgreSQL clients to ClickHouse.
+    description: PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients to ClickHouse.
   - aid: clickhouse:clickhouse-grpc
     name: ClickHouse gRPC Interface
     tags:
@@ -113,9 +105,7 @@ apis:
         type: Documentation
       - url: https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
         type: Protocol Buffers
-    description: >-
-      gRPC interface defined by clickhouse_grpc.proto for efficient binary
-      communication.
+    description: gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
 common:
   - type: LinkedIn
     url: https://www.linkedin.com/company/clickhouseinc
@@ -147,8 +137,6 @@ common:
     url: json-ld/clickhouse-context.jsonld
   - type: Spectral
     url: rules/clickhouse-rules.yml
-  - type: Naftiko Capabilities
-    url: capabilities/clickhouse-capabilities.yml
   - type: Integrations
     url: https://clickhouse.com/integrations
 integrations:
@@ -172,7 +160,7 @@ integrations:
   - name: Tableau
   - name: DataGrip
   - name: DBeaver
-  - name: 'C#'
+  - name: C#
   - name: Java
   - name: Node.js
   - name: Python
