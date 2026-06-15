@@ -1,0 +1,132 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "ClickHouse HTTP Interface",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Health check or execute query",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "http://localhost:8123/",
+        "params": [
+          {
+            "name": "query",
+            "value": "",
+            "type": "query",
+            "description": "SQL statement to execute"
+          },
+          {
+            "name": "database",
+            "value": "",
+            "type": "query",
+            "description": "Default database"
+          },
+          {
+            "name": "default_format",
+            "value": "",
+            "type": "query",
+            "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)"
+          },
+          {
+            "name": "session_id",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "session_timeout",
+            "value": "",
+            "type": "query"
+          },
+          {
+            "name": "compress",
+            "value": "",
+            "type": "query"
+          }
+        ]
+      },
+      "docs": "With no parameters returns \"Ok.\" When a `query` parameter is supplied,\nexecutes the SQL statement and returns the result in the configured\nformat.\n"
+    },
+    {
+      "info": {
+        "name": "Execute query or insert data",
+        "type": "http"
+      },
+      "http": {
+        "method": "POST",
+        "url": "http://localhost:8123/",
+        "params": [
+          {
+            "name": "query",
+            "value": "",
+            "type": "query",
+            "description": "SQL statement to execute"
+          },
+          {
+            "name": "database",
+            "value": "",
+            "type": "query",
+            "description": "Default database"
+          },
+          {
+            "name": "default_format",
+            "value": "",
+            "type": "query",
+            "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)"
+          },
+          {
+            "name": "decompress",
+            "value": "",
+            "type": "query"
+          }
+        ]
+      },
+      "docs": "Submit a SQL query in the request body, or stream data for INSERT with\nthe partial query in the URL (e.g. `?query=INSERT INTO table FORMAT\nJSONEachRow`).\n"
+    },
+    {
+      "info": {
+        "name": "Ping the server",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "http://localhost:8123/ping"
+      },
+      "docs": "Returns \"Ok.\" when the server is healthy."
+    },
+    {
+      "info": {
+        "name": "Get replica status",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "http://localhost:8123/replicas_status"
+      },
+      "docs": "Returns replica delay information across the cluster."
+    },
+    {
+      "info": {
+        "name": "Web UI",
+        "type": "http"
+      },
+      "http": {
+        "method": "GET",
+        "url": "http://localhost:8123/play"
+      },
+      "docs": "Returns the embedded ClickHouse Play web UI."
+    }
+  ],
+  "bundled": true
+}

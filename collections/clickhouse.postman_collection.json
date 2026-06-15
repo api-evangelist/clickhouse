@@ -1,0 +1,535 @@
+{
+  "item": [
+    {
+      "id": "020b64f9-f031-4ec3-91c6-31374a2d12c3",
+      "name": "Health check or execute query",
+      "request": {
+        "name": "Health check or execute query",
+        "description": {
+          "content": "With no parameters returns \"Ok.\" When a `query` parameter is supplied,\nexecutes the SQL statement and returns the result in the configured\nformat.\n",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            ""
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [
+            {
+              "disabled": false,
+              "key": "query",
+              "value": "<string>",
+              "description": "SQL statement to execute"
+            },
+            {
+              "disabled": false,
+              "key": "database",
+              "value": "<string>",
+              "description": "Default database"
+            },
+            {
+              "disabled": false,
+              "key": "default_format",
+              "value": "<string>",
+              "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)"
+            },
+            {
+              "disabled": false,
+              "key": "session_id",
+              "value": "<string>"
+            },
+            {
+              "disabled": false,
+              "key": "session_timeout",
+              "value": "<integer>"
+            },
+            {
+              "disabled": false,
+              "key": "compress",
+              "value": "<integer>"
+            }
+          ],
+          "variable": []
+        },
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/plain"
+          }
+        ],
+        "method": "GET",
+        "auth": null
+      },
+      "response": [
+        {
+          "id": "0dd3d67a-98c0-4696-831a-744cf39f9392",
+          "name": "Query result or health response",
+          "originalRequest": {
+            "url": {
+              "path": [
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "<string>"
+                },
+                {
+                  "key": "database",
+                  "value": "<string>"
+                },
+                {
+                  "key": "default_format",
+                  "value": "<string>"
+                },
+                {
+                  "key": "session_id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "session_timeout",
+                  "value": "<integer>"
+                },
+                {
+                  "key": "compress",
+                  "value": "<integer>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "description": {
+                  "content": "Added as a part of security scheme: basic",
+                  "type": "text/plain"
+                },
+                "key": "Authorization",
+                "value": "Basic <credentials>"
+              },
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    },
+    {
+      "id": "1b7eedab-f4d3-4acf-b553-4ffbf4ab9bff",
+      "name": "Execute query or insert data",
+      "request": {
+        "name": "Execute query or insert data",
+        "description": {
+          "content": "Submit a SQL query in the request body, or stream data for INSERT with\nthe partial query in the URL (e.g. `?query=INSERT INTO table FORMAT\nJSONEachRow`).\n",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            ""
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [
+            {
+              "disabled": false,
+              "key": "query",
+              "value": "<string>",
+              "description": "SQL statement to execute"
+            },
+            {
+              "disabled": false,
+              "key": "database",
+              "value": "<string>",
+              "description": "Default database"
+            },
+            {
+              "disabled": false,
+              "key": "default_format",
+              "value": "<string>",
+              "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)"
+            },
+            {
+              "disabled": false,
+              "key": "decompress",
+              "value": "<integer>"
+            }
+          ],
+          "variable": []
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/plain"
+          },
+          {
+            "key": "Accept",
+            "value": "text/plain"
+          }
+        ],
+        "method": "POST",
+        "auth": null,
+        "body": {
+          "mode": "raw",
+          "raw": "<string>"
+        }
+      },
+      "response": [
+        {
+          "id": "938b1c0d-63bb-4e37-acd9-b8627a8e1135",
+          "name": "Query result or insert acknowledgment",
+          "originalRequest": {
+            "url": {
+              "path": [
+                ""
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "<string>"
+                },
+                {
+                  "key": "database",
+                  "value": "<string>"
+                },
+                {
+                  "key": "default_format",
+                  "value": "<string>"
+                },
+                {
+                  "key": "decompress",
+                  "value": "<integer>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "description": {
+                  "content": "Added as a part of security scheme: basic",
+                  "type": "text/plain"
+                },
+                "key": "Authorization",
+                "value": "Basic <credentials>"
+              },
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "<string>"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{}",
+          "cookie": [],
+          "_postman_previewlanguage": "json"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    },
+    {
+      "id": "959602d0-227e-4adc-ae14-9c90e445594f",
+      "name": "Ping the server",
+      "request": {
+        "name": "Ping the server",
+        "description": {
+          "content": "Returns \"Ok.\" when the server is healthy.",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "ping"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/plain"
+          }
+        ],
+        "method": "GET",
+        "auth": null
+      },
+      "response": [
+        {
+          "id": "a66abf28-f2c2-4ca7-901f-89e61e9f7a21",
+          "name": "Server is healthy",
+          "originalRequest": {
+            "url": {
+              "path": [
+                "ping"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "description": {
+                  "content": "Added as a part of security scheme: basic",
+                  "type": "text/plain"
+                },
+                "key": "Authorization",
+                "value": "Basic <credentials>"
+              },
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "body": "string",
+          "cookie": [],
+          "_postman_previewlanguage": "text"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    },
+    {
+      "id": "168efc82-2c01-48c8-8a2c-3b417851780c",
+      "name": "Get replica status",
+      "request": {
+        "name": "Get replica status",
+        "description": {
+          "content": "Returns replica delay information across the cluster.",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "replicas_status"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/plain"
+          }
+        ],
+        "method": "GET",
+        "auth": null
+      },
+      "response": [
+        {
+          "id": "dcde6a9d-00b2-4568-87f5-f45eb3fbd3b4",
+          "name": "Replica status report",
+          "originalRequest": {
+            "url": {
+              "path": [
+                "replicas_status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "description": {
+                  "content": "Added as a part of security scheme: basic",
+                  "type": "text/plain"
+                },
+                "key": "Authorization",
+                "value": "Basic <credentials>"
+              },
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ],
+          "body": "string",
+          "cookie": [],
+          "_postman_previewlanguage": "text"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    },
+    {
+      "id": "3a5faff6-5574-4c2e-ac82-6289e57beee2",
+      "name": "Web UI",
+      "request": {
+        "name": "Web UI",
+        "description": {
+          "content": "Returns the embedded ClickHouse Play web UI.",
+          "type": "text/plain"
+        },
+        "url": {
+          "path": [
+            "play"
+          ],
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html"
+          }
+        ],
+        "method": "GET",
+        "auth": null
+      },
+      "response": [
+        {
+          "id": "fa4bfc71-6ae4-4168-8358-1db5277f7a48",
+          "name": "HTML page",
+          "originalRequest": {
+            "url": {
+              "path": [
+                "play"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "description": {
+                  "content": "Added as a part of security scheme: basic",
+                  "type": "text/plain"
+                },
+                "key": "Authorization",
+                "value": "Basic <credentials>"
+              },
+              {
+                "key": "Accept",
+                "value": "text/html"
+              }
+            ],
+            "method": "GET",
+            "body": {}
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/html"
+            }
+          ],
+          "body": "string",
+          "cookie": [],
+          "_postman_previewlanguage": "text"
+        }
+      ],
+      "event": [],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      }
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8123",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "2b23c954-00c4-4eb4-9e72-9c8f1f9de2a7",
+    "name": "ClickHouse HTTP Interface",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "ClickHouse HTTP interface for executing SQL queries, inserting data, and\nmonitoring server health. Authentication is performed with HTTP Basic, URL\nparameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.\n",
+      "type": "text/plain"
+    }
+  }
+}
