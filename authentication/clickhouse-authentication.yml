@@ -1,0 +1,21 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/clickhouse-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: basicAuth
+  type: http
+  scheme: basic
+  sources:
+  - openapi/clickhouse-openapi.yml
+- name: clickhouseHeaders
+  type: apiKey
+  in: header
+  parameter: X-ClickHouse-User
+  sources:
+  - openapi/clickhouse-openapi.yml

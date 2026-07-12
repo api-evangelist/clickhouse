@@ -107,6 +107,12 @@ apis:
         type: Protocol Buffers
     description: gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
 common:
+  - type: TrustCenter
+    url: security/clickhouse-trust-center.yml
+  - type: DomainSecurity
+    url: security/clickhouse-domain-security.yml
+  - type: Authentication
+    url: authentication/clickhouse-authentication.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/clickhouseinc
   - type: Website
