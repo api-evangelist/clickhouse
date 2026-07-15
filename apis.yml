@@ -107,6 +107,8 @@ apis:
         type: Protocol Buffers
     description: gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
 common:
+  - type: AgenticAccess
+    url: agentic-access/clickhouse-agentic-access.yml
   - type: TrustCenter
     url: security/clickhouse-trust-center.yml
   - type: DomainSecurity
