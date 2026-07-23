@@ -1,0 +1,41 @@
+openapi: 3.1.0
+info:
+  title: ClickHouse HTTP Interface Replicas Status API
+  description: 'ClickHouse HTTP interface for executing SQL queries, inserting data, and
+
+    monitoring server health. Authentication is performed with HTTP Basic, URL
+
+    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.
+
+    '
+  version: 1.0.0
+servers:
+- url: http://localhost:8123
+  description: Default local ClickHouse HTTP listener
+security:
+- basicAuth: []
+tags:
+- name: Replicas Status
+paths:
+  /replicas_status:
+    get:
+      summary: Get replica status
+      description: Returns replica delay information across the cluster.
+      responses:
+        '200':
+          description: Replica status report
+          content:
+            text/plain:
+              schema:
+                type: string
+      tags:
+      - Replicas Status
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    clickhouseHeaders:
+      type: apiKey
+      in: header
+      name: X-ClickHouse-User

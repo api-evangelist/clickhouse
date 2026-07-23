@@ -1,0 +1,138 @@
+openapi: 3.1.0
+info:
+  title: ClickHouse HTTP Interface API
+  description: 'ClickHouse HTTP interface for executing SQL queries, inserting data, and
+
+    monitoring server health. Authentication is performed with HTTP Basic, URL
+
+    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.
+
+    '
+  version: 1.0.0
+servers:
+- url: http://localhost:8123
+  description: Default local ClickHouse HTTP listener
+security:
+- basicAuth: []
+tags:
+- name: ClickHouse HTTP Interface
+paths:
+  /:
+    get:
+      summary: Health check or execute query
+      description: 'With no parameters returns "Ok." When a `query` parameter is supplied,
+
+        executes the SQL statement and returns the result in the configured
+
+        format.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/QueryParam'
+      - $ref: '#/components/parameters/DatabaseParam'
+      - $ref: '#/components/parameters/Format'
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/SessionTimeout'
+      - $ref: '#/components/parameters/Compress'
+      responses:
+        '200':
+          description: Query result or health response
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: object
+      tags:
+      - ClickHouse HTTP Interface
+    post:
+      summary: Execute query or insert data
+      description: 'Submit a SQL query in the request body, or stream data for INSERT with
+
+        the partial query in the URL (e.g. `?query=INSERT INTO table FORMAT
+
+        JSONEachRow`).
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/QueryParam'
+      - $ref: '#/components/parameters/DatabaseParam'
+      - $ref: '#/components/parameters/Format'
+      - $ref: '#/components/parameters/Decompress'
+      requestBody:
+        required: false
+        content:
+          text/plain:
+            schema:
+              type: string
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Query result or insert acknowledgment
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: object
+      tags:
+      - ClickHouse HTTP Interface
+components:
+  parameters:
+    SessionTimeout:
+      name: session_timeout
+      in: query
+      schema:
+        type: integer
+    Compress:
+      name: compress
+      in: query
+      schema:
+        type: integer
+        enum:
+        - 0
+        - 1
+    Decompress:
+      name: decompress
+      in: query
+      schema:
+        type: integer
+        enum:
+        - 0
+        - 1
+    DatabaseParam:
+      name: database
+      in: query
+      description: Default database
+      schema:
+        type: string
+    Format:
+      name: default_format
+      in: query
+      description: Output format (TabSeparated, JSON, CSV, Pretty, etc.)
+      schema:
+        type: string
+    SessionId:
+      name: session_id
+      in: query
+      schema:
+        type: string
+    QueryParam:
+      name: query
+      in: query
+      description: SQL statement to execute
+      schema:
+        type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    clickhouseHeaders:
+      type: apiKey
+      in: header
+      name: X-ClickHouse-User
