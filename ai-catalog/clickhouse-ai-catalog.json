@@ -1,0 +1,225 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "ClickHouse",
+    "identifier": "clickhouse.com",
+    "documentationUrl": "https://clickhouse.com/docs"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:clickhouse.com:skill:clickhouse",
+      "displayName": "ClickHouse getting-started skill",
+      "type": "application/ai-skill+md",
+      "url": "https://clickhouse.com/SKILL.md",
+      "description": "Get started with ClickHouse. What it is, and how to install, run, and query ClickHouse locally and in ClickHouse Cloud using the clickhousectl CLI. Use this when a user wants to understand ClickHouse or start building with it.",
+      "tags": [
+        "clickhouse",
+        "getting-started"
+      ],
+      "representativeQueries": [
+        "what is ClickHouse and when should I use it",
+        "install and run ClickHouse locally",
+        "start building an application on ClickHouse"
+      ],
+      "metadata": {
+        "digest": "sha256:0f91d8b6ca87fe55fb031b81c1e75c1ce177c5257b26944fb5c3e8b28d3b8fa1"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:clickhouse-best-practices",
+      "displayName": "clickhouse-best-practices",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/clickhouse-best-practices.tar.gz",
+      "description": "MUST USE when reviewing ClickHouse schemas, queries, or configurations. Contains 31 rules that MUST be checked before providing recommendations. Always read relevant rule files and cite specific rules in responses.",
+      "tags": [
+        "clickhouse",
+        "sql",
+        "schema-design",
+        "performance"
+      ],
+      "representativeQueries": [
+        "review my ClickHouse schema for problems",
+        "is my ClickHouse ORDER BY key right for this query pattern",
+        "why is this ClickHouse query slow"
+      ],
+      "metadata": {
+        "digest": "sha256:822c43d09bdbaa08a9b6d6fe7470bed0268f36f47cc6cdc39a3ef7a0c999e041"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:clickhouse-architecture-advisor",
+      "displayName": "clickhouse-architecture-advisor",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/clickhouse-architecture-advisor.tar.gz",
+      "description": "MUST USE when designing ClickHouse architectures, selecting between ingestion or modeling patterns, or translating best practices into workload-specific system designs. Complements clickhouse-best-practices with decision frameworks and explicit provenance labels.",
+      "tags": [
+        "clickhouse",
+        "architecture",
+        "data-modeling"
+      ],
+      "representativeQueries": [
+        "design a ClickHouse architecture for high-volume event ingestion",
+        "should I use materialized views or projections for this workload",
+        "how should I model multi-tenant analytics in ClickHouse"
+      ],
+      "metadata": {
+        "digest": "sha256:680a9e74338d73a46968ffd63a5ce79d2fa1f6cc1af08ed209cd233972a1b8a0"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:clickhouse-js-node-troubleshooting",
+      "displayName": "clickhouse-js-node-troubleshooting",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/clickhouse-js-node-troubleshooting.tar.gz",
+      "description": "Troubleshoot and resolve common issues with the ClickHouse Node.js client (@clickhouse/client). Use this skill whenever a user reports errors, unexpected behavior, or configuration questions involving the Node.js client specifically — including socket hang-up errors, Keep-Alive problems, stream handling issues, data type mismatches, read-only user restrictions, proxy/TLS setup problems, or long-running query timeouts. Trigger even when the user hasn't precisely named the issue; vague symptoms like \"my inserts keep failing\" or \"connection drops randomly\" in a Node.js context are strong signals to use this skill. Do NOT use for browser/Web client issues.",
+      "tags": [
+        "clickhouse",
+        "nodejs",
+        "javascript",
+        "troubleshooting"
+      ],
+      "representativeQueries": [
+        "my Node.js ClickHouse client keeps throwing socket hang up errors",
+        "inserts from @clickhouse/client fail intermittently",
+        "ClickHouse Node.js connection drops randomly under load"
+      ],
+      "metadata": {
+        "digest": "sha256:c43040ccbde1748485dff38601b0b03f253138f992a6fae75045c5339f6b34aa"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:chdb-datastore",
+      "displayName": "chdb-datastore",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/chdb-datastore.tar.gz",
+      "description": "Use when the user has tabular data (pandas DataFrame, parquet, csv, Arrow, json) and wants to filter, group, aggregate, join, or speed up slow pandas. Provides chDB DataStore — same pandas API, ClickHouse engine underneath. Also handles reading from S3, MySQL, PostgreSQL, MongoDB, ClickHouse Cloud, Iceberg, Delta Lake as DataFrames and joining across sources. TRIGGER when: user mentions DataFrame, parquet, csv, \"fast pandas\", \"speed up pandas\", or cross-source DataFrame joins; user imports `chdb.datastore` or `from datastore import DataStore`. SKIP this skill for raw SQL syntax (use chdb-sql instead), ClickHouse server administration, or non-Python DataStore API work.",
+      "tags": [
+        "chdb",
+        "python",
+        "pandas",
+        "dataframes"
+      ],
+      "representativeQueries": [
+        "speed up my slow pandas code on a large dataset",
+        "query parquet files in S3 as a pandas DataFrame",
+        "join MySQL and Postgres data in Python without a server"
+      ],
+      "metadata": {
+        "digest": "sha256:f3ee52e56850589762fd64e0a34887ad2c50c67c8012cd82dd362c75dd13db84"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:chdb-sql",
+      "displayName": "chdb-sql",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/chdb-sql.tar.gz",
+      "description": "Use when the user wants to run SQL — especially analytical SQL — on local files (parquet/csv/json), URLs, S3 paths, or remote databases (Postgres, MySQL, MongoDB, ClickHouse Cloud, Iceberg, Delta Lake) without setting up a server. Provides chDB — embedded ClickHouse SQL in Python with 1000+ functions, Session for stateful multi-step pipelines, parametrized queries, and cross-source joins via `s3()`, `mysql()`, `postgresql()`, `iceberg()`, `deltaLake()`, `remoteSecure()` table functions. TRIGGER when: user wants SQL on parquet/csv/files or across remote analytical sources; uses ClickHouse SQL features (window functions, windowFunnel, geoToH3, JSON path ops, Session, parametrized queries); imports `chdb` or calls `chdb.query()`. SKIP this skill for pandas-style DataFrame method-chaining (use chdb-datastore instead) or ClickHouse server administration.",
+      "tags": [
+        "chdb",
+        "python",
+        "sql",
+        "embedded"
+      ],
+      "representativeQueries": [
+        "run ClickHouse SQL on local parquet files without a server",
+        "query CSV and JSON files with SQL from Python",
+        "read S3 or Iceberg tables with ClickHouse table functions in Python"
+      ],
+      "metadata": {
+        "digest": "sha256:cc6d740a409642fbd3ae2ef4de1a744a542445f05b27e7626f32be5a667d88db"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:infra-clickhouse",
+      "displayName": "infra-clickhouse",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/infra-clickhouse.tar.gz",
+      "description": "Sets up and manages ClickHouse using the clickhousectl CLI — installs and runs a local ClickHouse server for development, and creates managed ClickHouse Cloud services for production (authentication, service creation, schema migration, application connection). Use when the user wants to build an application with ClickHouse, set up a local ClickHouse dev environment, create tables and start querying, deploy ClickHouse to production or ClickHouse Cloud, or migrate from a local setup to the cloud.",
+      "tags": [
+        "clickhouse"
+      ],
+      "metadata": {
+        "digest": "sha256:193dbff7fae049477b3d18ec127378572d6bcdb0f24ce1e06bee72bbbae231aa"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:infra-postgres",
+      "displayName": "infra-postgres",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/infra-postgres.tar.gz",
+      "description": "Sets up and manages Postgres using the clickhousectl CLI — runs a local Docker-backed Postgres for development, and creates and operates managed ClickHouse Cloud Postgres services (connections, TLS, runtime config, read replicas, failover, point-in-time restore). Use when the user wants a Postgres or PostgreSQL database for their application, a local Postgres dev environment, psql access, or a managed/production Postgres in ClickHouse Cloud, or mentions moving a local Postgres to production.",
+      "tags": [
+        "clickhouse"
+      ],
+      "metadata": {
+        "digest": "sha256:d911438f39771ee4665b919cf3613530c58fac98326a912a08510de88b268607"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:skill:clickstack-otel-collector",
+      "displayName": "clickstack-otel-collector",
+      "type": "application/ai-skill-archive+gzip",
+      "url": "https://clickhouse.com/.well-known/agent-skills/clickstack-otel-collector.tar.gz",
+      "description": "Use when a user wants to wire an OpenTelemetry collector into a Managed ClickStack service on ClickHouse Cloud, either by deploying a new local collector (Docker run or Docker Compose) or by configuring their own existing collector, then send rich synthetic telemetry and verify it is visible in ClickStack.",
+      "tags": [
+        "clickhouse"
+      ],
+      "metadata": {
+        "digest": "sha256:dcf0d37209891d90f4a08812b9de353719a144d52492784a5c68962190076e58"
+      }
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:cloud",
+      "displayName": "ClickHouse Cloud MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://mcp.clickhouse.cloud/mcp/server-card",
+      "description": "Remote MCP server for ClickHouse Cloud: explore schemas and run SQL queries against your ClickHouse Cloud services.",
+      "tags": [
+        "clickhouse",
+        "mcp",
+        "sql",
+        "analytics"
+      ],
+      "representativeQueries": [
+        "query my ClickHouse Cloud database",
+        "list the tables in my ClickHouse service and describe their schemas",
+        "run this SQL against ClickHouse from my agent"
+      ]
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:clickstack",
+      "displayName": "Managed ClickStack MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://mcp.clickhouse.cloud/clickstack/server-card",
+      "description": "Remote MCP server for Managed ClickStack: search logs, traces, and metrics in your ClickStack observability data.",
+      "tags": [
+        "clickstack",
+        "mcp",
+        "observability",
+        "logs",
+        "traces"
+      ],
+      "representativeQueries": [
+        "search my logs for errors in the last hour",
+        "find slow traces in my observability data",
+        "investigate a production incident with ClickStack"
+      ]
+    },
+    {
+      "identifier": "urn:air:clickhouse.com:api-catalog",
+      "displayName": "ClickHouse API catalog",
+      "type": "application/linkset+json",
+      "url": "https://clickhouse.com/.well-known/api-catalog",
+      "description": "RFC 9727 catalog of ClickHouse public APIs, including the ClickHouse Cloud management API with its OpenAPI description.",
+      "tags": [
+        "clickhouse",
+        "api",
+        "openapi"
+      ],
+      "representativeQueries": [
+        "manage ClickHouse Cloud services programmatically",
+        "find the OpenAPI spec for the ClickHouse Cloud API"
+      ]
+    }
+  ]
+}
