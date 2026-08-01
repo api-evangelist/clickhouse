@@ -1,0 +1,117 @@
+{
+  "info": {
+    "_postman_id": "610d492a-4457-493e-aec5-f2274938037e",
+    "name": "ClickHouse HTTP Interface Replicas Status API",
+    "description": "ClickHouse HTTP interface for executing SQL queries, inserting data, and\nmonitoring server health. Authentication is performed with HTTP Basic, URL\nparameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:22:18.000Z",
+    "updatedAt": "2026-07-28T01:22:18.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-610d492a-4457-493e-aec5-f2274938037e"
+  },
+  "item": [
+    {
+      "name": "replicas_status",
+      "item": [
+        {
+          "name": "Get replica status",
+          "id": "1499ed9f-d894-469a-af03-e9670beb0b0d",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/replicas_status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "replicas_status"
+              ]
+            },
+            "description": "Returns replica delay information across the cluster."
+          },
+          "response": [
+            {
+              "id": "40f4502a-2b60-4dd2-b8f3-d8445867d468",
+              "name": "Replica status report",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/replicas_status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "replicas_status"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "<string>",
+              "createdAt": "2026-07-28T01:22:19.000Z",
+              "updatedAt": "2026-07-28T01:22:19.000Z",
+              "uid": "35240-40f4502a-2b60-4dd2-b8f3-d8445867d468"
+            }
+          ],
+          "createdAt": "2026-07-28T01:22:19.000Z",
+          "updatedAt": "2026-07-28T01:22:19.000Z",
+          "uid": "35240-1499ed9f-d894-469a-af03-e9670beb0b0d"
+        }
+      ],
+      "id": "979354a7-d4cf-40a4-b0e8-818ff9e02383",
+      "createdAt": "2026-07-28T01:22:19.000Z",
+      "updatedAt": "2026-07-28T01:22:19.000Z",
+      "uid": "35240-979354a7-d4cf-40a4-b0e8-818ff9e02383"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8123"
+    }
+  ]
+}

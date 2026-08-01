@@ -1,0 +1,306 @@
+{
+  "info": {
+    "_postman_id": "16845d55-264c-4c3d-b2cb-76cfb90082c2",
+    "name": "ClickHouse HTTP Interface API",
+    "description": "ClickHouse HTTP interface for executing SQL queries, inserting data, and\nmonitoring server health. Authentication is performed with HTTP Basic, URL\nparameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:22:00.000Z",
+    "updatedAt": "2026-07-28T01:22:00.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-16845d55-264c-4c3d-b2cb-76cfb90082c2"
+  },
+  "item": [
+    {
+      "name": "/",
+      "item": [
+        {
+          "name": "Health check or execute query",
+          "id": "2fb227ed-8247-463d-945a-6879867c3f70",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/?query=<string>&database=<string>&default_format=<string>&session_id=<string>&session_timeout=<integer>&compress=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ],
+              "query": [
+                {
+                  "description": "SQL statement to execute",
+                  "key": "query",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Default database",
+                  "key": "database",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)",
+                  "key": "default_format",
+                  "value": "<string>"
+                },
+                {
+                  "key": "session_id",
+                  "value": "<string>"
+                },
+                {
+                  "key": "session_timeout",
+                  "value": "<integer>"
+                },
+                {
+                  "key": "compress",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "With no parameters returns \"Ok.\" When a `query` parameter is supplied,\nexecutes the SQL statement and returns the result in the configured\nformat.\n"
+          },
+          "response": [
+            {
+              "id": "38c86cf9-bb8b-4357-87db-fe262b49940b",
+              "name": "Query result or health response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/?query=<string>&database=<string>&default_format=<string>&session_id=<string>&session_timeout=<integer>&compress=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    ""
+                  ],
+                  "query": [
+                    {
+                      "description": "SQL statement to execute",
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Default database",
+                      "key": "database",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)",
+                      "key": "default_format",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "session_id",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "session_timeout",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "compress",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{}",
+              "createdAt": "2026-07-28T01:22:00.000Z",
+              "updatedAt": "2026-07-28T01:22:00.000Z",
+              "uid": "35240-38c86cf9-bb8b-4357-87db-fe262b49940b"
+            }
+          ],
+          "createdAt": "2026-07-28T01:22:00.000Z",
+          "updatedAt": "2026-07-28T01:22:00.000Z",
+          "uid": "35240-2fb227ed-8247-463d-945a-6879867c3f70"
+        },
+        {
+          "name": "Execute query or insert data",
+          "id": "fca5916b-2ed1-49d5-8d55-71c379b45d87",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/plain"
+              },
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<string>"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/?query=<string>&database=<string>&default_format=<string>&decompress=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ],
+              "query": [
+                {
+                  "description": "SQL statement to execute",
+                  "key": "query",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Default database",
+                  "key": "database",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)",
+                  "key": "default_format",
+                  "value": "<string>"
+                },
+                {
+                  "key": "decompress",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Submit a SQL query in the request body, or stream data for INSERT with\nthe partial query in the URL (e.g. `?query=INSERT INTO table FORMAT\nJSONEachRow`).\n"
+          },
+          "response": [
+            {
+              "id": "9ddcc892-201a-48be-af0a-0aed789b9c8f",
+              "name": "Query result or insert acknowledgment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "<string>"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/?query=<string>&database=<string>&default_format=<string>&decompress=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    ""
+                  ],
+                  "query": [
+                    {
+                      "description": "SQL statement to execute",
+                      "key": "query",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Default database",
+                      "key": "database",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Output format (TabSeparated, JSON, CSV, Pretty, etc.)",
+                      "key": "default_format",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "decompress",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{}",
+              "createdAt": "2026-07-28T01:22:00.000Z",
+              "updatedAt": "2026-07-28T01:22:00.000Z",
+              "uid": "35240-9ddcc892-201a-48be-af0a-0aed789b9c8f"
+            }
+          ],
+          "createdAt": "2026-07-28T01:22:00.000Z",
+          "updatedAt": "2026-07-28T01:22:00.000Z",
+          "uid": "35240-fca5916b-2ed1-49d5-8d55-71c379b45d87"
+        }
+      ],
+      "id": "9bac88e4-2004-4586-9f71-13be6a975acc",
+      "createdAt": "2026-07-28T01:22:00.000Z",
+      "updatedAt": "2026-07-28T01:22:00.000Z",
+      "uid": "35240-9bac88e4-2004-4586-9f71-13be6a975acc"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8123"
+    }
+  ]
+}
