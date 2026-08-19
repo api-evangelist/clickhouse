@@ -1,0 +1,123 @@
+{
+  "item": [
+    {
+      "id": "bce65c2c-a0b2-4043-abeb-1e9202319254",
+      "name": "Play",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "2bcf1e58-5d4c-4f6a-9fa9-e4fc4d110c43",
+          "name": "Web UI",
+          "request": {
+            "name": "Web UI",
+            "description": {
+              "content": "Returns the embedded ClickHouse Play web UI.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "play"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/html"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "05df358e-fcb0-4a27-8bb0-827745dc382d",
+              "name": "HTML page",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "play"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/html"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html"
+                }
+              ],
+              "body": "string",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "http://localhost:8123",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b50664cb-2e55-4a53-a6e1-f2234e10e14c",
+    "name": "ClickHouse HTTP Interface Play API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "ClickHouse HTTP interface for executing SQL queries, inserting data, and\nmonitoring server health. Authentication is performed with HTTP Basic, URL\nparameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.\n",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "ClickHouse HTTP Interface Play API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Play",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Web UI",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8123/play"
+          },
+          "docs": "Returns the embedded ClickHouse Play web UI."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,36 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "ClickHouse HTTP Interface Replicas Status API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Replicas Status",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get replica status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://localhost:8123/replicas_status"
+          },
+          "docs": "Returns replica delay information across the cluster."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
