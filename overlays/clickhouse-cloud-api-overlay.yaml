@@ -1,0 +1,67 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the ClickHouse Cloud API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-05'
+  method: generated
+  extends: openapi/clickhouse-cloud-api-openapi.json
+  source: >-
+    Written by API Evangelist against the verbatim ClickHouse Cloud OpenAPI fetched from
+    https://api.clickhouse.cloud/v1 on 2026-09-05. The original spec is never mutated; every
+    enhancement below is expressed as an OpenAPI Overlay 1.0.0 action.
+  note: >-
+    All values added here are traceable to a published ClickHouse source — the rate limit and the
+    HTTP Basic key-ID/key-secret convention come from
+    https://clickhouse.com/docs/cloud/manage/api/api-overview and
+    https://clickhouse.com/docs/cloud/manage/openapi; the error envelope comes from the spec's own
+    4xx/5xx schemas. Nothing is invented.
+actions:
+  - target: $.info
+    description: Record the discovery path and the catalog artifacts derived from this spec
+    update:
+      x-apis-io-provider: clickhouse
+      x-discovery:
+        service-desc: https://api.clickhouse.cloud/v1
+        api-catalog: https://clickhouse.com/.well-known/api-catalog
+        service-doc: https://clickhouse.com/docs/products/cloud/features/admin-features/api/api-overview
+      x-derived-artifacts:
+        - errors/clickhouse-problem-types.yml
+        - data-model/clickhouse-data-model.yml
+        - conventions/clickhouse-conventions.yml
+        - conformance/clickhouse-conformance.yml
+        - mcp/clickhouse-tool-crosswalk.yml
+  - target: $.info
+    description: Document the published rate limit, which the spec itself does not carry
+    update:
+      x-rate-limit:
+        scope: per-api-key
+        limit: 10
+        window: 10s
+        keys_per_organization: 100
+        increase: support@clickhouse.com
+        source: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - target: $.components.securitySchemes.basicAuth
+    description: Name what the Basic username and password actually are
+    update:
+      x-credential-shape:
+        username: API key ID
+        password: API key secret
+        issued_at: ClickHouse Cloud console -> API Keys -> New API Key
+        roles:
+          - developer (read-only on assigned services)
+          - admin (full read and write)
+        expiry: configurable per key
+        ip_allowlist: optional, per key (single IP or CIDR)
+        source: https://clickhouse.com/docs/cloud/manage/openapi
+  - target: $.info
+    description: Declare the error envelope shape shared by every operation
+    update:
+      x-error-envelope:
+        media_type: application/json
+        rfc9457: false
+        fields:
+          - status
+          - error
+          - requestId
+        correlation_id: requestId

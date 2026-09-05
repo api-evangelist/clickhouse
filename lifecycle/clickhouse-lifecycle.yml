@@ -1,0 +1,86 @@
+specification: API Lifecycle
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://clickhouse.com/docs/whats-new/changelog (core server changelog, 2026),
+  https://clickhouse.com/docs/resources/changelogs/cloud/2026 (Cloud changelog),
+  https://status.clickhouse.com/api/v2/status.json (probed 2026-09-05, HTTP 200),
+  https://clickhouse.com/.well-known/api-catalog (linkset names the status page),
+  and openapi/clickhouse-cloud-api-openapi.json
+versioning:
+  api:
+    style: URI path
+    current: v1
+    base: https://api.clickhouse.cloud/v1
+  server:
+    style: CalVer-like YY.M releases with designated LTS lines
+    current: '26.8 LTS'
+    released: '2026-08-27'
+    cadence: monthly
+    lts: true
+    lts_examples:
+      - version: '26.8 LTS'
+        date: '2026-08-27'
+      - version: '26.3 LTS'
+        date: '2026-03-26'
+  terraform_provider:
+    style: SemVer (MAJOR.MINOR.PATCH)
+    note: >-
+      ClickHouse states the official Terraform provider uses semantic versioning — major for breaking
+      changes, minor for features, patch for fixes.
+deprecation:
+  policy_published: false
+  breaking_changes_disclosed: true
+  where: >-
+    The core server changelog opens every release with an explicit "Backward Incompatible Change" section,
+    naming each breaking change per release. That section is present on 26.8, 26.7, 26.6, 26.5, 26.4, 26.3,
+    26.2 and 26.1.
+  docs: https://clickhouse.com/docs/whats-new/changelog
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No notice period, sunset horizon or deprecation commitment is stated anywhere, which is why
+    policy_published is false while breaking_changes_disclosed is true — ClickHouse tells you what broke,
+    per release, but not how long you have. No RFC 8594 Sunset/Deprecation response headers are documented on the Cloud API, and the OpenAPI declares
+    `deprecated: true` on zero of its 148 operations. The published breaking-change discipline is on the
+    DATABASE release train, not the control-plane API.
+  deprecated_operations: 0
+upgrades:
+  scheduled_upgrades: true
+  api_operations:
+    - upgradeWindowGet
+    - upgradeWindowUpdate
+    - upgradeWindowDelete
+  note: >-
+    Scheduled upgrades are an Enterprise-plan feature; the API exposes a per-service upgrade window that
+    controls when routine platform maintenance runs.
+  release_status_page: https://clickhouse.com/docs/resources/changelogs/cloud/release-status
+status_page:
+  url: https://status.clickhouse.com/
+  machine_readable: https://status.clickhouse.com/api/v2/status.json
+  probed: '2026-09-05'
+  http_status: 200
+  page_name: ClickHouse Cloud
+  provider: statuspage-compatible (v2 API)
+  declared_in_api_catalog: true
+sla:
+  published: true
+  where: plan tiers publish support response targets rather than a numeric uptime SLA on the pricing page
+  tiers:
+    - plan: Basic
+      support_response: 1 business day
+    - plan: Scale
+      support_response: 1 hour, 24x7, for Severity 1
+    - plan: Enterprise
+      support_response: 30 minutes for Severity 1, with a named Lead Support Engineer
+  source: https://clickhouse.com/pricing.md
+beta_labelling:
+  in_spec: true
+  note: >-
+    Several ClickPipes, UDF, ClickStack and Postgres operations self-label in their description text with
+    "**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the
+    future." That is a maturity signal carried in the contract itself, not just in prose docs.

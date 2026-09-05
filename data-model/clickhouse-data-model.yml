@@ -1,0 +1,981 @@
+specification: Data Model
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: derived
+source: openapi/clickhouse-cloud-api-openapi.json — $ref graph and *Id reference fields
+note: 'Derived mechanically from the live ClickHouse Cloud OpenAPI: 369 component schemas, and every field whose name ends
+  in Id treated as a reference to the same-named entity. The control plane is rooted at Organization; organizationId is a
+  path parameter on 85 of 86 paths, so effectively every other entity belongs to an organization.'
+root_entity: Organization
+entity_count: 322
+relationship_count: 120
+path_hierarchy:
+- /v1/organizations/{organizationId}
+- /v1/organizations/{organizationId}/services/{serviceId}
+- /v1/organizations/{organizationId}/services/{serviceId}/backups/{backupId}
+- /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+- /v1/organizations/{organizationId}/services/{serviceId}/clickstack/{alerts|dashboards|roles|saved-searches|sources|webhooks}/{id}
+- /v1/organizations/{organizationId}/postgres/{postgresId}
+- /v1/organizations/{organizationId}/udfs/{functionName}/versions/{version}
+- /v1/organizations/{organizationId}/keys/{keyId}
+- /v1/organizations/{organizationId}/members/{userId}
+- /v1/organizations/{organizationId}/roles/{roleId}
+entities:
+- name: PostgresQueryExecution
+  fields: 43
+  references: []
+  id_reference_fields:
+  - queryId
+  - traceId
+  - spanId
+- name: Service
+  fields: 40
+  references:
+  - CurrentScaling
+  - IpAccessListEntry
+  - ResourceTagsV1
+  - ScalingSchedule
+  - ServiceEndpoint
+  id_reference_fields:
+  - dataWarehouseId
+  - byocId
+  - transparentDataEncryptionKeyId
+  - encryptionRoleId
+- name: ServiceScalingPatchResponse
+  fields: 40
+  references:
+  - CurrentScaling
+  - IpAccessListEntry
+  - ResourceTagsV1
+  - ScalingSchedule
+  - ServiceEndpoint
+  id_reference_fields:
+  - dataWarehouseId
+  - byocId
+  - transparentDataEncryptionKeyId
+  - encryptionRoleId
+- name: ClickStackTraceSource
+  fields: 35
+  references:
+  - ClickStackHighlightedAttributeExpression
+  - ClickStackMaterializedView
+  - ClickStackQuerySetting
+  - ClickStackSourceFilterSettings
+  - ClickStackSourceFrom
+  - ClickStackTraceSourceMetadataMaterializedViews
+  id_reference_fields:
+  - logSourceId
+  - sessionSourceId
+  - metricSourceId
+- name: pgConfig
+  fields: 31
+  references: []
+  id_reference_fields: []
+- name: ServicePostRequest
+  fields: 30
+  references:
+  - IpAccessListEntry
+  - ResourceTagsV1
+  - ServiceEndpointChange
+  id_reference_fields:
+  - dataWarehouseId
+  - backupId
+  - byocId
+- name: ClickStackLogSource
+  fields: 29
+  references:
+  - ClickStackHighlightedAttributeExpression
+  - ClickStackLogSourceMetadataMaterializedViews
+  - ClickStackMaterializedView
+  - ClickStackQuerySetting
+  - ClickStackSourceFilterSettings
+  - ClickStackSourceFrom
+  id_reference_fields:
+  - metricSourceId
+  - traceSourceId
+- name: ScimUserPutRequest
+  fields: 26
+  references:
+  - ScimEnterpriseUser
+  - ScimUserAddress
+  - ScimUserEmail
+  - ScimUserEntitlement
+  - ScimUserGroup
+  - ScimUserIm
+  - ScimUserMeta
+  - ScimUserName
+  - ScimUserPhoneNumber
+  - ScimUserPhoto
+  - ScimUserRole
+  - ScimX509Certificate
+  id_reference_fields:
+  - externalId
+- name: ScimUser
+  fields: 25
+  references:
+  - ScimEnterpriseUser
+  - ScimUserAddress
+  - ScimUserEmail
+  - ScimUserEntitlement
+  - ScimUserGroup
+  - ScimUserIm
+  - ScimUserMeta
+  - ScimUserName
+  - ScimUserPhoneNumber
+  - ScimUserPhoto
+  - ScimUserRole
+  - ScimX509Certificate
+  id_reference_fields:
+  - externalId
+- name: ClickStackAlertResponse
+  fields: 24
+  references:
+  - ClickStackAlertChannel
+  - ClickStackAlertChannels
+  - ClickStackAlertExecutionError
+  - ClickStackAlertSilenced
+  id_reference_fields:
+  - dashboardId
+  - tileId
+  - savedSearchId
+  - teamId
+- name: ScimUserPostRequest
+  fields: 24
+  references:
+  - ScimEnterpriseUser
+  - ScimUserAddress
+  - ScimUserEmail
+  - ScimUserEntitlement
+  - ScimUserGroup
+  - ScimUserIm
+  - ScimUserName
+  - ScimUserPhoneNumber
+  - ScimUserPhoto
+  - ScimUserRole
+  - ScimX509Certificate
+  id_reference_fields:
+  - externalId
+- name: Udf
+  fields: 21
+  references: []
+  id_reference_fields: []
+- name: PostgresSlowQueryPattern
+  fields: 19
+  references: []
+  id_reference_fields:
+  - queryId
+- name: ClickStackCreateAlertRequest
+  fields: 17
+  references:
+  - ClickStackAlertChannel
+  - ClickStackAlertChannels
+  id_reference_fields:
+  - dashboardId
+  - tileId
+  - savedSearchId
+- name: ClickStackUpdateAlertRequest
+  fields: 17
+  references:
+  - ClickStackAlertChannel
+  - ClickStackAlertChannels
+  id_reference_fields:
+  - dashboardId
+  - tileId
+  - savedSearchId
+- name: ClickPipePostObjectStorageSource
+  fields: 16
+  references:
+  - MskIamUser
+  id_reference_fields: []
+- name: Activity
+  fields: 16
+  references: []
+  id_reference_fields:
+  - actorId
+  - organizationId
+  - serviceId
+  - targetKeyId
+- name: PostgresService
+  fields: 16
+  references:
+  - pgCreatedAtProperty
+  - pgHaType
+  - pgIdProperty
+  - pgIsPrimaryProperty
+  - pgNameProperty
+  - pgProvider
+  - pgRegion
+  - pgSize
+  - pgStateProperty
+  - pgStorageSize
+  - pgTags
+  - pgVersion
+  id_reference_fields: []
+- name: ReversePrivateEndpoint
+  fields: 15
+  references:
+  - CustomPrivateDnsMapping
+  id_reference_fields:
+  - vpcResourceConfigurationId
+  - serviceId
+  - endpointId
+- name: ClickPipePostKafkaSource
+  fields: 14
+  references:
+  - AzureEventHub
+  - ClickPipeKafkaOffset
+  - ClickPipeMutateKafkaSchemaRegistry
+  - MskIamUser
+  - MutualTLS
+  - PLAIN
+  id_reference_fields: []
+- name: ClickPipeObjectStorageSource
+  fields: 14
+  references: []
+  id_reference_fields: []
+- name: ScalingScheduleEntry
+  fields: 13
+  references: []
+  id_reference_fields: []
+- name: ClickPipeMutatePostgresSource
+  fields: 13
+  references:
+  - ClickPipePostgresPipeSettings
+  - ClickPipePostgresPipeTableMapping
+  - PLAIN
+  id_reference_fields: []
+- name: ClickPipeMutateMySQLSource
+  fields: 13
+  references:
+  - ClickPipeMySQLPipeSettings
+  - ClickPipeMySQLPipeTableMapping
+  - PLAIN
+  id_reference_fields:
+  - serverId
+- name: ClickPipePatchMySQLSource
+  fields: 13
+  references:
+  - ClickPipeMySQLPipeTableMapping
+  - ClickPipePatchMySQLPipeRemoveTableMapping
+  - ClickPipePatchMySQLPipeSettings
+  - PLAIN
+  id_reference_fields:
+  - serverId
+- name: ClickPipeSettings
+  fields: 13
+  references: []
+  id_reference_fields: []
+- name: ClickPipeSettingsPutRequest
+  fields: 13
+  references: []
+  id_reference_fields: []
+- name: ClickStackTimeChartSeries
+  fields: 13
+  references:
+  - ClickStackNumberFormat
+  id_reference_fields:
+  - sourceId
+- name: ClickStackTableChartSeries
+  fields: 13
+  references:
+  - ClickStackNumberFormat
+  id_reference_fields:
+  - sourceId
+- name: ClickStackLineBuilderChartConfig
+  fields: 13
+  references:
+  - ClickStackFormula
+  - ClickStackNumberFormat
+  - ClickStackSelectItem
+  id_reference_fields:
+  - sourceId
+- name: ScalingScheduleEntryRequest
+  fields: 12
+  references: []
+  id_reference_fields: []
+- name: ClickPipeKafkaSource
+  fields: 12
+  references:
+  - ClickPipeKafkaOffset
+  - ClickPipeKafkaSchemaRegistry
+  id_reference_fields: []
+- name: ClickPipePostgresSource
+  fields: 12
+  references:
+  - ClickPipePostgresPipeSettings
+  - ClickPipePostgresPipeTableMapping
+  id_reference_fields: []
+- name: ClickPipeMySQLSource
+  fields: 12
+  references:
+  - ClickPipeMySQLPipeSettings
+  - ClickPipeMySQLPipeTableMapping
+  id_reference_fields:
+  - serverId
+- name: ClickStackTableBuilderChartConfig
+  fields: 12
+  references:
+  - ClickStackFormula
+  - ClickStackNumberFormat
+  - ClickStackOnClick
+  - ClickStackSelectItem
+  id_reference_fields:
+  - sourceId
+- name: ClickStackFilter
+  fields: 12
+  references: []
+  id_reference_fields:
+  - sourceId
+- name: ClickStackSavedSearch
+  fields: 12
+  references:
+  - ClickStackSavedSearchFilter
+  id_reference_fields:
+  - sourceId
+  - teamId
+- name: ClickStackMetricSource
+  fields: 12
+  references:
+  - ClickStackMetricSourceFrom
+  - ClickStackMetricTables
+  - ClickStackQuerySetting
+  id_reference_fields:
+  - logSourceId
+- name: ScimSchemaAttribute
+  fields: 12
+  references:
+  - ScimSchemaAttribute
+  id_reference_fields: []
+- name: ClickPipePostgresPipeSettings
+  fields: 11
+  references: []
+  id_reference_fields: []
+- name: ClickPipePatchPostgresSource
+  fields: 11
+  references:
+  - ClickPipePatchPostgresPipeRemoveTableMapping
+  - ClickPipePatchPostgresPipeSettings
+  - ClickPipePostgresPipeTableMapping
+  - PLAIN
+  id_reference_fields: []
+- name: ClickPipe
+  fields: 11
+  references:
+  - ClickPipeDestination
+  - ClickPipeFieldMapping
+  - ClickPipeScaling
+  - ClickPipeSettings
+  - ClickPipeSource
+  id_reference_fields:
+  - serviceId
+- name: ClickStackNumberChartSeries
+  fields: 11
+  references:
+  - ClickStackNumberFormat
+  id_reference_fields:
+  - sourceId
+- name: ClickStackBarBuilderChartConfig
+  fields: 11
+  references:
+  - ClickStackFormula
+  - ClickStackNumberFormat
+  - ClickStackSelectItem
+  id_reference_fields:
+  - sourceId
+- name: ClickStackTileInput
+  fields: 11
+  references:
+  - ClickStackDashboardChartSeries
+  - ClickStackTileConfig
+  id_reference_fields:
+  - containerId
+  - tabId
+- name: ClickStackFilterInput
+  fields: 11
+  references: []
+  id_reference_fields:
+  - sourceId
+- name: PostgresServiceListItem
+  fields: 11
+  references:
+  - pgCreatedAtProperty
+  - pgHaType
+  - pgIdProperty
+  - pgIsPrimaryProperty
+  - pgNameProperty
+  - pgProvider
+  - pgRegion
+  - pgSize
+  - pgStateProperty
+  - pgTags
+  - pgVersion
+  id_reference_fields: []
+- name: UsageCostMetrics
+  fields: 10
+  references: []
+  id_reference_fields: []
+- name: ClickPipeMySQLPipeSettings
+  fields: 10
+  references: []
+  id_reference_fields: []
+- name: ClickPipePatchMongoDBSource
+  fields: 10
+  references:
+  - ClickPipeMongoDBPipeTableMapping
+  - ClickPipePatchMongoDBPipeRemoveTableMapping
+  - ClickPipePatchMongoDBPipeSettings
+  - PLAIN
+  id_reference_fields: []
+- name: ClickPipePostPubSubServiceAccountSource
+  fields: 10
+  references:
+  - ServiceAccount
+  id_reference_fields:
+  - projectId
+- name: Backup
+  fields: 10
+  references:
+  - AwsBackupBucketProperties
+  - AzureBackupBucketProperties
+  - GcpBackupBucketProperties
+  id_reference_fields:
+  - serviceId
+- name: ClickStackSelectItem
+  fields: 10
+  references:
+  - ClickStackNumberFormat
+  id_reference_fields: []
+- name: ClickStackLineRawSqlChartConfig
+  fields: 10
+  references:
+  - ClickStackNumberFormat
+  id_reference_fields:
+  - connectionId
+  - sourceId
+- name: ClickStackSessionSource
+  fields: 10
+  references:
+  - ClickStackQuerySetting
+  - ClickStackSourceFrom
+  id_reference_fields:
+  - traceSourceId
+- name: ScimServiceProviderConfig
+  fields: 10
+  references:
+  - ScimAuthenticationScheme
+  - ScimBooleanFeature
+  - ScimServiceProviderConfigBulk
+  - ScimServiceProviderConfigFilter
+  - ScimServiceProviderConfigMeta
+  - ScimServiceProviderConfigPatch
+  id_reference_fields: []
+- name: ApiKey
+  fields: 10
+  references:
+  - AssignedRole
+  - IpAccessListEntry
+  id_reference_fields: []
+- name: RBACRole
+  fields: 9
+  references:
+  - RBACPolicy
+  id_reference_fields:
+  - tenantId
+  - ownerId
+- name: UsageCostRecord
+  fields: 9
+  references:
+  - UsageCostMetrics
+  id_reference_fields:
+  - dataWarehouseId
+  - serviceId
+  - entityId
+- name: CreateReversePrivateEndpoint
+  fields: 9
+  references:
+  - CustomPrivateDnsMapping
+  id_reference_fields:
+  - vpcResourceConfigurationId
+relationships:
+- from: ScalingSchedule
+  type: belongs_to
+  to: ActiveEntry
+  via: activeEntryId
+- from: CurrentScaling
+  type: belongs_to
+  to: ActiveEntry
+  via: activeEntryId
+- from: Service
+  type: belongs_to
+  to: DataWarehouse
+  via: dataWarehouseId
+- from: Service
+  type: belongs_to
+  to: Byoc
+  via: byocId
+- from: Service
+  type: belongs_to
+  to: TransparentDataEncryptionKey
+  via: transparentDataEncryptionKeyId
+- from: Service
+  type: belongs_to
+  to: EncryptionRole
+  via: encryptionRoleId
+- from: PrivateEndpointConfig
+  type: belongs_to
+  to: EndpointService
+  via: endpointServiceId
+- from: ByocConfig
+  type: belongs_to
+  to: Region
+  via: regionId
+- from: OrganizationCloudRegionPrivateEndpointConfig
+  type: belongs_to
+  to: EndpointService
+  via: endpointServiceId
+- from: RBACPolicy
+  type: belongs_to
+  to: Role
+  via: roleId
+- from: RBACPolicy
+  type: belongs_to
+  to: Tenant
+  via: tenantId
+- from: RBACRole
+  type: belongs_to
+  to: Tenant
+  via: tenantId
+- from: RBACRole
+  type: belongs_to
+  to: Owner
+  via: ownerId
+- from: UsageCostRecord
+  type: belongs_to
+  to: DataWarehouse
+  via: dataWarehouseId
+- from: UsageCostRecord
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: UsageCostRecord
+  type: belongs_to
+  to: Entity
+  via: entityId
+- from: CreateReversePrivateEndpoint
+  type: belongs_to
+  to: VpcResourceConfiguration
+  via: vpcResourceConfigurationId
+- from: ReversePrivateEndpoint
+  type: belongs_to
+  to: VpcResourceConfiguration
+  via: vpcResourceConfigurationId
+- from: ReversePrivateEndpoint
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: ReversePrivateEndpoint
+  type: belongs_to
+  to: Endpoint
+  via: endpointId
+- from: MskIamUser
+  type: belongs_to
+  to: AccessKey
+  via: accessKeyId
+- from: ClickPipeMySQLSource
+  type: belongs_to
+  to: Server
+  via: serverId
+- from: ClickPipeMutateMySQLSource
+  type: belongs_to
+  to: Server
+  via: serverId
+- from: ClickPipePatchMySQLSource
+  type: belongs_to
+  to: Server
+  via: serverId
+- from: ClickPipeBigQueryServiceAccountSource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipeBigQueryWorkloadIdentitySource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipePostBigQueryServiceAccountSource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipePostBigQueryWorkloadIdentitySource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipePubSubSource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipePostPubSubServiceAccountSource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipePostPubSubWorkloadIdentitySource
+  type: belongs_to
+  to: Project
+  via: projectId
+- from: ClickPipeDestinationTableEngine
+  type: belongs_to
+  to: VersionColumn
+  via: versionColumnId
+- from: ClickPipe
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: Activity
+  type: belongs_to
+  to: Actor
+  via: actorId
+- from: Activity
+  type: belongs_to
+  to: Organization
+  via: organizationId
+- from: Activity
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: Activity
+  type: belongs_to
+  to: TargetKey
+  via: targetKeyId
+- from: GcpBackupBucket
+  type: belongs_to
+  to: AccessKey
+  via: accessKeyId
+- from: GcpBackupBucketProperties
+  type: belongs_to
+  to: AccessKey
+  via: accessKeyId
+- from: GcpBackupBucketPostRequestV1
+  type: belongs_to
+  to: AccessKey
+  via: accessKeyId
+- from: GcpBackupBucketPatchRequestV1
+  type: belongs_to
+  to: AccessKey
+  via: accessKeyId
+- from: Backup
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: ClickStackAlertChannelWebhook
+  type: belongs_to
+  to: Webhook
+  via: webhookId
+- from: ClickStackAlertChannelWebhook
+  type: belongs_to
+  to: SlackChannel
+  via: slackChannelId
+- from: ClickStackAlertResponse
+  type: belongs_to
+  to: Dashboard
+  via: dashboardId
+- from: ClickStackAlertResponse
+  type: belongs_to
+  to: Tile
+  via: tileId
+- from: ClickStackAlertResponse
+  type: belongs_to
+  to: SavedSearch
+  via: savedSearchId
+- from: ClickStackAlertResponse
+  type: belongs_to
+  to: Team
+  via: teamId
+- from: ClickStackCreateAlertRequest
+  type: belongs_to
+  to: Dashboard
+  via: dashboardId
+- from: ClickStackCreateAlertRequest
+  type: belongs_to
+  to: Tile
+  via: tileId
+- from: ClickStackCreateAlertRequest
+  type: belongs_to
+  to: SavedSearch
+  via: savedSearchId
+- from: ClickStackUpdateAlertRequest
+  type: belongs_to
+  to: Dashboard
+  via: dashboardId
+- from: ClickStackUpdateAlertRequest
+  type: belongs_to
+  to: Tile
+  via: tileId
+- from: ClickStackUpdateAlertRequest
+  type: belongs_to
+  to: SavedSearch
+  via: savedSearchId
+- from: ClickStackTimeChartSeries
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackTableChartSeries
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackNumberChartSeries
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackSearchChartSeries
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackLineBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackBarBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackTableBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackNumberBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackPieBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackCategoricalBarBuilderChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackHeatmapChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackSearchChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackEventPatternsChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackLineRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackLineRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackBarRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackBarRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackTableRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackTableRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackNumberRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackNumberRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackPieRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackPieRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackCategoricalBarRawSqlChartConfig
+  type: belongs_to
+  to: Connection
+  via: connectionId
+- from: ClickStackCategoricalBarRawSqlChartConfig
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackTileOutput
+  type: belongs_to
+  to: Container
+  via: containerId
+- from: ClickStackTileOutput
+  type: belongs_to
+  to: Tab
+  via: tabId
+- from: ClickStackTileInput
+  type: belongs_to
+  to: Container
+  via: containerId
+- from: ClickStackTileInput
+  type: belongs_to
+  to: Tab
+  via: tabId
+- from: ClickStackFilterInput
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackFilter
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackSavedSearch
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackSavedSearch
+  type: belongs_to
+  to: Team
+  via: teamId
+- from: ClickStackSavedSearchInput
+  type: belongs_to
+  to: Source
+  via: sourceId
+- from: ClickStackLogSource
+  type: belongs_to
+  to: MetricSource
+  via: metricSourceId
+- from: ClickStackLogSource
+  type: belongs_to
+  to: TraceSource
+  via: traceSourceId
+- from: ClickStackTraceSource
+  type: belongs_to
+  to: LogSource
+  via: logSourceId
+- from: ClickStackTraceSource
+  type: belongs_to
+  to: SessionSource
+  via: sessionSourceId
+- from: ClickStackTraceSource
+  type: belongs_to
+  to: MetricSource
+  via: metricSourceId
+- from: ClickStackMetricSource
+  type: belongs_to
+  to: LogSource
+  via: logSourceId
+- from: ClickStackSessionSource
+  type: belongs_to
+  to: TraceSource
+  via: traceSourceId
+- from: AssignedRole
+  type: belongs_to
+  to: Role
+  via: roleId
+- from: Member
+  type: belongs_to
+  to: User
+  via: userId
+- from: ScimUser
+  type: belongs_to
+  to: External
+  via: externalId
+- from: ScimUserPostRequest
+  type: belongs_to
+  to: External
+  via: externalId
+- from: ScimUserPutRequest
+  type: belongs_to
+  to: External
+  via: externalId
+- from: ScimGroup
+  type: belongs_to
+  to: External
+  via: externalId
+- from: ScimGroupPostRequest
+  type: belongs_to
+  to: External
+  via: externalId
+- from: ScimGroupPutRequest
+  type: belongs_to
+  to: External
+  via: externalId
+- from: PostgresSlowQueryPattern
+  type: belongs_to
+  to: Query
+  via: queryId
+- from: PostgresQueryExecution
+  type: belongs_to
+  to: Query
+  via: queryId
+- from: PostgresQueryExecution
+  type: belongs_to
+  to: Trace
+  via: traceId
+- from: PostgresQueryExecution
+  type: belongs_to
+  to: Span
+  via: spanId
+- from: ServicePostRequest
+  type: belongs_to
+  to: DataWarehouse
+  via: dataWarehouseId
+- from: ServicePostRequest
+  type: belongs_to
+  to: Backup
+  via: backupId
+- from: ServicePostRequest
+  type: belongs_to
+  to: Byoc
+  via: byocId
+- from: ServicePatchRequest
+  type: belongs_to
+  to: TransparentDataEncryptionKey
+  via: transparentDataEncryptionKeyId
+- from: ServiceScalingPatchResponse
+  type: belongs_to
+  to: DataWarehouse
+  via: dataWarehouseId
+- from: ServiceScalingPatchResponse
+  type: belongs_to
+  to: Byoc
+  via: byocId
+- from: ServiceScalingPatchResponse
+  type: belongs_to
+  to: TransparentDataEncryptionKey
+  via: transparentDataEncryptionKeyId
+- from: ServiceScalingPatchResponse
+  type: belongs_to
+  to: EncryptionRole
+  via: encryptionRoleId
+- from: ApiKeyPostResponse
+  type: belongs_to
+  to: Key
+  via: keyId
+- from: ByocInfrastructurePostRequest
+  type: belongs_to
+  to: Region
+  via: regionId
+- from: ByocInfrastructurePostRequest
+  type: belongs_to
+  to: Account
+  via: accountId
+- from: UdfAttachment
+  type: belongs_to
+  to: Service
+  via: serviceId
+- from: UdfUploadSession
+  type: belongs_to
+  to: Upload
+  via: uploadId

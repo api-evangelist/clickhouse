@@ -1,0 +1,113 @@
+specification: Well-Known Documents
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: probed
+source: live GET probes of /.well-known/* on every host in apis.yml, every OpenAPI servers[] host, the docs/console host, and the authorization server named by the MCP protected-resource document
+note: >-
+  clickhouse.com serves a real security.txt and a real RFC 9727 api-catalog linkset (the linkset points at
+  https://api.clickhouse.cloud/v1 as service-desc, which is the live ClickHouse Cloud OpenAPI). api.clickhouse.cloud
+  serves no /.well-known/* documents. clickhouse.cloud and console.clickhouse.cloud answer 200 with the same 5,990-byte
+  SPA shell for EVERY /.well-known/* path — that is a catch-all, not a document, and is recorded as a miss.
+  mcp.clickhouse.cloud is its own OAuth authorization server and serves both RFC 9728 protected-resource metadata
+  (including a per-resource variant at /.well-known/oauth-protected-resource/mcp) and RFC 8414 authorization-server metadata.
+hosts:
+  - host: clickhouse.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: clickhouse-security.txt
+      - path: /.well-known/api-catalog
+        status: 200
+        file: clickhouse-api-catalog.json
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: www.clickhouse.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: clickhouse-security.txt
+      - path: /.well-known/api-catalog
+        status: 200
+        file: clickhouse-api-catalog.json
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: api.clickhouse.cloud
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: mcp.clickhouse.cloud
+    documents:
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: clickhouse-mcp-oauth-protected-resource.json
+      - path: /.well-known/oauth-protected-resource/mcp
+        status: 200
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: clickhouse-mcp-oauth-authorization-server.json
+      - path: /.well-known/openid-configuration
+        status: 404
+  - host: clickhouse.cloud
+    note: every /.well-known/* path returns the identical 5,990-byte console SPA shell; treated as a miss, not a document
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+      - path: /.well-known/openid-configuration
+        status: 200
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+      - path: /.well-known/api-catalog
+        status: 200
+      - path: /.well-known/agent-card.json
+        status: 200
+      - path: /.well-known/agent.json
+        status: 200
+  - host: console.clickhouse.cloud
+    note: every /.well-known/* path returns the identical 5,990-byte console SPA shell; treated as a miss, not a document
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+      - path: /.well-known/openid-configuration
+        status: 200
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+      - path: /.well-known/api-catalog
+        status: 200
+      - path: /.well-known/agent-card.json
+        status: 200
+      - path: /.well-known/agent.json
+        status: 200

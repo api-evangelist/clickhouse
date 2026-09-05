@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: ClickHouse HTTP Interface Ping API
   description: 'ClickHouse HTTP interface for executing SQL queries, inserting data, and

@@ -1,0 +1,87 @@
+specification: CLI
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: https://clickhouse.com/docs/interfaces/cli (read as its published markdown twin, 2026-09-05)
+name: clickhousectl
+alias: chctl
+tagline: The CLI for ClickHouse — local and cloud
+description: >-
+  clickhousectl installs and manages local ClickHouse versions and servers, runs local Postgres instances,
+  executes queries, provisions and manages ClickHouse Cloud clusters and Postgres services, creates and
+  manages ClickPipes, installs the official ClickHouse Agent Skills into coding agents, and pushes local
+  development up to Cloud. ClickHouse describes it as helping "humans and AI-agents to develop with ClickHouse".
+install:
+  - method: script
+    command: curl https://clickhouse.com/cli | sh
+    installs_to: ~/.local/bin/clickhousectl
+    note: A `chctl` alias is created automatically.
+requirements:
+  - macOS (aarch64, x86_64) or Linux (aarch64, x86_64)
+  - Cloud commands require a ClickHouse Cloud API key
+binary_source:
+  - builds.clickhouse.com
+  - packages.clickhouse.com (Linux fallback)
+  - https://github.com/ClickHouse/ClickHouse/releases (macOS fallback)
+command_groups:
+  - group: local install
+    purpose: install and pin ClickHouse versions
+    commands:
+      - clickhousectl local install latest
+      - clickhousectl local install 26.5
+      - clickhousectl local list [--remote]
+      - clickhousectl local use latest [--no-global]
+      - clickhousectl local which
+      - clickhousectl local remove <version>
+  - group: local server
+    purpose: run and manage named local ClickHouse servers
+    commands:
+      - clickhousectl local server start [--name <n>] [--version <v>] [--foreground] [--http-port <p>] [--tcp-port <p>] [--config-file <c>]
+      - clickhousectl local server list [--global]
+      - clickhousectl local server stop <name> [--global]
+      - clickhousectl local server stop-all
+      - clickhousectl local server remove <name>
+      - clickhousectl local server dotenv [--name <n>] [--local]
+      - clickhousectl local server configs
+  - group: local client
+    purpose: query a running server
+    commands:
+      - clickhousectl local client [--name <n>]
+      - clickhousectl local client --query "SHOW DATABASES"
+      - clickhousectl local client --queries-file schema.sql
+      - clickhousectl local client --host <host> --port 9000
+  - group: local postgres
+    purpose: run local Postgres instances alongside ClickHouse
+    commands:
+      - clickhousectl local install postgres@18
+      - clickhousectl local postgres start [--name <n>] [--version <v>] [--port <p>] [--user <u>] [--password <p>] [--database <d>]
+      - clickhousectl local postgres client --name <n> [--query "SELECT 1"]
+      - clickhousectl local postgres dotenv --name <n>
+  - group: skills
+    purpose: install the official ClickHouse Agent Skills into coding agents
+    upstream: https://github.com/ClickHouse/agent-skills
+    commands:
+      - clickhousectl skills
+      - clickhousectl skills --all
+      - clickhousectl skills --detected-only
+      - clickhousectl skills --global --all
+      - clickhousectl skills --agent claude --agent codex
+  - group: cloud
+    purpose: set up ClickHouse Cloud, create cloud-managed clusters and Postgres services, manage Cloud resources and ClickPipes
+    note: >-
+      Cloud commands authenticate with a ClickHouse Cloud API key and drive the same control plane as
+      https://api.clickhouse.cloud/v1.
+key_flows:
+  - name: Local development from zero
+    steps:
+      - curl https://clickhouse.com/cli | sh
+      - clickhousectl local use latest
+      - clickhousectl local server start
+      - clickhousectl local client --query "SHOW DATABASES"
+  - name: Wire an AI coding agent to ClickHouse
+    steps:
+      - clickhousectl skills --detected-only
+      - Connect the agent to the MCP server (see mcp/clickhouse-mcp.yml)
+binary_packages: packages/clickhouse-packages.yml

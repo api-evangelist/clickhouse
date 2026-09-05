@@ -1,0 +1,82 @@
+specification: Webhooks
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: derived
+source: >-
+  openapi/clickhouse-cloud-api-openapi.json — the ClickStack tag's webhook and alert operations and their
+  component schemas (live first-party spec fetched from https://api.clickhouse.cloud/v1 on 2026-09-05)
+note: >-
+  ClickHouse publishes NO AsyncAPI document and no event catalog of its own outbound events. What it does
+  publish is an OUTBOUND webhook surface inside ClickStack, its OpenTelemetry observability product: a
+  customer registers webhook destinations through the Cloud API, attaches them to alerts as notification
+  channels, and ClickStack posts to them when an alert fires or resolves. That surface is described here.
+  It is a notification fan-out, not a full event bus — there is no subscribe-to-resource-events API on the
+  control plane, and no signing scheme, replay endpoint or delivery-log endpoint is documented.
+direction: outbound (ClickStack -> customer destination)
+delivery: HTTP POST to a customer-registered URL
+trigger: an alert fires or resolves
+management_api: https://api.clickhouse.cloud/v1
+management_operations:
+  - operationId: clickStackListWebhooks
+    method: GET
+    path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  - operationId: clickStackCreateWebhook
+    method: POST
+    path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  - operationId: clickStackUpdateWebhook
+    method: PUT
+    path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+  - operationId: clickStackDeleteWebhook
+    method: DELETE
+    path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+destination_types:
+  - service: slack
+    schema: ClickStackSlackWebhook
+    description: Slack incoming webhook URL
+  - service: slack_api
+    schema: ClickStackSlackAPIWebhook
+    description: Slack API endpoint; alerts can target a specific Slack channel id
+  - service: incidentio
+    schema: ClickStackIncidentIOWebhook
+    description: incident.io alert event HTTP source URL
+  - service: pagerduty_api
+    schema: ClickStackPagerDutyAPIWebhook
+    description: PagerDuty Events API endpoint
+  - service: generic
+    schema: ClickStackGenericWebhook
+    description: Any HTTPS destination; supports custom headers and query parameters
+configuration:
+  custom_headers: true
+  custom_query_params: true
+  headers_schema: ClickStackWebhookInputHeaders
+  query_params_schema: ClickStackWebhookInputQueryParams
+  name_uniqueness: webhook name must be unique per service within the team
+alert_channels:
+  schema: ClickStackAlertChannels
+  min: 1
+  max: 10
+  types:
+    - webhook
+    - email
+  note: Duplicate channels are rejected. Alerts can be silenced for a window (ClickStackAlertSilenced).
+delivery_failures:
+  surfaced_as: ClickStackAlertExecutionError
+  error_types:
+    - QUERY_ERROR
+    - QUERY_TIMEOUT
+    - WEBHOOK_ERROR
+    - INVALID_ALERT
+    - UNKNOWN
+  note: WEBHOOK_ERROR is reported on the alert's execution error record, timestamped, with a human-readable message.
+gaps:
+  signing: not documented
+  replay_endpoint: not documented
+  delivery_log_endpoint: not documented
+  retry_policy: not documented
+related:
+  asyncapi: asyncapi/clickhouse-kafka-engine-asyncapi.yml
+  note: >-
+    The Kafka-engine AsyncAPI in this repo describes ClickHouse's CONSUMER-side streaming contract and was
+    written by API Evangelist, not by ClickHouse.

@@ -1,0 +1,144 @@
+specification: Packages
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: >-
+  Registry metadata endpoints (registry.npmjs.org, pypi.org/pypi/<pkg>/json, proxy.golang.org, crates.io/api/v1,
+  api.nuget.org, search.maven.org) queried unauthenticated on 2026-09-05, cross-checked against the ClickHouse
+  GitHub organization and https://clickhouse.com/docs/integrations/language-clients
+note: >-
+  official:true is set only for packages published from the ClickHouse GitHub organization. The Java family
+  (com.clickhouse:*) is the clearest decay signal in this set: the whole 0.9.0 release train last published
+  2025-06-12, and the gRPC / CLI clients have not shipped since 0.6.4 on 2024-08-17, while the ClickHouse Cloud
+  API and the JS/Python/Go/Rust clients all released within the last three months.
+package_count: 14
+official_count: 12
+packages:
+  - name: '@clickhouse/client'
+    registry: npm
+    language: JavaScript/TypeScript
+    url: https://www.npmjs.com/package/@clickhouse/client
+    repository: https://github.com/ClickHouse/clickhouse-js
+    official: true
+    version: 1.23.1
+    published: '2026-07-07'
+    description: Official JS client for ClickHouse — Node.js implementation
+  - name: '@clickhouse/client-web'
+    registry: npm
+    language: JavaScript/TypeScript
+    url: https://www.npmjs.com/package/@clickhouse/client-web
+    repository: https://github.com/ClickHouse/clickhouse-js
+    official: true
+    version: 1.23.1
+    published: '2026-07-07'
+    description: Official JS client for ClickHouse — Web API / browser implementation
+  - name: '@clickhouse/client-common'
+    registry: npm
+    language: JavaScript/TypeScript
+    url: https://www.npmjs.com/package/@clickhouse/client-common
+    repository: https://github.com/ClickHouse/clickhouse-js
+    official: true
+    version: 1.23.0
+    published: '2026-06-29'
+    description: Shared runtime-agnostic core for the official ClickHouse JS clients
+  - name: clickhouse-connect
+    registry: pypi
+    language: Python
+    url: https://pypi.org/project/clickhouse-connect/
+    repository: https://github.com/ClickHouse/clickhouse-connect
+    official: true
+    version: 1.8.0
+    published: '2026-09-03'
+    description: ClickHouse database core driver for Python, Pandas and Superset
+  - name: chdb
+    registry: pypi
+    language: Python
+    url: https://pypi.org/project/chdb/
+    repository: https://github.com/chdb-io/chdb
+    official: true
+    version: 4.3.0
+    published: '2026-08-17'
+    description: In-process OLAP SQL engine powered by ClickHouse
+  - name: mcp-clickhouse
+    registry: pypi
+    language: Python
+    url: https://pypi.org/project/mcp-clickhouse/
+    repository: https://github.com/ClickHouse/mcp-clickhouse
+    official: true
+    version: 0.6.0
+    published: '2026-09-03'
+    description: Official ClickHouse MCP server (stdio / HTTP / SSE transports)
+  - name: github.com/ClickHouse/clickhouse-go/v2
+    registry: go
+    language: Go
+    url: https://pkg.go.dev/github.com/ClickHouse/clickhouse-go/v2
+    repository: https://github.com/ClickHouse/clickhouse-go
+    official: true
+    version: v2.48.0
+    published: '2026-08-04'
+    description: Official Go client for ClickHouse, native protocol and database/sql
+  - name: github.com/ClickHouse/ch-go
+    registry: go
+    language: Go
+    url: https://pkg.go.dev/github.com/ClickHouse/ch-go
+    repository: https://github.com/ClickHouse/ch-go
+    official: true
+    version: v0.74.0
+    published: '2026-07-24'
+    description: Low-level Go client for the ClickHouse native protocol
+  - name: clickhouse
+    registry: crates.io
+    language: Rust
+    url: https://crates.io/crates/clickhouse
+    repository: https://github.com/ClickHouse/clickhouse-rs
+    official: true
+    version: 0.15.2
+    published: '2026-08-28'
+    description: Official Rust client for ClickHouse
+  - name: com.clickhouse:clickhouse-java
+    registry: maven
+    language: Java
+    url: https://central.sonatype.com/artifact/com.clickhouse/clickhouse-java
+    repository: https://github.com/ClickHouse/clickhouse-java
+    official: true
+    version: 0.9.0
+    published: '2025-06-12'
+    description: Official Java client aggregate for ClickHouse
+  - name: com.clickhouse:clickhouse-jdbc
+    registry: maven
+    language: Java
+    url: https://central.sonatype.com/artifact/com.clickhouse/clickhouse-jdbc
+    repository: https://github.com/ClickHouse/clickhouse-java
+    official: true
+    version: 0.9.0
+    published: '2025-06-12'
+    description: Official JDBC driver for ClickHouse
+  - name: com.clickhouse:clickhouse-grpc-client
+    registry: maven
+    language: Java
+    url: https://central.sonatype.com/artifact/com.clickhouse/clickhouse-grpc-client
+    repository: https://github.com/ClickHouse/clickhouse-java
+    official: true
+    version: 0.6.4
+    published: '2024-08-17'
+    description: gRPC transport for the ClickHouse Java client — last published 2024-08-17
+  - name: ClickHouse.Client
+    registry: nuget
+    language: .NET
+    url: https://www.nuget.org/packages/ClickHouse.Client
+    repository: https://github.com/DarkWanderer/ClickHouse.Client
+    official: false
+    version: 7.14.0
+    published: '2025-05-05'
+    description: ADO.NET client for ClickHouse; community-maintained and listed in the ClickHouse docs as a third-party client
+  - name: clickhouse-driver
+    registry: pypi
+    language: Python
+    url: https://pypi.org/project/clickhouse-driver/
+    repository: https://github.com/mymarilyn/clickhouse-driver
+    official: false
+    version: 0.2.11
+    published: '2026-07-17'
+    description: Third-party Python driver using the ClickHouse native protocol

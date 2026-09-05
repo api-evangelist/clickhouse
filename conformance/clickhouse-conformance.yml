@@ -1,0 +1,115 @@
+specification: Conformance
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: derived
+source: >-
+  openapi/clickhouse-cloud-api-openapi.json (live spec fetched from https://api.clickhouse.cloud/v1),
+  well-known/clickhouse-api-catalog.json, well-known/clickhouse-security.txt,
+  well-known/clickhouse-mcp-oauth-authorization-server.json,
+  well-known/clickhouse-mcp-oauth-protected-resource.json, grpc/clickhouse-grpc.proto,
+  security/clickhouse-trust-center.yml, and https://clickhouse.com/docs
+note: >-
+  Every `conforms: true` below points at a document or spec location we actually fetched. Where a standard
+  is not implemented the entry is kept with conforms:false so the absence is measured rather than omitted.
+conformance:
+  - id: openapi-3.1
+    conforms: true
+    evidence: 'openapi/clickhouse-cloud-api-openapi.json declares openapi: 3.1.2 with 86 paths, 148 operations and 369 component schemas'
+  - id: rfc9727-api-catalog
+    conforms: true
+    evidence: 'https://clickhouse.com/.well-known/api-catalog returns 200 with an RFC 9727 linkset naming service-desc https://api.clickhouse.cloud/v1, service-doc and status'
+  - id: rfc9116-security-txt
+    conforms: true
+    evidence: 'https://clickhouse.com/.well-known/security.txt returns 200 with Contact, Policy and Expires (2027-07-28)'
+  - id: oauth2
+    conforms: true
+    evidence: 'https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server returns 200 — authorization_code + refresh_token, S256 PKCE, open dynamic client registration'
+    scope: the remote MCP server only; the REST API uses HTTP Basic
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: true
+    evidence: 'https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server, HTTP 200, 2026-09-05'
+  - id: rfc9728-oauth-protected-resource-metadata
+    conforms: true
+    evidence: 'https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource and .../oauth-protected-resource/mcp, HTTP 200; the 401 on /mcp carries www-authenticate with resource_metadata'
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: 'registration_endpoint https://mcp.clickhouse.cloud/register published in the authorization-server metadata'
+  - id: mcp
+    conforms: true
+    evidence: 'https://mcp.clickhouse.cloud/mcp responds to a JSON-RPC tools/list POST with 401 + an OAuth challenge — a live MCP endpoint; 13 read-only tools documented at https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp'
+  - id: agent-skills
+    conforms: true
+    evidence: 'https://github.com/ClickHouse/agent-skills publishes 11 first-party SKILL.md files (Apache-2.0, author ClickHouse Inc); clickhousectl skills installs them'
+  - id: llmstxt
+    conforms: true
+    evidence: 'https://clickhouse.com/llms.txt (200, 100,933 bytes) and https://clickhouse.com/docs/llms.txt (200); docs pages also serve markdown twins at <page>.md, and https://clickhouse.com/pricing.md carries an explicit "Agent instructions" section'
+  - id: oidc
+    conforms: true
+    evidence: 'openid / profile / email are in scopes_supported at https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server; SSO via Google/Microsoft on all plans and SAML on Enterprise per https://clickhouse.com/pricing.md'
+    note: No /.well-known/openid-configuration is served on any ClickHouse host; the OIDC claim rests on the MCP scopes and the published SSO feature set.
+  - id: grpc-protobuf
+    conforms: true
+    evidence: 'grpc/clickhouse-grpc.proto — proto3, package clickhouse.grpc, service ClickHouse with ExecuteQuery, ExecuteQueryWithStreamInput, ExecuteQueryWithStreamOutput, ExecuteQueryWithStreamIO'
+  - id: prometheus-exposition
+    conforms: true
+    evidence: 'the Cloud API exposes 4 Prometheus-tagged operations (organizationPrometheusGet, organizationPrometheusDiscoveryGet, instancePrometheusGet, postgresInstancePrometheusGet) returning text/plain metrics plus a scrape-target discovery endpoint'
+  - id: opentelemetry
+    conforms: true
+    evidence: 'ClickStack is ClickHouse''s OpenTelemetry-native observability product; the Cloud API manages ClickStack sources, dashboards, alerts and webhooks, and ClickHouse publishes a first-party clickstack-otel-collector agent skill'
+  - id: mysql-wire-protocol
+    conforms: true
+    evidence: 'https://clickhouse.com/docs/en/interfaces/mysql — MySQL wire-protocol compatibility on port 9004'
+  - id: postgresql-wire-protocol
+    conforms: true
+    evidence: 'https://clickhouse.com/docs/en/interfaces/postgresql — PostgreSQL wire-protocol compatibility on port 9005'
+  - id: jdbc
+    conforms: true
+    evidence: 'com.clickhouse:clickhouse-jdbc published to Maven Central by ClickHouse (0.9.0, 2025-06-12)'
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: 'no operation in openapi/clickhouse-cloud-api-openapi.json returns application/problem+json; errors are a flat {status, error, requestId} JSON envelope'
+  - id: idempotency
+    conforms: false
+    evidence: 'zero header parameters are declared across all 148 operations and no Idempotency-Key is documented — see conventions/clickhouse-conventions.yml idempotency.coverage: none'
+  - id: pagination
+    conforms: false
+    evidence: 'only 9 of 148 operations declare a limit parameter; the main collection reads return the full set with no paging parameters'
+    note: partially implemented — offset/limit on 9 operations and cursor on 3, but not applied across the collection surface
+  - id: rfc8594-sunset
+    conforms: false
+    evidence: 'no Sunset or Deprecation response headers are documented, and zero operations are marked deprecated in the spec'
+  - id: json-api
+    conforms: false
+    evidence: 'responses use a bare {"result": ...} envelope, not the JSON:API media type or document structure'
+  - id: asyncapi
+    conforms: false
+    evidence: 'ClickHouse publishes no AsyncAPI document; the event surface is ClickStack webhooks and the Kafka table engine (see asyncapi/clickhouse-kafka-engine-asyncapi.yml, which API Evangelist derived, not ClickHouse)'
+  - id: a2a-agent-card
+    conforms: false
+    evidence: '/.well-known/agent-card.json and /.well-known/agent.json return 404 on clickhouse.com, www.clickhouse.com and api.clickhouse.cloud; clickhouse.cloud and console.clickhouse.cloud return the console SPA shell for every path'
+domain_standards:
+  note: >-
+    ClickHouse is a general-purpose OLAP database and a cloud control plane. Its market has no single
+    domain data standard the contract could declare (there is no SCIM/OData/HL7/ISO-20022 analogue for a
+    columnar analytics engine), so no domain-standard signature is asserted. The closest genuine domain
+    signatures ClickHouse DOES carry are recorded above as first-class conformance entries rather than
+    invented into this slot: the MySQL and PostgreSQL wire protocols, the Prometheus exposition surface,
+    OpenTelemetry via ClickStack, and JDBC.
+  declared: []
+compliance:
+  published: true
+  trust_center: https://trust.clickhouse.com/
+  certifications:
+    - SOC 2
+    - ISO 27001
+    - PCI DSS
+    - HIPAA
+    - GDPR
+  plan_gated:
+    - certification: HIPAA
+      plan: Enterprise
+    - certification: PCI DSS
+      plan: Enterprise
+  source: security/clickhouse-trust-center.yml and https://clickhouse.com/pricing.md

@@ -1,0 +1,87 @@
+specification: Error Catalog
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: derived
+source: openapi/clickhouse-cloud-api-openapi.json (fetched verbatim from https://api.clickhouse.cloud/v1 on 2026-09-05)
+format: vendor-json
+rfc9457: false
+note: 'The ClickHouse Cloud API does NOT use RFC 9457 problem+json. Every documented error response is application/json carrying
+  a flat envelope. `requestId` is a UUIDv4 assigned to every request and is the value support asks for. The 4xx/5xx set below
+  is derived from the live spec: 400 and 500 are declared on all 148 operations; 403/404/409/410/422/424 are declared only
+  on the UDF and ClickPipes surfaces.'
+envelope:
+  media_type: application/json
+  fields:
+  - name: status
+    type: integer
+    description: HTTP status code, repeated in the body.
+  - name: error
+    type: string
+    description: Human-readable error description.
+  - name: requestId
+    type: string
+    format: uuid
+    description: Unique id assigned to every request (UUIDv4). Quote it to support.
+  - name: code
+    type: string
+    description: 'Present on 424 only: SERVICE_IDLE | SERVICE_NOT_RUNNING | SERVICE_STOPPED.'
+  observed_field_counts:
+    status: 317
+    error: 317
+    requestId: 317
+    code: 1
+    serviceState: 1
+    canWake: 1
+    issues: 11
+type_count: 8
+problem_types:
+- code: 400
+  title: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+  meaning: Client error — request parameters failed validation.
+  remediation: Fix the request parameters named in `error` and retry. Keep `requestId` for support.
+  operations: 148
+  content_type: application/json
+- code: 403
+  title: Requested UDF features are not enabled.
+  meaning: Forbidden — the requested feature is not enabled for the organization, or the key lacks permission.
+  remediation: Enable the feature for the organization, or issue a key with the admin role instead of developer.
+  operations: 2
+  content_type: application/json
+- code: 404
+  title: UDF not found.
+  meaning: Not found — the organization, service, key, UDF, version or attachment does not exist.
+  remediation: Re-resolve the identifier (organizationGetList / instanceGetList) before retrying.
+  operations: 9
+  content_type: application/json
+- code: 409
+  title: The requested version is not ready or another attachment transition is in progress.
+  meaning: Conflict — the resource is in a state that blocks the transition (another transition in progress, version not ready).
+  remediation: Poll the resource until the in-flight transition completes, then retry.
+  operations: 6
+  content_type: application/json
+- code: 410
+  title: The source archive is unavailable.
+  meaning: Gone — the referenced upload/source archive is no longer available.
+  remediation: Create a fresh upload URL (udfUploadSessionCreate) and re-upload the archive.
+  operations: 2
+  content_type: application/json
+- code: 422
+  title: Service UDF attachment limit exceeded.
+  meaning: Unprocessable — a documented limit was exceeded (e.g. service UDF attachment limit).
+  remediation: Detach an existing resource or request a limit increase from support@clickhouse.com.
+  operations: 1
+  content_type: application/json
+- code: 424
+  title: The service must be running before the UDF can be attached.
+  meaning: Failed dependency — a prerequisite resource is not in the required state (service idle / not running / stopped).
+  remediation: Start or resume the service (instanceStateUpdate) and retry once it is running.
+  operations: 1
+  content_type: application/json
+- code: 500
+  title: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+  meaning: Internal server error — retry, and contact ClickHouse Cloud support if it persists.
+  remediation: Retry with backoff. Quote `requestId` to support@clickhouse.com if the error persists.
+  operations: 148
+  content_type: application/json

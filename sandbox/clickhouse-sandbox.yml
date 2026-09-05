@@ -1,0 +1,52 @@
+specification: Sandbox
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: https://clickhouse.com/docs/getting-started/playground (read as its published markdown twin, 2026-09-05)
+note: >-
+  ClickHouse publishes a genuinely anonymous, no-signup sandbox: the ClickHouse Playground. Credentials
+  below are the provider's own published values, quoted verbatim — none was invented. There is no
+  test-vs-live key-prefix scheme, no test clock and no fixture/trigger tooling, because the sandbox is a
+  real read-only ClickHouse cluster with example datasets, not a simulated environment.
+sandbox:
+  name: ClickHouse Playground
+  console: https://sql.clickhouse.com
+  signup_required: false
+  credentials_published: true
+  endpoints:
+    - protocol: HTTPS
+      url: https://play.clickhouse.com:443/
+    - protocol: Native TCP
+      url: play.clickhouse.com:9440
+  credentials:
+    user:
+      - explorer
+      - play
+    password: '(empty)'
+  limitations:
+    - Queries run as a read-only user
+    - DDL queries are not allowed
+    - INSERT queries are not allowed
+    - The service has usage quotas
+  specifications:
+    hosting: Google Cloud (GCE), US Central region (us-central1)
+    replicas: 3
+    per_replica: 256 GiB storage, 59 virtual CPUs
+  examples:
+    - description: HTTPS endpoint with curl
+      command: curl "https://play.clickhouse.com/?user=explorer" --data-binary "SELECT 'Play ClickHouse'"
+    - description: Native TCP with the ClickHouse client
+      command: clickhouse client --secure --host play.clickhouse.com --user explorer
+free_tier:
+  cloud_trial: $300 in credits over 30 days
+  ends: after 30 days or once the credits are consumed, whichever comes first
+  then: converts to pay-as-you-go
+  signup: https://console.clickhouse.cloud/signUp
+  source: https://clickhouse.com/pricing.md
+control_plane_sandbox:
+  available: false
+  note: >-
+    The ClickHouse Cloud API (api.clickhouse.cloud) has no separate test mode, sandbox host or test-key
+    prefix. Control-plane calls provision real, billable resources.

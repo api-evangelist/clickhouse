@@ -1,0 +1,84 @@
+specification: Change Log
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://clickhouse.com/docs/resources/changelogs/cloud/2026 (Cloud) and
+  https://clickhouse.com/docs/whats-new/changelog (core server), both read as their published markdown twins
+  (.md) on 2026-09-05
+note: >-
+  ClickHouse runs TWO dated changelogs. The Cloud changelog is a weekly-to-fortnightly product log with
+  dated <Update> entries. The core server changelog is per release and opens each release with an explicit
+  "Backward Incompatible Change" section, which is where breaking changes are actually called out.
+changelogs:
+  - name: Cloud changelog
+    url: https://clickhouse.com/docs/resources/changelogs/cloud/2026
+    scheme: date
+    cadence: weekly to fortnightly
+    breaking_changes_called_out: false
+    archive: https://clickhouse.com/docs/resources/changelogs/cloud/archive/2025
+  - name: ClickHouse server changelog
+    url: https://clickhouse.com/docs/whats-new/changelog
+    scheme: CalVer release (YY.M, with LTS lines)
+    cadence: monthly
+    current_version: '26.8 LTS'
+    breaking_changes_called_out: true
+    breaking_section: Backward Incompatible Change
+  - name: Cloud database release changelog
+    url: https://clickhouse.com/docs/resources/changelogs/cloud/release-notes-index
+    scheme: release
+  - name: Release status
+    url: https://clickhouse.com/docs/resources/changelogs/cloud/release-status
+    scheme: rollout tracker
+entries:
+  - source: cloud
+    date: '2026-08-31'
+    breaking: false
+    highlights:
+      - New AWS regions — Taipei (ap-east-2) and Malaysia (ap-southeast-5), both Private Regions with ClickPipes support
+      - ClickPipes Private Service Connect now supports Global Access for cross-region private connections
+      - SAML users can switch between SAML organizations from the org switcher
+  - source: cloud
+    date: '2026-08-17'
+    breaking: false
+    highlights:
+      - Managed Postgres now available on GCP for selected design partners
+      - ClickStack resources manageable through v3.25.0 of the official ClickHouse/clickhouse Terraform provider (beta)
+      - New billing notifications warn before credits expire or service is interrupted
+      - Improved tracing for ClickHouse Agents and a smoother SAML sign-in
+  - source: cloud
+    date: '2026-07-13'
+    breaking: false
+  - source: cloud
+    date: '2026-06-30'
+    breaking: false
+  - source: cloud
+    date: '2026-06-03'
+    breaking: false
+  - source: server
+    version: '26.8 LTS'
+    date: '2026-08-27'
+    breaking: true
+    note: LTS release; carries a Backward Incompatible Change section
+  - source: server
+    version: '26.7'
+    date: '2026-07-22'
+    breaking: true
+  - source: server
+    version: '26.6'
+    date: '2026-06-25'
+    breaking: true
+  - source: server
+    version: '26.5'
+    date: '2026-05-21'
+    breaking: true
+  - source: server
+    version: '26.4'
+    date: '2026-04-30'
+    breaking: true
+  - source: server
+    version: '26.3 LTS'
+    date: '2026-03-26'
+    breaking: true

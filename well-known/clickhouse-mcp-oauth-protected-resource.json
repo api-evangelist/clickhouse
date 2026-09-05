@@ -1,0 +1,1 @@
+{"resource":"https://mcp.clickhouse.cloud","authorization_servers":["https://mcp.clickhouse.cloud"],"scopes_supported":["mcp:access","clickstack:access","openid","profile","email"],"bearer_methods_supported":["header"]}

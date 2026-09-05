@@ -1,0 +1,672 @@
+specification: Tool Crosswalk
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: derived
+source: mcp/clickhouse-mcp.yml (documented remote MCP tool list) bound to openapi/clickhouse-cloud-api-openapi.json (live
+  first-party spec fetched from https://api.clickhouse.cloud/v1)
+note: The live MCP schemas are OAuth-gated (tools/list returns 401 anonymously), so every binding below was made by name and
+  documented semantics against the ClickHouse Cloud OpenAPI, not by comparing inputSchemas. Each bound tool inherits the parameters
+  and responses of its backing operation. The three query tools have no control-plane operation at all — they run against
+  the database, which is a different surface from api.clickhouse.cloud.
+surfaces:
+  openapi:
+    url: https://api.clickhouse.cloud/v1
+    file: openapi/clickhouse-cloud-api-openapi.json
+    gated: false
+    auth: HTTP Basic (key ID + key secret)
+  mcp:
+    url: https://mcp.clickhouse.cloud/mcp
+    gated: true
+    auth: OAuth 2.1 + per-service enablement
+  graphql: null
+coverage:
+  mcp_tools: 13
+  mapped_tools: 10
+  mcp_only_tools: 3
+  rest_operations: 148
+  rest_operations_with_a_tool: 10
+  rest_only_operations: 138
+  tool_coverage_of_rest_pct: 6.8
+crosswalk:
+- tool: get_organizations
+  category: organization
+  rest:
+  - organizationGetList
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations (Organization).'
+- tool: get_organization_details
+  category: organization
+  rest:
+  - organizationGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}
+    (Organization).'
+- tool: get_services_list
+  category: service
+  rest:
+  - instanceGetList
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services
+    (Service).'
+- tool: get_service_details
+  category: service
+  rest:
+  - instanceGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}
+    (Service).'
+- tool: list_service_backups
+  category: backup
+  rest:
+  - backupGetList
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}/backups
+    (Backup).'
+- tool: get_service_backup_details
+  category: backup
+  rest:
+  - backupGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}/backups/{backupId}
+    (Backup).'
+- tool: get_service_backup_configuration
+  category: backup
+  rest:
+  - backupConfigurationGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration
+    (Backup).'
+- tool: list_clickpipes
+  category: clickpipes
+  rest:
+  - clickPipeGetList
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}/clickpipes
+    (ClickPipes).'
+- tool: get_clickpipe
+  category: clickpipes
+  rest:
+  - clickPipeGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+    (ClickPipes).'
+- tool: get_organization_cost
+  category: billing
+  rest:
+  - usageCostGet
+  binding: '1:1'
+  confidence: high
+  note: 'Tool name and documented behaviour match exactly one ClickHouse Cloud operation: GET /v1/organizations/{organizationId}/usageCost
+    (Billing).'
+mcp_only:
+- tool: run_select_query
+  reason: Executes SQL against the ClickHouse database over the service query endpoint (HTTP interface / Query API Endpoints),
+    not over the api.clickhouse.cloud control plane. The Cloud OpenAPI has no query-execution operation.
+- tool: list_databases
+  reason: Reads SHOW DATABASES from the database itself. The Cloud OpenAPI manages services, not schemas.
+- tool: list_tables
+  reason: Reads table + column metadata from system tables in the database. No control-plane operation exposes schema.
+rest_only:
+- operationId: activeBalancesGet
+  method: GET
+  path: /v1/organizations/{organizationId}/activeBalances
+  tag: Billing
+- operationId: activityGet
+  method: GET
+  path: /v1/organizations/{organizationId}/activities/{activityId}
+  tag: Organization
+- operationId: activityGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/activities
+  tag: Organization
+- operationId: backupBucketCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  tag: Backup
+- operationId: backupBucketDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  tag: Backup
+- operationId: backupBucketGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  tag: Backup
+- operationId: backupBucketUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  tag: Backup
+- operationId: backupConfigurationUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration
+  tag: Backup
+- operationId: clickPipeCdcScalingGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesCdcScaling
+  tag: ClickPipes
+- operationId: clickPipeCdcScalingUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesCdcScaling
+  tag: ClickPipes
+- operationId: clickPipeCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes
+  tag: ClickPipes
+- operationId: clickPipeDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+  tag: ClickPipes
+- operationId: clickPipeReversePrivateEndpointCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints
+  tag: ClickPipes
+- operationId: clickPipeReversePrivateEndpointDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  tag: ClickPipes
+- operationId: clickPipeReversePrivateEndpointGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  tag: ClickPipes
+- operationId: clickPipeReversePrivateEndpointGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints
+  tag: ClickPipes
+- operationId: clickPipeReversePrivateEndpointUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  tag: ClickPipes
+- operationId: clickPipeScalingUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/scaling
+  tag: ClickPipes
+- operationId: clickPipeSchemaDiscovery
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/schemaDiscovery
+  tag: ClickPipes
+- operationId: clickPipeSettingsGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/settings
+  tag: ClickPipes
+- operationId: clickPipeSettingsUpdate
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/settings
+  tag: ClickPipes
+- operationId: clickPipeStateUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/state
+  tag: ClickPipes
+- operationId: clickPipeUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+  tag: ClickPipes
+- operationId: clickPipesServiceContextGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/context
+  tag: ClickPipes
+- operationId: clickStackCreateAlert
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts
+  tag: ClickStack
+- operationId: clickStackCreateDashboard
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards
+  tag: ClickStack
+- operationId: clickStackCreateRole
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles
+  tag: ClickStack
+- operationId: clickStackCreateSavedSearch
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches
+  tag: ClickStack
+- operationId: clickStackCreateSource
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources
+  tag: ClickStack
+- operationId: clickStackCreateWebhook
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  tag: ClickStack
+- operationId: clickStackDeleteAlert
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  tag: ClickStack
+- operationId: clickStackDeleteDashboard
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  tag: ClickStack
+- operationId: clickStackDeleteRole
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  tag: ClickStack
+- operationId: clickStackDeleteSavedSearch
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  tag: ClickStack
+- operationId: clickStackDeleteSource
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  tag: ClickStack
+- operationId: clickStackDeleteWebhook
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+  tag: ClickStack
+- operationId: clickStackGetAlert
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  tag: ClickStack
+- operationId: clickStackGetDashboard
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  tag: ClickStack
+- operationId: clickStackGetRole
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  tag: ClickStack
+- operationId: clickStackGetSavedSearch
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  tag: ClickStack
+- operationId: clickStackGetSource
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  tag: ClickStack
+- operationId: clickStackListAlerts
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts
+  tag: ClickStack
+- operationId: clickStackListDashboards
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards
+  tag: ClickStack
+- operationId: clickStackListRoles
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles
+  tag: ClickStack
+- operationId: clickStackListSavedSearches
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches
+  tag: ClickStack
+- operationId: clickStackListSources
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources
+  tag: ClickStack
+- operationId: clickStackListWebhooks
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  tag: ClickStack
+- operationId: clickStackUpdateAlert
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  tag: ClickStack
+- operationId: clickStackUpdateDashboard
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  tag: ClickStack
+- operationId: clickStackUpdateRole
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  tag: ClickStack
+- operationId: clickStackUpdateSavedSearch
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  tag: ClickStack
+- operationId: clickStackUpdateSource
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  tag: ClickStack
+- operationId: clickStackUpdateWebhook
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+  tag: ClickStack
+- operationId: clickStackValidateDashboard
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/validate
+  tag: ClickStack
+- operationId: creditBalancesGet
+  method: GET
+  path: /v1/organizations/{organizationId}/creditBalances
+  tag: Billing
+- operationId: instanceCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/services
+  tag: Service
+- operationId: instanceDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}
+  tag: Service
+- operationId: instancePasswordUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/password
+  tag: Service
+- operationId: instancePrivateEndpointConfigGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/privateEndpointConfig
+  tag: Service
+- operationId: instancePrivateEndpointCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/privateEndpoint
+  tag: Service
+- operationId: instancePrometheusGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/prometheus
+  tag: Prometheus
+- operationId: instanceQueryEndpointDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  tag: Service
+- operationId: instanceQueryEndpointGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  tag: Service
+- operationId: instanceQueryEndpointUpsert
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  tag: Service
+- operationId: instanceReplicaScalingUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/replicaScaling
+  tag: Service
+- operationId: instanceScalingUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/scaling
+  tag: Service
+- operationId: instanceStateUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/state
+  tag: Service
+- operationId: instanceUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}
+  tag: Service
+- operationId: invitationCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/invitations
+  tag: User management
+- operationId: invitationDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/invitations/{invitationId}
+  tag: User management
+- operationId: invitationGet
+  method: GET
+  path: /v1/organizations/{organizationId}/invitations/{invitationId}
+  tag: User management
+- operationId: invitationGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/invitations
+  tag: User management
+- operationId: memberDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/members/{userId}
+  tag: User management
+- operationId: memberGet
+  method: GET
+  path: /v1/organizations/{organizationId}/members/{userId}
+  tag: User management
+- operationId: memberGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/members
+  tag: User management
+- operationId: memberUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/members/{userId}
+  tag: User management
+- operationId: openapiKeyCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/keys
+  tag: API keys
+- operationId: openapiKeyDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/keys/{keyId}
+  tag: API keys
+- operationId: openapiKeyGet
+  method: GET
+  path: /v1/organizations/{organizationId}/keys/{keyId}
+  tag: API keys
+- operationId: openapiKeyGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/keys
+  tag: API keys
+- operationId: openapiKeyUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/keys/{keyId}
+  tag: API keys
+- operationId: organizationByocInfrastructureCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/byocInfrastructure
+  tag: Organization
+- operationId: organizationByocInfrastructureDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}
+  tag: Organization
+- operationId: organizationByocInfrastructureUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}
+  tag: Organization
+- operationId: organizationPrivateEndpointConfigGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/privateEndpointConfig
+  tag: Organization
+- operationId: organizationPrometheusDiscoveryGet
+  method: GET
+  path: /v1/organizations/{organizationId}/prometheus/discovery
+  tag: Prometheus
+- operationId: organizationPrometheusGet
+  method: GET
+  path: /v1/organizations/{organizationId}/prometheus
+  tag: Prometheus
+- operationId: organizationQuotaGet
+  method: GET
+  path: /v1/organizations/{organizationId}/quotas/{quotaCode}
+  tag: Organization
+- operationId: organizationQuotasGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/quotas
+  tag: Organization
+- operationId: organizationRoleDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/roles/{roleId}
+  tag: Role Management
+- operationId: organizationRoleGet
+  method: GET
+  path: /v1/organizations/{organizationId}/roles/{roleId}
+  tag: Role Management
+- operationId: organizationRolePatch
+  method: PATCH
+  path: /v1/organizations/{organizationId}/roles/{roleId}
+  tag: Role Management
+- operationId: organizationRolePost
+  method: POST
+  path: /v1/organizations/{organizationId}/roles
+  tag: Role Management
+- operationId: organizationRolesGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/roles
+  tag: Role Management
+- operationId: organizationUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}
+  tag: Organization
+- operationId: postgresInstanceConfigGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  tag: Postgres
+- operationId: postgresInstanceConfigPatch
+  method: PATCH
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  tag: Postgres
+- operationId: postgresInstanceConfigPost
+  method: POST
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  tag: Postgres
+- operationId: postgresInstanceCreateReadReplica
+  method: POST
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/readReplica
+  tag: Postgres
+- operationId: postgresInstanceMetricsGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/metrics
+  tag: Postgres
+- operationId: postgresInstancePrometheusGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/prometheus
+  tag: Prometheus
+- operationId: postgresInstanceRestore
+  method: POST
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/restoredService
+  tag: Postgres
+- operationId: postgresLogsGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/logs
+  tag: Postgres
+- operationId: postgresOrgPrometheusGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/prometheus
+  tag: Prometheus
+- operationId: postgresServiceCertsGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/caCertificates
+  tag: Postgres
+- operationId: postgresServiceCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/postgres
+  tag: Postgres
+- operationId: postgresServiceDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  tag: Postgres
+- operationId: postgresServiceGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  tag: Postgres
+- operationId: postgresServiceGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres
+  tag: Postgres
+- operationId: postgresServicePatch
+  method: PATCH
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  tag: Postgres
+- operationId: postgresServicePatchState
+  method: PATCH
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/state
+  tag: Postgres
+- operationId: postgresServiceSetPassword
+  method: PATCH
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/password
+  tag: Postgres
+- operationId: scalingScheduleDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  tag: Service
+- operationId: scalingScheduleGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  tag: Service
+- operationId: scalingScheduleUpsert
+  method: POST
+  path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  tag: Service
+- operationId: serviceClickhouseSettingDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/{settingName}
+  tag: Service
+- operationId: serviceClickhouseSettingGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/{settingName}
+  tag: Service
+- operationId: serviceClickhouseSettingsListGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings
+  tag: Service
+- operationId: serviceClickhouseSettingsSchemaGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/schema
+  tag: Service
+- operationId: serviceClickhouseSettingsUpdate
+  method: PATCH
+  path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings
+  tag: Service
+- operationId: serviceProfilesList
+  method: GET
+  path: /v1/organizations/{organizationId}/serviceProfiles
+  tag: Service
+- operationId: slowQueryPatternGet
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/slowQueryPatterns/{queryId}
+  tag: Postgres
+- operationId: slowQueryPatternsGetList
+  method: GET
+  path: /v1/organizations/{organizationId}/postgres/{postgresId}/slowQueryPatterns
+  tag: Postgres
+- operationId: udfAttach
+  method: PUT
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  tag: UDF
+- operationId: udfAttachmentGet
+  method: GET
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  tag: UDF
+- operationId: udfAttachmentList
+  method: GET
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments
+  tag: UDF
+- operationId: udfCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/udfs
+  tag: UDF
+- operationId: udfDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/udfs/{functionName}
+  tag: UDF
+- operationId: udfDetach
+  method: DELETE
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  tag: UDF
+- operationId: udfGet
+  method: GET
+  path: /v1/organizations/{organizationId}/udfs/{functionName}
+  tag: UDF
+- operationId: udfList
+  method: GET
+  path: /v1/organizations/{organizationId}/udfs
+  tag: UDF
+- operationId: udfUploadSessionCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/udfUploads/url
+  tag: UDF
+- operationId: udfVersionCreate
+  method: POST
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/versions
+  tag: UDF
+- operationId: udfVersionDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/versions/{version}
+  tag: UDF
+- operationId: udfVersionList
+  method: GET
+  path: /v1/organizations/{organizationId}/udfs/{functionName}/versions
+  tag: UDF
+- operationId: upgradeWindowDelete
+  method: DELETE
+  path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  tag: Service
+- operationId: upgradeWindowGet
+  method: GET
+  path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  tag: Service
+- operationId: upgradeWindowUpdate
+  method: PUT
+  path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  tag: Service

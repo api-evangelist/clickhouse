@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: ClickHouse HTTP Interface API
   description: 'ClickHouse HTTP interface for executing SQL queries, inserting data, and
@@ -84,19 +84,12 @@ paths:
       - ClickHouse HTTP Interface
 components:
   parameters:
-    SessionTimeout:
-      name: session_timeout
+    DatabaseParam:
+      name: database
       in: query
+      description: Default database
       schema:
-        type: integer
-    Compress:
-      name: compress
-      in: query
-      schema:
-        type: integer
-        enum:
-        - 0
-        - 1
+        type: string
     Decompress:
       name: decompress
       in: query
@@ -105,21 +98,28 @@ components:
         enum:
         - 0
         - 1
-    DatabaseParam:
-      name: database
+    SessionTimeout:
+      name: session_timeout
       in: query
-      description: Default database
+      schema:
+        type: integer
+    SessionId:
+      name: session_id
+      in: query
       schema:
         type: string
+    Compress:
+      name: compress
+      in: query
+      schema:
+        type: integer
+        enum:
+        - 0
+        - 1
     Format:
       name: default_format
       in: query
       description: Output format (TabSeparated, JSON, CSV, Pretty, etc.)
-      schema:
-        type: string
-    SessionId:
-      name: session_id
-      in: query
       schema:
         type: string
     QueryParam:

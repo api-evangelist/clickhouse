@@ -1,0 +1,124 @@
+specification: MCP Server
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: probed
+source: >-
+  POST tools/list against https://mcp.clickhouse.cloud/mcp on 2026-09-05 (HTTP 401,
+  www-authenticate: Bearer realm="OAuth", resource_metadata="https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource/mcp"),
+  plus https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp and https://github.com/ClickHouse/mcp-clickhouse
+note: >-
+  ClickHouse ships BOTH a hosted remote MCP server (an agent can POST to it today, after an OAuth sign-in) and an
+  official open-source stdio/HTTP server for self-hosted ClickHouse. The live tool schemas at the remote endpoint are
+  auth-gated: tools/list returns 401 anonymously, so the tool list below is taken from the provider's own remote-MCP
+  documentation (names + descriptions only). Full inputSchema requires authenticated introspection — it is NOT recorded
+  here, and nothing about the schemas has been inferred.
+status: published
+deployment:
+  mode: both
+  endpoint: https://mcp.clickhouse.cloud/mcp
+  install: uv run --with mcp-clickhouse --python 3.12 mcp-clickhouse
+  package: https://pypi.org/project/mcp-clickhouse/
+  auth: oauth
+  verified: probed
+authorization:
+  scheme: OAuth 2.1 with PKCE (RFC 9728 protected resource + RFC 8414 authorization server)
+  protected_resource: https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource/mcp
+  authorization_server: https://mcp.clickhouse.cloud
+  authorization_endpoint: https://mcp.clickhouse.cloud/authorize
+  token_endpoint: https://mcp.clickhouse.cloud/token
+  registration_endpoint: https://mcp.clickhouse.cloud/register
+  code_challenge_methods_supported:
+    - S256
+  scopes_supported:
+    - mcp:access
+    - clickstack:access
+    - openid
+    - profile
+    - email
+  note: >-
+    Dynamic client registration is open (token_endpoint_auth_methods_supported ["none"], public client + PKCE),
+    so an MCP client can register itself. The remote server must additionally be enabled per ClickHouse Cloud
+    service in the console (Connect -> MCP) before it accepts connections.
+enablement:
+  required: true
+  how: ClickHouse Cloud console -> open the service -> Connect -> MCP -> enable
+  docs: https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp
+read_only: true
+read_only_evidence: >-
+  ClickHouse documents every remote MCP tool as read-only and marks them readOnlyHint:true; no tool can modify
+  data or perform destructive operations.
+tool_count: 13
+tools_source: https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp
+tools:
+  - name: run_select_query
+    category: query
+    description: Execute a read-only SELECT query against the service
+  - name: list_databases
+    category: query
+    description: List all databases in the service
+  - name: list_tables
+    category: query
+    description: List tables with their column definitions
+  - name: get_organizations
+    category: organization
+    description: List the organizations the authenticated user can access
+  - name: get_organization_details
+    category: organization
+    description: Get details for a single organization
+  - name: get_services_list
+    category: service
+    description: List the services in an organization
+  - name: get_service_details
+    category: service
+    description: Get details for a specific service
+  - name: list_service_backups
+    category: backup
+    description: List a service's backups, most recent first
+  - name: get_service_backup_details
+    category: backup
+    description: Get details for an individual backup
+  - name: get_service_backup_configuration
+    category: backup
+    description: Get a service's backup schedule and retention settings
+  - name: list_clickpipes
+    category: clickpipes
+    description: List the ClickPipes configured on a service
+  - name: get_clickpipe
+    category: clickpipes
+    description: Get details for a specific ClickPipe
+  - name: get_organization_cost
+    category: billing
+    description: Retrieve organization billing and usage data
+local_server:
+  name: mcp-clickhouse
+  repository: https://github.com/ClickHouse/mcp-clickhouse
+  package: https://pypi.org/project/mcp-clickhouse/
+  version: 0.6.0
+  published: '2026-09-03'
+  transports:
+    - stdio
+    - http
+    - sse
+  tools:
+    - list_databases
+    - list_tables
+    - run_select_query
+  note: >-
+    The open-source server targets self-hosted ClickHouse and chDB. It exposes ClickHouse tools plus optional chDB
+    tools, is read-only by default, and has opt-in write access and destructive-operation protection controlled by
+    environment variables. Tool names above are from the repository README, not from a live tools/list.
+probes:
+  - url: https://mcp.clickhouse.cloud/mcp
+    method: POST tools/list
+    status: 401
+    body: '{"error":"Authentication required"}'
+  - url: https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource
+    status: 200
+  - url: https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server
+    status: 200
+  - url: https://api.clickhouse.cloud/mcp
+    status: 404
+  - url: https://clickhouse.com/mcp
+    status: 404

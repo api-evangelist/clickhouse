@@ -1,21 +1,91 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/clickhouse-openapi.yml
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://clickhouse.com/docs/cloud/manage/openapi and https://clickhouse.com/docs/cloud/manage/api/api-overview,
+  reconciled against openapi/clickhouse-cloud-api-openapi.json (live spec fetched from
+  https://api.clickhouse.cloud/v1 on 2026-09-05), openapi/_original/clickhouse-openapi.yml (HTTP interface),
+  and the MCP discovery documents in well-known/
+docs: https://clickhouse.com/docs/cloud/manage/openapi
 summary:
   types:
-  - apiKey
-  - http
+    - http
+    - apiKey
+    - oauth2
   api_key_in:
-  - header
-schemes:
-- name: basicAuth
-  type: http
-  scheme: basic
-  sources:
-  - openapi/clickhouse-openapi.yml
-- name: clickhouseHeaders
-  type: apiKey
-  in: header
-  parameter: X-ClickHouse-User
-  sources:
-  - openapi/clickhouse-openapi.yml
+    - header
+    - query
+surfaces:
+  - name: ClickHouse Cloud API
+    base: https://api.clickhouse.cloud/v1
+    schemes:
+      - name: basicAuth
+        type: http
+        scheme: basic
+        username: API key ID
+        password: API key secret
+        applies_to: all 148 operations
+        sources:
+          - openapi/clickhouse-cloud-api-openapi.json
+        example: 'curl --user $KEY_ID:$KEY_SECRET https://api.clickhouse.cloud/v1/organizations'
+    key_management:
+      issue: ClickHouse Cloud console -> API Keys -> New API Key
+      roles:
+        - name: developer
+          grants: read-only permissions for assigned services
+        - name: admin
+          grants: full read and write permissions
+      expiration: configurable per key
+      ip_allowlist: optional per key — a single IP or a CIDR range such as 203.0.113.0/24
+      keys_per_organization: 100
+      secret_display: >-
+        Key ID and key secret are shown once at creation and never again; ClickHouse tells you to store them
+        in a vault.
+      revocation: >-
+        Keys can be disabled or deleted from the API Keys page. Deletion is permanent and immediately cuts
+        off any service using the key.
+  - name: ClickHouse HTTP interface
+    base: 'http(s)://<host>:8123 (HTTPS 8443)'
+    schemes:
+      - name: basicAuth
+        type: http
+        scheme: basic
+        sources:
+          - openapi/_original/clickhouse-openapi.yml
+      - name: clickhouseHeaders
+        type: apiKey
+        in: header
+        parameter: X-ClickHouse-User
+        companion: X-ClickHouse-Key
+        sources:
+          - openapi/_original/clickhouse-openapi.yml
+      - name: urlParameters
+        type: apiKey
+        in: query
+        parameter: user
+        companion: password
+        note: Credentials may also be passed as URL parameters — documented, but the weakest of the three.
+    docs: https://clickhouse.com/docs/en/interfaces/http
+  - name: ClickHouse Cloud remote MCP server
+    base: https://mcp.clickhouse.cloud/mcp
+    schemes:
+      - name: oauth2
+        type: oauth2
+        flow: authorization_code with PKCE (S256)
+        issuer: https://mcp.clickhouse.cloud
+        dynamic_registration: https://mcp.clickhouse.cloud/register
+        scopes:
+          - 'mcp:access'
+          - 'clickstack:access'
+          - openid
+          - profile
+          - email
+        sources:
+          - well-known/clickhouse-mcp-oauth-authorization-server.json
+          - well-known/clickhouse-mcp-oauth-protected-resource.json
+    detail: scopes/clickhouse-scopes.yml
+sso:
+  google: all plans
+  microsoft: all plans
+  saml: Enterprise plan only
+  mfa: all plans
+  source: https://clickhouse.com/pricing.md

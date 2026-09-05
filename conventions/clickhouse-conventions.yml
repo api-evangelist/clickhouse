@@ -1,0 +1,176 @@
+specification: API Conventions
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: searched
+source: >-
+  https://clickhouse.com/docs/cloud/manage/api/api-overview, https://clickhouse.com/docs/cloud/manage/openapi,
+  https://clickhouse.com/docs/cloud/manage/backups/overview, and the live spec
+  openapi/clickhouse-cloud-api-openapi.json (fetched from https://api.clickhouse.cloud/v1 on 2026-09-05)
+scope: >-
+  The ClickHouse Cloud control-plane API at https://api.clickhouse.cloud/v1. The database interfaces
+  (HTTP :8123/:8443, native TCP :9000, MySQL, PostgreSQL, gRPC) are a separate surface with their own
+  conventions and are described in the other apis[] entries.
+authentication:
+  style: HTTP Basic
+  username: API key ID
+  password: API key secret
+  scheme_name: basicAuth
+  applies_to: all 148 operations
+  roles:
+    - name: developer
+      grants: read-only on assigned services
+    - name: admin
+      grants: full read and write
+  key_expiry: configurable per key
+  ip_allowlist: optional per key — a single IP or a CIDR range
+  key_limit_per_organization: 100
+  docs: https://clickhouse.com/docs/cloud/manage/openapi
+  detail: authentication/clickhouse-authentication.yml
+versioning:
+  style: URI path
+  current: v1
+  base: https://api.clickhouse.cloud/v1
+  note: >-
+    The spec declares info.version "1.0" and a single server, https://api.clickhouse.cloud. No date-based
+    or header-based version negotiation is published. Individual operations self-label maturity in their
+    description text (several ClickPipes, UDF, Postgres and ClickStack endpoints carry an explicit
+    "This endpoint is in beta" preamble that states the contract is stable).
+pagination:
+  style: offset/limit, with cursor on a small number of collections
+  params:
+    - name: limit
+      operations: 9
+    - name: offset
+      operations: 6
+    - name: cursor
+      operations: 3
+    - name: from_date
+      operations: 5
+    - name: to_date
+      operations: 5
+  sort:
+    - sort_by
+    - sort_order
+  note: >-
+    Pagination is NOT universal. Only 9 of the 148 operations declare a limit parameter; the large
+    collection reads (organizations, services, keys, members, backups, ClickPipes) return the full set
+    in a `result` array with no paging parameters at all.
+response_envelope:
+  shape: '{ "result": <object|array> }'
+  note: Successful 2xx bodies wrap the payload in a top-level `result` key.
+error_envelope:
+  shape: '{ "status": <int>, "error": "<message>", "requestId": "<uuid>" }'
+  rfc9457: false
+  media_type: application/json
+  detail: errors/clickhouse-problem-types.yml
+request_id_tracing:
+  supported: true
+  field: requestId
+  location: response body (every documented 4xx/5xx)
+  format: UUIDv4
+  note: >-
+    ClickHouse assigns a requestId to every request and returns it in error bodies. It is the correlation
+    id support asks for. No request-scoped tracing header (X-Request-Id, traceparent) is documented on the
+    control plane. The database HTTP interface separately supports X-ClickHouse-Query-Id.
+field_expansion:
+  supported: false
+  note: No sparse-fieldset or expand parameter is published; a few metrics endpoints accept filtered_metrics.
+metadata:
+  supported: false
+  note: No general-purpose customer metadata bag is exposed on control-plane resources.
+idempotency:
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  evidence: >-
+    The live spec declares ZERO header parameters across all 148 operations, and neither
+    https://clickhouse.com/docs/cloud/manage/api/api-overview nor
+    https://clickhouse.com/docs/cloud/manage/openapi documents an Idempotency-Key or any replay-protection
+    mechanism. There is no way for a client to make a retried POST safe.
+  note: >-
+    HTTP semantics still cover part of the surface — PUT and PATCH state updates (instanceStateUpdate,
+    clickPipeStateUpdate, upgradeWindowUpdate, scalingScheduleUpsert) are naturally idempotent, and
+    scalingScheduleUpsert is an explicit upsert. But the 3 creating POSTs that matter most (instanceCreate,
+    postgresServiceCreate, clickPipeCreate, openapiKeyCreate) carry no replay key, so a retried create can
+    provision and bill a second resource. `coverage: none` records the mechanism, not the HTTP verb table.
+reversibility:
+  grade: documented
+  na: false
+  note: >-
+    Reversal on this API is asymmetric: state changes are freely reversible, but the destructive operations
+    (delete service, delete API key) have NO reversal operation. Graded `documented` rather than `verified`
+    because the reversal for the highest-consequence write is a console restore, not an API operation, and the
+    permanent one (openapiKeyDelete) has no reversal at all. Recovery from a deleted ClickHouse service
+    is a restore-from-backup into a NEW service, bounded by the backup retention window, and the restore
+    itself is a console action, not a published API operation.
+  surfaces:
+    - write: instanceStateUpdate
+      path: PATCH /v1/organizations/{organizationId}/services/{serviceId}/state
+      reversal: instanceStateUpdate
+      window: unbounded — set the state back
+      grade: verified
+      docs: https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+    - write: clickPipeStateUpdate
+      path: PATCH /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/state
+      reversal: clickPipeStateUpdate
+      window: unbounded — set the state back
+      grade: verified
+    - write: instanceDelete
+      path: DELETE /v1/organizations/{organizationId}/services/{serviceId}
+      reversal: none in the API — restore a backup into a NEW service from the console Backups tab
+      window: >-
+        24 hours by default. "services are backed up once every 24 hours, and each backup is retained for
+        24 hours"; Scale and Enterprise can configure the schedule and retention (backupConfigurationUpdate).
+      grade: documented
+      docs: https://clickhouse.com/docs/cloud/manage/backups/overview
+      caution: >-
+        The restore creates a SECOND service; it does not restore in place. Data written since the last
+        backup is lost.
+    - write: postgresServiceDelete
+      path: DELETE /v1/organizations/{organizationId}/postgres/{postgresId}
+      reversal: postgresInstanceRestore
+      operationId: postgresInstanceRestore
+      window: the service's continuous-backup retention; restore supports an optional point in time
+      grade: documented
+      note: >-
+        The spec states "Restore a Postgres database from continuous backup, optionally at a specific point
+        in time" but does not state the retention length, so this is documented, not verified.
+    - write: openapiKeyDelete
+      path: DELETE /v1/organizations/{organizationId}/keys/{keyId}
+      reversal: none
+      window: none
+      grade: none
+      docs: https://clickhouse.com/docs/cloud/manage/openapi
+      caution: >-
+        ClickHouse states plainly: "Deleting an API key is a permanent action. Any services using the key
+        will immediately lose access to ClickHouse Cloud."
+    - write: udfDetach / udfVersionDelete / udfDelete
+      path: DELETE /v1/organizations/{organizationId}/udfs/...
+      reversal: udfAttach / udfVersionCreate re-upload
+      window: not stated
+      grade: documented
+dry_run_mode:
+  supported: partial
+  operations:
+    - clickStackValidateDashboard
+  note: >-
+    ClickStack publishes a real validate-without-apply endpoint
+    (POST .../clickstack/dashboards/validate). No other write surface offers a dry run.
+rate_limit_signaling:
+  documented_limit: 10 requests per 10-second window per API key
+  headers_published: false
+  status_on_exhaustion: not documented
+  detail: rate-limits/clickhouse-rate-limits.yml
+  note: >-
+    ClickHouse publishes the number but not the runtime signal — no X-RateLimit-* / RateLimit-* / Retry-After
+    header is documented, and no 429 response is declared on any of the 148 operations in the spec. An agent
+    cannot read its remaining budget from a response.
+cross_links:
+  errors: errors/clickhouse-problem-types.yml
+  lifecycle: lifecycle/clickhouse-lifecycle.yml
+  authentication: authentication/clickhouse-authentication.yml
+  rate_limits: rate-limits/clickhouse-rate-limits.yml
+  scopes: scopes/clickhouse-scopes.yml

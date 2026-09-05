@@ -1,0 +1,3 @@
+Contact: mailto:security@clickhouse.com
+Policy: https://github.com/ClickHouse/ClickHouse/blob/master/SECURITY.md
+Expires: 2027-07-28T00:00:00.000Z

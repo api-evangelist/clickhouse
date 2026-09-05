@@ -1,0 +1,60 @@
+specification: OAuth Scopes
+specificationVersion: '0.1'
+provider: ClickHouse
+providerId: clickhouse
+generated: '2026-09-05'
+method: probed
+source: >-
+  https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server and
+  https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource (+ the per-resource variant
+  /.well-known/oauth-protected-resource/mcp), all fetched anonymously on 2026-09-05 with HTTP 200
+note: >-
+  The ClickHouse Cloud REST API at api.clickhouse.cloud does NOT use OAuth — it declares a single
+  securityScheme, HTTP Basic with an API key ID and secret, and therefore has no scopes. The only OAuth
+  surface ClickHouse publishes is the remote MCP server, and the scopes below are read straight from its
+  RFC 8414 / RFC 9728 discovery documents. Permissions on the REST API are expressed as key ROLES
+  (developer / admin) rather than scopes; those are recorded here too because they are the closest
+  equivalent a caller has to reason about.
+oauth:
+  applies_to: https://mcp.clickhouse.cloud/mcp
+  issuer: https://mcp.clickhouse.cloud
+  authorization_endpoint: https://mcp.clickhouse.cloud/authorize
+  token_endpoint: https://mcp.clickhouse.cloud/token
+  registration_endpoint: https://mcp.clickhouse.cloud/register
+  grant_types_supported:
+    - authorization_code
+    - refresh_token
+  response_types_supported:
+    - code
+  code_challenge_methods_supported:
+    - S256
+  token_endpoint_auth_methods_supported:
+    - none
+  docs: https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp
+scope_count: 5
+scopes:
+  - name: 'mcp:access'
+    description: Access the ClickHouse Cloud remote MCP server and its read-only tools
+    resource: https://mcp.clickhouse.cloud/mcp
+  - name: 'clickstack:access'
+    description: Access ClickStack observability resources through the MCP server
+    resource: https://mcp.clickhouse.cloud
+  - name: openid
+    description: Standard OpenID Connect scope — issue an ID token for the authenticated ClickHouse Cloud user
+  - name: profile
+    description: Standard OIDC scope — basic profile claims
+  - name: email
+    description: Standard OIDC scope — email claim
+rest_api_permissions:
+  model: role-per-key (not scopes)
+  scheme: basicAuth (HTTP Basic — key ID as username, key secret as password)
+  roles:
+    - name: developer
+      grants: read-only permissions for assigned services
+    - name: admin
+      grants: full read and write permissions
+  additional_controls:
+    - Per-key expiration
+    - Per-key IP allowlist (single IP or CIDR)
+    - Query API Endpoints require Organization Role `Member` (minimum) plus Service Role access to `Query Endpoints`
+  docs: https://clickhouse.com/docs/cloud/manage/openapi

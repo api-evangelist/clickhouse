@@ -29,7 +29,7 @@ accessModel:
   generated: '2026-09-03'
   method: derived
 created: '2024-01-01'
-modified: '2026-04-26'
+modified: '2026-09-05'
 type: Index
 access: 3rd-Party
 position: Consuming
@@ -37,23 +37,23 @@ specificationVersion: '0.23'
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/clickhouse.png
 kind: opensource
 tags:
-  - Analytics
-  - Cloud Database
-  - Column-Oriented
-  - Database
-  - OLAP
-  - Open-Source
-  - Real-Time
-  - SQL
+- Analytics
+- Cloud Database
+- Column-Oriented
+- Database
+- OLAP
+- Open-Source
+- Real-Time
+- SQL
 tags_raw:
-  - Analytics
-  - Cloud Database
-  - Column-Oriented
-  - Database
-  - OLAP
-  - Open Source
-  - Real-Time
-  - SQL
+- Analytics
+- Cloud Database
+- Column-Oriented
+- Database
+- OLAP
+- Open Source
+- Real-Time
+- SQL
 description: >-
   ClickHouse is a fast open-source column-oriented database management system that enables real-time analytical
   reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface for SQL queries, native TCP, MySQL and
@@ -68,7 +68,7 @@ apis:
   - HTTP
   - SQL
   humanURL: https://clickhouse.com/docs/en/interfaces/http
-  baseURL: http://localhost:8123
+  baseURL: https://{clickhouse-host}:8443
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/http
     type: Documentation
@@ -130,7 +130,7 @@ apis:
   description: >-
     The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http interface.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
-  baseURL: http://localhost:8123
+  baseURL: https://{clickhouse-host}:8443
   tags:
   - ClickHouse HTTP Interface
   properties:
@@ -144,7 +144,7 @@ apis:
   name: ClickHouse Ping API
   description: The Ping API from ClickHouse — 1 operation(s) for ping.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
-  baseURL: http://localhost:8123
+  baseURL: https://{clickhouse-host}:8443
   tags:
   - Ping
   properties:
@@ -158,7 +158,7 @@ apis:
   name: ClickHouse Play API
   description: The Play API from ClickHouse — 1 operation(s) for play.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
-  baseURL: http://localhost:8123
+  baseURL: https://{clickhouse-host}:8443
   tags:
   - Play
   properties:
@@ -172,7 +172,7 @@ apis:
   name: ClickHouse Replicas Status API
   description: The Replicas Status API from ClickHouse — 1 operation(s) for replicas status.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
-  baseURL: http://localhost:8123
+  baseURL: https://{clickhouse-host}:8443
   tags:
   - Replicas Status
   properties:
@@ -182,83 +182,177 @@ apis:
     url: https://clickhouse.com/docs/en/cloud/manage/api/api-overview
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
-common:
-  - type: PostmanWorkspace
-    url: https://www.postman.com/kinlaneapi/clickhouse/overview
-  - type: AgenticAccess
-    url: agentic-access/clickhouse-agentic-access.yml
-  - type: TrustCenter
-    url: security/clickhouse-trust-center.yml
-  - type: DomainSecurity
-    url: security/clickhouse-domain-security.yml
-  - type: Authentication
-    url: authentication/clickhouse-authentication.yml
-  - type: LinkedIn
-    url: https://www.linkedin.com/company/clickhouseinc
-  - type: Website
-    url: https://clickhouse.com/
+- aid: clickhouse:clickhouse-cloud-api
+  name: ClickHouse Cloud API
+  description: >-
+    The ClickHouse Cloud control-plane REST API — 148 operations across 86 paths for organizations, services, users and roles, API keys, backups, ClickPipes, ClickStack observability, Managed Postgres, UDFs, Prometheus metrics and billing. Authenticated with HTTP Basic using an API key ID and secret. The OpenAPI 3.1.2 description is served live and unauthenticated from the API root itself, and is advertised as service-desc in the RFC 9727 api-catalog at https://clickhouse.com/.well-known/api-catalog.
+  humanURL: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  baseURL: https://api.clickhouse.cloud/v1
+  tags:
+  - Cloud
+  - Control Plane
+  - Provisioning
+  - Billing
+  - Observability
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-cloud-api-openapi.json
+  - type: Overlay
+    url: overlays/clickhouse-cloud-api-overlay.yaml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
   - type: Documentation
-    url: https://clickhouse.com/docs
-  - type: GettingStarted
-    url: https://clickhouse.com/docs/en/getting-started
-  - type: GitHub
-    url: https://github.com/ClickHouse/ClickHouse
-  - type: Blog
-    url: https://clickhouse.com/blog
-  - type: Community
-    url: https://clickhouse.com/community
-  - type: Slack
-    url: https://clickhouse.com/slack
-  - type: Pricing
-    url: https://clickhouse.com/pricing
-  - type: Support
-    url: https://clickhouse.com/support
-  - type: StatusPage
-    url: https://status.clickhouse.com/
-  - type: PrivacyPolicy
-    url: https://clickhouse.com/legal/privacy-policy
-  - type: TermsOfService
-    url: https://clickhouse.com/legal/terms-of-service
-  - type: JSONLD
-    url: json-ld/clickhouse-context.jsonld
-  - type: Spectral
-    url: rules/clickhouse-rules.yml
-  - type: Integrations
-    url: https://clickhouse.com/integrations
-  - type: AICatalog
-    url: ai-catalog/clickhouse-ai-catalog.yml
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+common:
+- type: VulnerabilityDisclosure
+  url: security/clickhouse-vulnerability-disclosure.yml
+- type: PostmanWorkspace
+  url: https://www.postman.com/kinlaneapi/clickhouse/overview
+- type: AgenticAccess
+  url: agentic-access/clickhouse-agentic-access.yml
+- type: TrustCenter
+  url: security/clickhouse-trust-center.yml
+- type: DomainSecurity
+  url: security/clickhouse-domain-security.yml
+- type: Authentication
+  url: authentication/clickhouse-authentication.yml
+- type: LinkedIn
+  url: https://www.linkedin.com/company/clickhouseinc
+- type: Website
+  url: https://clickhouse.com/
+- type: Documentation
+  url: https://clickhouse.com/docs
+- type: GettingStarted
+  url: https://clickhouse.com/docs/quick-start
+- type: GitHub
+  url: https://github.com/ClickHouse/ClickHouse
+- type: Blog
+  url: https://clickhouse.com/blog
+- type: Community
+  url: https://clickhouse.com/community
+- type: Slack
+  url: https://clickhouse.com/slack
+- type: Pricing
+  url: https://clickhouse.com/pricing
+- type: Support
+  url: https://clickhouse.com/support
+- type: StatusPage
+  url: https://status.clickhouse.com/
+- type: PrivacyPolicy
+  url: https://clickhouse.com/legal/privacy-policy
+- type: TermsOfService
+  url: https://clickhouse.com/legal/clickhouse-general-terms-and-conditions
+- type: JSONLD
+  url: json-ld/clickhouse-context.jsonld
+- type: Spectral
+  url: rules/clickhouse-rules.yml
+- type: Integrations
+  url: https://clickhouse.com/integrations
+- type: AICatalog
+  url: ai-catalog/clickhouse-ai-catalog.yml
+- type: Packages
+  url: packages/clickhouse-packages.yml
+- type: SDKs
+  url: packages/clickhouse-packages.yml
+- type: CLI
+  url: cli/clickhouse-cli.yml
+- type: WellKnown
+  url: well-known/clickhouse-well-known.yml
+- type: SecurityTxt
+  url: well-known/clickhouse-security.txt
+- type: APICatalog
+  url: well-known/clickhouse-api-catalog.json
+- type: Security
+  url: security/clickhouse-vulnerability-disclosure.yml
+- type: Compliance
+  url: security/clickhouse-trust-center.yml
+- type: MCPServer
+  url: mcp/clickhouse-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/clickhouse-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/clickhouse-llms.txt
+- type: Protobuf
+  url: grpc/clickhouse-grpc.proto
+- type: Conformance
+  url: conformance/clickhouse-conformance.yml
+- type: ErrorCatalog
+  url: errors/clickhouse-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/clickhouse-lifecycle.yml
+- type: OAuthScopes
+  url: scopes/clickhouse-scopes.yml
+- type: Conventions
+  url: conventions/clickhouse-conventions.yml
+- type: Sandbox
+  url: sandbox/clickhouse-sandbox.yml
+- type: ChangeLog
+  url: changelog/clickhouse-changelog.yml
+- type: DataModel
+  url: data-model/clickhouse-data-model.yml
+- type: Webhooks
+  url: asyncapi/clickhouse-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/clickhouse-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/clickhouse-rate-limits.yml
+- type: Overlay
+  url: overlays/clickhouse-cloud-api-overlay.yaml
+- type: DeveloperPortal
+  url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+- type: APIReference
+  url: https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+- type: GitHubOrganization
+  url: https://github.com/ClickHouse
+- type: SignUp
+  url: https://console.clickhouse.cloud/signUp
+- type: Quickstart
+  url: https://clickhouse.com/docs/quick-start
+- type: Playground
+  url: https://sql.clickhouse.com
 integrations:
-  - name: Airbyte
-  - name: Amazon S3
-  - name: CloudQuery
-  - name: Confluent Cloud
-  - name: Google Cloud Storage (GCS)
-  - name: Kafka
-  - name: MySQL
-  - name: PostgreSQL
-  - name: Prequel
-  - name: new Streamkap
-  - name: Vector
-  - name: Deepnote
-  - name: Grafana
-  - name: Hex
-  - name: Metabase
-  - name: Splunk
-  - name: Superset
-  - name: Tableau
-  - name: DataGrip
-  - name: DBeaver
-  - name: C#
-  - name: Java
-  - name: Node.js
-  - name: Python
-  - name: dbt
-  - name: Microsoft Azure Data Factory
-  - name: Microsoft Azure Synapse
-  - name: pg_clickhouse
-  - name: AWS
-  - name: Azure
-  - name: Google Cloud
+- name: Airbyte
+- name: Amazon S3
+- name: CloudQuery
+- name: Confluent Cloud
+- name: Google Cloud Storage (GCS)
+- name: Kafka
+- name: MySQL
+- name: PostgreSQL
+- name: Prequel
+- name: new Streamkap
+- name: Vector
+- name: Deepnote
+- name: Grafana
+- name: Hex
+- name: Metabase
+- name: Splunk
+- name: Superset
+- name: Tableau
+- name: DataGrip
+- name: DBeaver
+- name: C#
+- name: Java
+- name: Node.js
+- name: Python
+- name: dbt
+- name: Microsoft Azure Data Factory
+- name: Microsoft Azure Synapse
+- name: pg_clickhouse
+- name: AWS
+- name: Azure
+- name: Google Cloud
 maintainers:
-  - FN: Kin Lane
-    email: kinlane@gmail.com
+- FN: Kin Lane
+  email: kinlane@gmail.com
+x-enrichment:
+  date: '2026-09-05'
+  status: enriched
+  artifacts_added: 35
+  pass: local-v3

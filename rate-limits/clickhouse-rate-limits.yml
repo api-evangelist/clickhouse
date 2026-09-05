@@ -4,117 +4,52 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: ClickHouse
 providerId: clickhouse
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-tags:
-  - Analytics
-  - Cloud Database
-  - Column-Oriented
-  - Database
-  - OLAP
-  - Open Source
-  - Real-Time
-  - SQL
-  - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the ClickHouse API surface. Captures per-tier
-  quotas, burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to
-  be replaced with published provider limits.
-headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
-responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
+modified: '2026-09-05'
+generated: '2026-09-05'
+method: searched
+source: https://clickhouse.com/docs/cloud/manage/api/api-overview
+source_note: >-
+  ClickHouse publishes exactly one numeric rate limit, on the Cloud API overview page. This artifact REPLACES
+  the 2026-05-04 scaffold, which asserted per-tier request quotas and a full X-RateLimit-* header set that
+  ClickHouse does not in fact publish.
+description: >-
+  Published rate limits for the ClickHouse Cloud control-plane API. The number is published; the runtime
+  signal is not.
+limit_count: 1
 limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
+  - name: Cloud API key request rate
+    scope: per-api-key
+    api: https://api.clickhouse.cloud/v1
     limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - ClickHouse HTTP Interface
-      - ClickHouse Cloud API
-      - ClickHouse Native TCP Interface
-      - ClickHouse MySQL Interface
-      - ClickHouse PostgreSQL Interface
-      - ClickHouse gRPC Interface
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - ClickHouse HTTP Interface
-      - ClickHouse Cloud API
-      - ClickHouse Native TCP Interface
-      - ClickHouse MySQL Interface
-      - ClickHouse PostgreSQL Interface
-      - ClickHouse gRPC Interface
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
+    metric: requests
+    window: 10s
+    burst: not documented
+    increase: contact support@clickhouse.com for a higher limit
+    source: https://clickhouse.com/docs/cloud/manage/api/api-overview
+quotas:
+  - name: API keys per organization
+    scope: per-organization
     limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - ClickHouse HTTP Interface
-      - ClickHouse Cloud API
-      - ClickHouse Native TCP Interface
-      - ClickHouse MySQL Interface
-      - ClickHouse PostgreSQL Interface
-      - ClickHouse gRPC Interface
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - ClickHouse HTTP Interface
-      - ClickHouse Cloud API
-      - ClickHouse Native TCP Interface
-      - ClickHouse MySQL Interface
-      - ClickHouse PostgreSQL Interface
-      - ClickHouse gRPC Interface
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - ClickHouse HTTP Interface
-      - ClickHouse Cloud API
-      - ClickHouse Native TCP Interface
-      - ClickHouse MySQL Interface
-      - ClickHouse PostgreSQL Interface
-      - ClickHouse gRPC Interface
-policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
-maintainers:
-  - FN: Kin Lane
-    email: kinlane@gmail.com
+    metric: api_keys
+    source: https://clickhouse.com/docs/cloud/manage/api/api-overview
+headers:
+  published: false
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+  note: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After response header is documented, and no 429 response is
+    declared on any of the 148 operations in openapi/clickhouse-cloud-api-openapi.json. An agent cannot read
+    its remaining budget or a recommended backoff from a ClickHouse Cloud API response — it has to count
+    locally against the published 10-per-10s figure.
+responseCodes:
+  throttled: not documented
+  quotaExceeded: not documented
+database_interface:
+  note: >-
+    The database interfaces (HTTP :8123/:8443, native TCP, MySQL, PostgreSQL, gRPC) are governed by
+    ClickHouse quotas and settings configured per user/service, not by a published platform-wide rate limit.
+    The public Playground is documented as having "quotas on its usage" without stating the numbers.
+  source: https://clickhouse.com/docs/getting-started/playground
