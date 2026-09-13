@@ -1,72 +1,65 @@
-generated: '2026-07-31'
+generated: '2026-09-13'
 method: probed
 source: https://clickhouse.com/.well-known/ai-catalog.json
 description: 'AI Catalog manifest observed at /.well-known/ai-catalog.json on clickhouse.com. The AI Catalog
-  Standard 1.0 is the publishing half of the Agentic Resource Discovery (ARD) v0.9 draft: a JSON manifest
-  listing the agentic resources a domain offers — MCP servers, agent cards, skills, APIs — each typed
-  by media type and identified by a domain-anchored urn:air: URN. Two verdicts are recorded: a structural
-  grade against the AI Catalog 1.0 data model, and the result of the ARD project''s own conformance CLI
-  run against this exact body. Provider-published by construction — served from the provider''s own host;
-  nothing here is derived or generated.'
+  Standard is the publishing half of Agentic Resource Discovery (ARD): a JSON manifest listing the agentic
+  resources a domain offers — MCP servers, agent cards, skills, APIs — each typed by media type and identified
+  by a domain-anchored urn:air: URN. Two verdicts are recorded: a structural grade against the data model,
+  and the result of the ARD project''s own conformance CLI run against this exact body. Provider-published
+  by construction — served from the provider''s own host; nothing here is derived or generated.'
 discovery:
   path: /.well-known/ai-catalog.json
-  canonical: true
+  canonical: false
+  predecessor_only: true
+  attempts:
+  - path: /.well-known/ard.json
+    http_status: 404
+  - path: /.well-known/ai-catalog.json
+    http_status: 200
   host: clickhouse.com
 conformance:
-  spec: AI Catalog 1.0 / ARD v0.9 (Draft)
+  spec: AI Catalog 1.0 / ARD v0.91
   grade: near-conformant
   spec_version_declared: '1.0'
   hard_failures: []
   soft_gaps:
+  - content-type-not-ai-catalog-json
   - entry-no-representativeQueries
   - host-identifier-not-did-web
   official_tool:
-    tool: ARD conformance-test v0.5.0 (ards-project/ard-spec)
+    tool: ARD conformance-test v0.9.1 (ards-project/ard-spec)
     status: PASS
     critical_errors: 0
     errors: []
     warnings:
-    - '[ClickHouse API catalog] Media type ''application/linkset+json'' is not one of standard discovery
-      types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[ClickHouse getting-started skill] Media type ''application/ai-skill+md'' is not one of standard
-      discovery types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[chdb-datastore] Media type ''application/ai-skill-archive+gzip'' is not one of standard discovery
-      types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[chdb-sql] Media type ''application/ai-skill-archive+gzip'' is not one of standard discovery types:
-      [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[clickhouse-architecture-advisor] Media type ''application/ai-skill-archive+gzip'' is not one of
-      standard discovery types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[clickhouse-best-practices] Media type ''application/ai-skill-archive+gzip'' is not one of standard
-      discovery types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[clickhouse-js-node-troubleshooting] Media type ''application/ai-skill-archive+gzip'' is not one
-      of standard discovery types: [''application/ai-catalog+json'', ''application/agent-card+json'',
-      ''application/a2a-agent-card+json'', ''application/mcp-server-card+json'', ''application/agent-skills+zip'',
-      ''application/agent-skills+gzip'', ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'',
-      ''application/ai-registry+json''].'
-    - '[clickstack-otel-collector] Media type ''application/ai-skill-archive+gzip'' is not one of standard
-      discovery types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[infra-clickhouse] Media type ''application/ai-skill-archive+gzip'' is not one of standard discovery
-      types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
-    - '[infra-postgres] Media type ''application/ai-skill-archive+gzip'' is not one of standard discovery
-      types: [''application/ai-catalog+json'', ''application/agent-card+json'', ''application/a2a-agent-card+json'',
-      ''application/mcp-server-card+json'', ''application/agent-skills+zip'', ''application/agent-skills+gzip'',
-      ''text/markdown; profile="urn:air:agent-skills"'', ''application/ai-registry'', ''application/ai-registry+json''].'
+    - '[infra-clickhouse] No ''representativeQueries''. The semantic index is built from this term, so
+      the entry will not be found by search — it is a valid catalog entry but not a discoverable ARD entry.'
+    - '[infra-postgres] No ''representativeQueries''. The semantic index is built from this term, so the
+      entry will not be found by search — it is a valid catalog entry but not a discoverable ARD entry.'
+    - '[clickstack-otel-collector] No ''representativeQueries''. The semantic index is built from this
+      term, so the entry will not be found by search — it is a valid catalog entry but not a discoverable
+      ARD entry.'
+    informational:
+    - '[ClickHouse getting-started skill] Media type ''application/ai-skill+md'' is a valid application
+      extension media type. ARD permits extension types without core registration.'
+    - '[clickhouse-best-practices] Media type ''application/ai-skill-archive+gzip'' is a valid application
+      extension media type. ARD permits extension types without core registration.'
+    - '[clickhouse-architecture-advisor] Media type ''application/ai-skill-archive+gzip'' is a valid application
+      extension media type. ARD permits extension types without core registration.'
+    - '[clickhouse-js-node-troubleshooting] Media type ''application/ai-skill-archive+gzip'' is a valid
+      application extension media type. ARD permits extension types without core registration.'
+    - '[chdb-datastore] Media type ''application/ai-skill-archive+gzip'' is a valid application extension
+      media type. ARD permits extension types without core registration.'
+    - '[chdb-sql] Media type ''application/ai-skill-archive+gzip'' is a valid application extension media
+      type. ARD permits extension types without core registration.'
+    - '[infra-clickhouse] Media type ''application/ai-skill-archive+gzip'' is a valid application extension
+      media type. ARD permits extension types without core registration.'
+    - '[infra-postgres] Media type ''application/ai-skill-archive+gzip'' is a valid application extension
+      media type. ARD permits extension types without core registration.'
+    - '[clickstack-otel-collector] Media type ''application/ai-skill-archive+gzip'' is a valid application
+      extension media type. ARD permits extension types without core registration.'
+    - '[ClickHouse API catalog] Media type ''application/linkset+json'' is a valid application extension
+      media type. ARD permits extension types without core registration.'
 catalog:
   host_display_name: ClickHouse
   host_identifier: clickhouse.com
@@ -74,8 +67,8 @@ catalog:
   types:
     application/ai-skill+md: 1
     application/ai-skill-archive+gzip: 8
-    application/mcp-server-card+json: 2
     application/linkset+json: 1
+    application/mcp-server-card+json: 2
   representative_queries: 26
   trust_manifests: 0
   file: clickhouse-ai-catalog.json
@@ -83,9 +76,8 @@ transport:
   http_status: 200
   content_type: application/json
   access_control_allow_origin: '*'
-  meets_publish_guide_requirements: true
 x-evidence:
-  fetched: '2026-07-31'
+  fetched: '2026-09-13'
   url: https://clickhouse.com/.well-known/ai-catalog.json
   http_status: 200
   content_type: application/json
