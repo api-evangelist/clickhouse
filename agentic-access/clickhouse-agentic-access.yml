@@ -1,21 +1,231 @@
-generated: '2026-07-15'
+generated: '2026-09-16'
 method: generated
-source: openapi/clickhouse-openapi.yml
+source: openapi/clickhouse-api-keys-api-openapi.yml, openapi/clickhouse-backup-api-openapi.yml,
+  openapi/clickhouse-billing-api-openapi.yml, openapi/clickhouse-clickhouse-http-interface-api-openapi.yml,
+  openapi/clickhouse-clickpipes-api-openapi.yml, openapi/clickhouse-clickstack-api-openapi.yml,
+  openapi/clickhouse-organization-api-openapi.yml, openapi/clickhouse-ping-api-openapi.yml,
+  openapi/clickhouse-play-api-openapi.yml, openapi/clickhouse-postgres-api-openapi.yml, openapi/clickhouse-prometheus-api-openapi.yml,
+  openapi/clickhouse-replicas-status-api-openapi.yml, openapi/clickhouse-role-management-api-openapi.yml,
+  openapi/clickhouse-service-api-openapi.yml, openapi/clickhouse-udf-api-openapi.yml, openapi/clickhouse-user-management-api-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
   the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
   audience per deployment. See research/curity/agentic-governance/.
 summary:
-  operations: 5
+  operations: 153
   by_action_class:
-    connected: 4
-    acting: 1
+    connected: 72
+    acting: 81
   by_consequence:
-    read: 4
-    write: 1
-  human_in_the_loop_required: 0
+    read: 72
+    write: 80
+    safety-critical: 1
+  human_in_the_loop_required: 1
 operations:
+- path: /v1/organizations/{organizationId}/keys
+  method: get
+  operationId: openapiKeyGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/keys
+  method: post
+  operationId: openapiKeyCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/keys/{keyId}
+  method: get
+  operationId: openapiKeyGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/keys/{keyId}
+  method: patch
+  operationId: openapiKeyUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/keys/{keyId}
+  method: delete
+  operationId: openapiKeyDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backups
+  method: get
+  operationId: backupGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backups/{backupId}
+  method: get
+  operationId: backupGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration
+  method: get
+  operationId: backupConfigurationGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration
+  method: patch
+  operationId: backupConfigurationUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  method: get
+  operationId: backupBucketGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  method: post
+  operationId: backupBucketCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  method: patch
+  operationId: backupBucketUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/backupBucket
+  method: delete
+  operationId: backupBucketDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/usageCost
+  method: get
+  operationId: usageCostGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/activeBalances
+  method: get
+  operationId: activeBalancesGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/creditBalances
+  method: get
+  operationId: creditBalancesGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /
   method: get
+  operationId: getRoot
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -25,6 +235,801 @@ operations:
     audit: none
 - path: /
   method: post
+  operationId: postRoot
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes
+  method: get
+  operationId: clickPipeGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes
+  method: post
+  operationId: clickPipeCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/context
+  method: get
+  operationId: clickPipesServiceContextGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+  method: get
+  operationId: clickPipeGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+  method: patch
+  operationId: clickPipeUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}
+  method: delete
+  operationId: clickPipeDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/settings
+  method: get
+  operationId: clickPipeSettingsGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/settings
+  method: put
+  operationId: clickPipeSettingsUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/schemaDiscovery
+  method: post
+  operationId: clickPipeSchemaDiscovery
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/scaling
+  method: patch
+  operationId: clickPipeScalingUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipes/{clickPipeId}/state
+  method: patch
+  operationId: clickPipeStateUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesCdcScaling
+  method: get
+  operationId: clickPipeCdcScalingGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesCdcScaling
+  method: patch
+  operationId: clickPipeCdcScalingUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints
+  method: get
+  operationId: clickPipeReversePrivateEndpointGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints
+  method: post
+  operationId: clickPipeReversePrivateEndpointCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  method: get
+  operationId: clickPipeReversePrivateEndpointGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  method: delete
+  operationId: clickPipeReversePrivateEndpointDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickpipesReversePrivateEndpoints/{reversePrivateEndpointId}
+  method: patch
+  operationId: clickPipeReversePrivateEndpointUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards
+  method: get
+  operationId: clickStackListDashboards
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards
+  method: post
+  operationId: clickStackCreateDashboard
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  method: get
+  operationId: clickStackGetDashboard
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  method: put
+  operationId: clickStackUpdateDashboard
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/{clickStackDashboardId}
+  method: delete
+  operationId: clickStackDeleteDashboard
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/dashboards/validate
+  method: post
+  operationId: clickStackValidateDashboard
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts
+  method: get
+  operationId: clickStackListAlerts
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts
+  method: post
+  operationId: clickStackCreateAlert
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources
+  method: get
+  operationId: clickStackListSources
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources
+  method: post
+  operationId: clickStackCreateSource
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  method: get
+  operationId: clickStackGetSource
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  method: put
+  operationId: clickStackUpdateSource
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/sources/{clickStackSourceId}
+  method: delete
+  operationId: clickStackDeleteSource
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  method: get
+  operationId: clickStackGetAlert
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  method: put
+  operationId: clickStackUpdateAlert
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/alerts/{clickStackAlertId}
+  method: delete
+  operationId: clickStackDeleteAlert
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  method: get
+  operationId: clickStackListWebhooks
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks
+  method: post
+  operationId: clickStackCreateWebhook
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+  method: put
+  operationId: clickStackUpdateWebhook
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/webhooks/{clickStackWebhookId}
+  method: delete
+  operationId: clickStackDeleteWebhook
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles
+  method: get
+  operationId: clickStackListRoles
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles
+  method: post
+  operationId: clickStackCreateRole
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  method: get
+  operationId: clickStackGetRole
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  method: put
+  operationId: clickStackUpdateRole
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/roles/{clickStackRoleId}
+  method: delete
+  operationId: clickStackDeleteRole
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches
+  method: get
+  operationId: clickStackListSavedSearches
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches
+  method: post
+  operationId: clickStackCreateSavedSearch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  method: get
+  operationId: clickStackGetSavedSearch
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  method: put
+  operationId: clickStackUpdateSavedSearch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickstack/saved-searches/{clickStackSavedSearchId}
+  method: delete
+  operationId: clickStackDeleteSavedSearch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations
+  method: get
+  operationId: organizationGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}
+  method: get
+  operationId: organizationGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}
+  method: patch
+  operationId: organizationUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/quotas
+  method: get
+  operationId: organizationQuotasGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/quotas/{quotaCode}
+  method: get
+  operationId: organizationQuotaGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/activities
+  method: get
+  operationId: activityGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/activities/{activityId}
+  method: get
+  operationId: activityGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/privateEndpointConfig
+  method: get
+  operationId: organizationPrivateEndpointConfigGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/byocInfrastructure
+  method: post
+  operationId: organizationByocInfrastructureCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}
+  method: delete
+  operationId: organizationByocInfrastructureDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}
+  method: patch
+  operationId: organizationByocInfrastructureUpdate
   x-agentic-access:
     action-class: acting
     consequence: write
@@ -40,15 +1045,7 @@ operations:
     audit: required
 - path: /ping
   method: get
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /replicas_status
-  method: get
+  operationId: getPing
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -58,6 +1055,7 @@ operations:
     audit: none
 - path: /play
   method: get
+  operationId: getPlay
   x-agentic-access:
     action-class: connected
     consequence: read
@@ -65,3 +1063,977 @@ operations:
     token:
       max-ttl: 3600
     audit: none
+- path: /v1/organizations/{organizationId}/postgres
+  method: post
+  operationId: postgresServiceCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres
+  method: get
+  operationId: postgresServiceGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  method: get
+  operationId: postgresServiceGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  method: delete
+  operationId: postgresServiceDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}
+  method: patch
+  operationId: postgresServicePatch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/caCertificates
+  method: get
+  operationId: postgresServiceCertsGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/restoredService
+  method: post
+  operationId: postgresInstanceRestore
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/password
+  method: patch
+  operationId: postgresServiceSetPassword
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/state
+  method: patch
+  operationId: postgresServicePatchState
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/readReplica
+  method: post
+  operationId: postgresInstanceCreateReadReplica
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  method: get
+  operationId: postgresInstanceConfigGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  method: post
+  operationId: postgresInstanceConfigPost
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/config
+  method: patch
+  operationId: postgresInstanceConfigPatch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/metrics
+  method: get
+  operationId: postgresInstanceMetricsGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/slowQueryPatterns
+  method: get
+  operationId: slowQueryPatternsGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/slowQueryPatterns/{queryId}
+  method: get
+  operationId: slowQueryPatternGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/logs
+  method: get
+  operationId: postgresLogsGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/prometheus
+  method: get
+  operationId: organizationPrometheusGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/prometheus/discovery
+  method: get
+  operationId: organizationPrometheusDiscoveryGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/prometheus
+  method: get
+  operationId: instancePrometheusGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/prometheus
+  method: get
+  operationId: postgresOrgPrometheusGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/postgres/{postgresId}/prometheus
+  method: get
+  operationId: postgresInstancePrometheusGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /replicas_status
+  method: get
+  operationId: getReplicasStatus
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/roles
+  method: get
+  operationId: organizationRolesGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/roles
+  method: post
+  operationId: organizationRolePost
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/roles/{roleId}
+  method: get
+  operationId: organizationRoleGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/roles/{roleId}
+  method: patch
+  operationId: organizationRolePatch
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/roles/{roleId}
+  method: delete
+  operationId: organizationRoleDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/serviceProfiles
+  method: get
+  operationId: serviceProfilesList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services
+  method: get
+  operationId: instanceGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services
+  method: post
+  operationId: instanceCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}
+  method: get
+  operationId: instanceGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}
+  method: patch
+  operationId: instanceUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}
+  method: delete
+  operationId: instanceDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/privateEndpointConfig
+  method: get
+  operationId: instancePrivateEndpointConfigGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  method: get
+  operationId: instanceQueryEndpointGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  method: delete
+  operationId: instanceQueryEndpointDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/serviceQueryEndpoint
+  method: post
+  operationId: instanceQueryEndpointUpsert
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/state
+  method: patch
+  operationId: instanceStateUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/scaling
+  method: patch
+  operationId: instanceScalingUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/replicaScaling
+  method: patch
+  operationId: instanceReplicaScalingUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/password
+  method: patch
+  operationId: instancePasswordUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/privateEndpoint
+  method: post
+  operationId: instancePrivateEndpointCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  method: get
+  operationId: scalingScheduleGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  method: post
+  operationId: scalingScheduleUpsert
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/scalingSchedule
+  method: delete
+  operationId: scalingScheduleDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  method: get
+  operationId: upgradeWindowGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  method: put
+  operationId: upgradeWindowUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/upgradeWindow
+  method: delete
+  operationId: upgradeWindowDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings
+  method: get
+  operationId: serviceClickhouseSettingsListGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings
+  method: patch
+  operationId: serviceClickhouseSettingsUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/schema
+  method: get
+  operationId: serviceClickhouseSettingsSchemaGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/{settingName}
+  method: get
+  operationId: serviceClickhouseSettingGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/services/{serviceId}/clickhouseSettings/{settingName}
+  method: delete
+  operationId: serviceClickhouseSettingDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: safety-critical
+    subject: required
+    audience: null
+    token:
+      max-ttl: 120
+      exchange: true
+      purpose-required: true
+      proof-of-possession: true
+    escalation:
+      human-in-the-loop: required
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  method: put
+  operationId: udfAttach
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  method: get
+  operationId: udfAttachmentGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments/{serviceId}
+  method: delete
+  operationId: udfDetach
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/attachments
+  method: get
+  operationId: udfAttachmentList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/udfs
+  method: post
+  operationId: udfCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs
+  method: get
+  operationId: udfList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/udfs/{functionName}
+  method: delete
+  operationId: udfDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}
+  method: get
+  operationId: udfGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/udfUploads/url
+  method: post
+  operationId: udfUploadSessionCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/versions
+  method: post
+  operationId: udfVersionCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/versions
+  method: get
+  operationId: udfVersionList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/udfs/{functionName}/versions/{version}
+  method: delete
+  operationId: udfVersionDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/members
+  method: get
+  operationId: memberGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/members/{userId}
+  method: get
+  operationId: memberGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/members/{userId}
+  method: patch
+  operationId: memberUpdate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/members/{userId}
+  method: delete
+  operationId: memberDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/invitations
+  method: get
+  operationId: invitationGetList
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/invitations
+  method: post
+  operationId: invitationCreate
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /v1/organizations/{organizationId}/invitations/{invitationId}
+  method: get
+  operationId: invitationGet
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /v1/organizations/{organizationId}/invitations/{invitationId}
+  method: delete
+  operationId: invitationDelete
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
