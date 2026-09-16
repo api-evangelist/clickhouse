@@ -29,7 +29,7 @@ accessModel:
   generated: '2026-09-03'
   method: derived
 created: '2024-01-01'
-modified: '2026-09-05'
+modified: '2026-09-16'
 type: Index
 access: 3rd-Party
 position: Consuming
@@ -54,12 +54,11 @@ tags_raw:
 - Open Source
 - Real-Time
 - SQL
-description: >-
-  ClickHouse is a fast open-source column-oriented database management system that enables real-time analytical
-  reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface for SQL queries, native TCP, MySQL and
-  PostgreSQL wire-compatible interfaces, and a gRPC interface - and the ClickHouse Cloud management plane offers a
-  public OpenAPI-described REST API for provisioning and managing services, organizations, members, API keys, backups,
-  and private endpoints.
+description: ClickHouse is a fast open-source column-oriented database management system that enables
+  real-time analytical reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface
+  for SQL queries, native TCP, MySQL and PostgreSQL wire-compatible interfaces, and a gRPC interface -
+  and the ClickHouse Cloud management plane offers a public OpenAPI-described REST API for provisioning
+  and managing services, organizations, members, API keys, backups, and private endpoints.
 apis:
 - aid: clickhouse:clickhouse-http-interface
   name: ClickHouse HTTP Interface
@@ -72,11 +71,10 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/http
     type: Documentation
-  description: >-
-    HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse. Supports
-    SELECT via GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated), and authentication
-    via HTTP Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers. Helper paths include
-    /ping and /replicas_status.
+  description: HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse.
+    Supports SELECT via GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated),
+    and authentication via HTTP Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers.
+    Helper paths include /ping and /replicas_status.
 - aid: clickhouse:clickhouse-native
   name: ClickHouse Native TCP Interface
   tags:
@@ -86,9 +84,8 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/tcp
     type: Documentation
-  description: >-
-    Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between client
-    and server (default port 9000).
+  description: Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between
+    client and server (default port 9000).
 - aid: clickhouse:clickhouse-mysql
   name: ClickHouse MySQL Interface
   tags:
@@ -98,9 +95,8 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/mysql
     type: Documentation
-  description: >-
-    MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query ClickHouse
-    without driver changes.
+  description: MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query
+    ClickHouse without driver changes.
 - aid: clickhouse:clickhouse-postgresql
   name: ClickHouse PostgreSQL Interface
   tags:
@@ -110,8 +106,8 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/postgresql
     type: Documentation
-  description: >-
-    PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients to ClickHouse.
+  description: PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients
+    to ClickHouse.
 - aid: clickhouse:clickhouse-grpc
   name: ClickHouse gRPC Interface
   tags:
@@ -121,14 +117,13 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/grpc
     type: Documentation
-  - url: >-
-      https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
+  - url: https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
     type: Protocol Buffers
   description: gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
 - aid: clickhouse:clickhouse-clickhouse-http-interface-api
-  name: ClickHouse ClickHouse HTTP Interface API
-  description: >-
-    The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http interface.
+  name: ClickHouse HTTP Interface API
+  description: The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http
+    interface.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
@@ -184,8 +179,11 @@ apis:
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
 - aid: clickhouse:clickhouse-cloud-api
   name: ClickHouse Cloud API
-  description: >-
-    The ClickHouse Cloud control-plane REST API — 148 operations across 86 paths for organizations, services, users and roles, API keys, backups, ClickPipes, ClickStack observability, Managed Postgres, UDFs, Prometheus metrics and billing. Authenticated with HTTP Basic using an API key ID and secret. The OpenAPI 3.1.2 description is served live and unauthenticated from the API root itself, and is advertised as service-desc in the RFC 9727 api-catalog at https://clickhouse.com/.well-known/api-catalog.
+  description: The ClickHouse Cloud control-plane REST API — 148 operations across 86 paths for organizations,
+    services, users and roles, API keys, backups, ClickPipes, ClickStack observability, Managed Postgres,
+    UDFs, Prometheus metrics and billing. Authenticated with HTTP Basic using an API key ID and secret.
+    The OpenAPI 3.1.2 description is served live and unauthenticated from the API root itself, and is
+    advertised as service-desc in the RFC 9727 api-catalog at https://clickhouse.com/.well-known/api-catalog.
   humanURL: https://clickhouse.com/docs/cloud/manage/api/api-overview
   baseURL: https://api.clickhouse.cloud/v1
   tags:
