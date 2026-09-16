@@ -71,10 +71,11 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/http
     type: Documentation
-  description: HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse.
-    Supports SELECT via GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated),
-    and authentication via HTTP Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers.
-    Helper paths include /ping and /replicas_status.
+  description: >-
+    HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse. Supports
+    SELECT via GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated), and authentication
+    via HTTP Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers. Helper paths include
+    /ping and /replicas_status.
 - aid: clickhouse:clickhouse-native
   name: ClickHouse Native TCP Interface
   tags:
@@ -84,8 +85,9 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/tcp
     type: Documentation
-  description: Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between
-    client and server (default port 9000).
+  description: >-
+    Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between client
+    and server (default port 9000).
 - aid: clickhouse:clickhouse-mysql
   name: ClickHouse MySQL Interface
   tags:
@@ -95,8 +97,9 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/mysql
     type: Documentation
-  description: MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query
-    ClickHouse without driver changes.
+  description: >-
+    MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query ClickHouse
+    without driver changes.
 - aid: clickhouse:clickhouse-postgresql
   name: ClickHouse PostgreSQL Interface
   tags:
@@ -106,8 +109,8 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/postgresql
     type: Documentation
-  description: PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients
-    to ClickHouse.
+  description: >-
+    PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients to ClickHouse.
 - aid: clickhouse:clickhouse-grpc
   name: ClickHouse gRPC Interface
   tags:
@@ -117,13 +120,14 @@ apis:
   properties:
   - url: https://clickhouse.com/docs/en/interfaces/grpc
     type: Documentation
-  - url: https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
+  - url: >-
+      https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto
     type: Protocol Buffers
   description: gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
 - aid: clickhouse:clickhouse-clickhouse-http-interface-api
   name: ClickHouse HTTP Interface API
-  description: The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http
-    interface.
+  description: >-
+    The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http interface.
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
@@ -177,32 +181,232 @@ apis:
     url: https://clickhouse.com/docs/en/cloud/manage/api/api-overview
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
-- aid: clickhouse:clickhouse-cloud-api
-  name: ClickHouse Cloud API
-  description: The ClickHouse Cloud control-plane REST API — 148 operations across 86 paths for organizations,
-    services, users and roles, API keys, backups, ClickPipes, ClickStack observability, Managed Postgres,
-    UDFs, Prometheus metrics and billing. Authenticated with HTTP Basic using an API key ID and secret.
-    The OpenAPI 3.1.2 description is served live and unauthenticated from the API root itself, and is
-    advertised as service-desc in the RFC 9727 api-catalog at https://clickhouse.com/.well-known/api-catalog.
-  humanURL: https://clickhouse.com/docs/cloud/manage/api/api-overview
-  baseURL: https://api.clickhouse.cloud/v1
+- aid: clickhouse:clickhouse-api-keys-api
+  name: ClickHouse API keys API
+  description: The API keys API from ClickHouse — 2 operation(s) for api keys.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
   tags:
-  - Cloud
-  - Control Plane
-  - Provisioning
-  - Billing
-  - Observability
+  - API keys
   properties:
   - type: OpenAPI
-    url: openapi/clickhouse-cloud-api-openapi.json
-  - type: Overlay
-    url: overlays/clickhouse-cloud-api-overlay.yaml
+    url: openapi/clickhouse-api-keys-api-openapi.yml
   - type: ToolCrosswalk
     url: mcp/clickhouse-tool-crosswalk.yml
   - type: Documentation
     url: https://clickhouse.com/docs/cloud/manage/api/api-overview
   - type: APIReference
-    url: https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-backup-api
+  name: ClickHouse Backup API
+  description: The Backup API from ClickHouse — 4 operation(s) for backup.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Backup
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-backup-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-billing-api
+  name: ClickHouse Billing API
+  description: The Billing API from ClickHouse — 3 operation(s) for billing.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-billing-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-clickpipes-api
+  name: ClickHouse Click Pipes API
+  description: The ClickPipes API from ClickHouse — 10 operation(s) for clickpipes.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - ClickPipes
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-clickpipes-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-clickstack-api
+  name: ClickHouse Click Stack API
+  description: The ClickStack API from ClickHouse — 13 operation(s) for clickstack.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - ClickStack
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-clickstack-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-organization-api
+  name: ClickHouse Organization API
+  description: The Organization API from ClickHouse — 9 operation(s) for organization.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Organization
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-organization-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-postgres-api
+  name: ClickHouse Postgres API
+  description: The Postgres API from ClickHouse — 12 operation(s) for postgres.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Postgres
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-postgres-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-prometheus-api
+  name: ClickHouse Prometheus API
+  description: The Prometheus API from ClickHouse — 5 operation(s) for prometheus.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Prometheus
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-prometheus-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-role-management-api
+  name: ClickHouse Role Management API
+  description: The Role Management API from ClickHouse — 2 operation(s) for role management.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Role Management
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-role-management-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-service-api
+  name: ClickHouse Service API
+  description: The Service API from ClickHouse — 15 operation(s) for service.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Service
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-service-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-udf-api
+  name: ClickHouse UDF API
+  description: The UDF API from ClickHouse — 7 operation(s) for udf.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - UDF
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-udf-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
+  - type: Swagger
+    url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-user-management-api
+  name: ClickHouse User management API
+  description: The User management API from ClickHouse — 4 operation(s) for user management.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - User management
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-user-management-api-openapi.yml
+  - type: ToolCrosswalk
+    url: mcp/clickhouse-tool-crosswalk.yml
+  - type: Documentation
+    url: https://clickhouse.com/docs/cloud/manage/api/api-overview
+  - type: APIReference
+    url: >-
+      https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
 common:
