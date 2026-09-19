@@ -45,8 +45,8 @@ tags:
 - Open-Source
 - Real-Time
 - SQL
-- ClickHouse
 tags_raw:
+- ClickHouse
 - Analytics
 - Cloud Database
 - Column-Oriented
@@ -188,6 +188,8 @@ apis:
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
+  - APIKeys
+  tags_raw:
   - API keys
   properties:
   - type: OpenAPI
@@ -359,6 +361,8 @@ apis:
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
+  - Services
+  tags_raw:
   - Service
   properties:
   - type: OpenAPI
@@ -397,6 +401,8 @@ apis:
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
+  - User Management
+  tags_raw:
   - User management
   properties:
   - type: OpenAPI
