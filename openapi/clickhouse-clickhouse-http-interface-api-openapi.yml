@@ -5,9 +5,7 @@ info:
 
     monitoring server health. Authentication is performed with HTTP Basic, URL
 
-    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.
-
-    '
+    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.'
   version: 1.0.0
 servers:
 - url: http://localhost:8123
@@ -24,9 +22,7 @@ paths:
 
         executes the SQL statement and returns the result in the configured
 
-        format.
-
-        '
+        format.'
       parameters:
       - $ref: '#/components/parameters/QueryParam'
       - $ref: '#/components/parameters/DatabaseParam'
@@ -46,15 +42,15 @@ paths:
                 type: object
       tags:
       - ClickHouse HTTP Interface
+      operationId: getRoot
+      x-operation-id-source: derived
     post:
       summary: Execute query or insert data
       description: 'Submit a SQL query in the request body, or stream data for INSERT with
 
         the partial query in the URL (e.g. `?query=INSERT INTO table FORMAT
 
-        JSONEachRow`).
-
-        '
+        JSONEachRow`).'
       parameters:
       - $ref: '#/components/parameters/QueryParam'
       - $ref: '#/components/parameters/DatabaseParam'
@@ -82,12 +78,20 @@ paths:
                 type: object
       tags:
       - ClickHouse HTTP Interface
+      operationId: postRoot
+      x-operation-id-source: derived
 components:
   parameters:
     DatabaseParam:
       name: database
       in: query
       description: Default database
+      schema:
+        type: string
+    QueryParam:
+      name: query
+      in: query
+      description: SQL statement to execute
       schema:
         type: string
     Decompress:
@@ -98,16 +102,6 @@ components:
         enum:
         - 0
         - 1
-    SessionTimeout:
-      name: session_timeout
-      in: query
-      schema:
-        type: integer
-    SessionId:
-      name: session_id
-      in: query
-      schema:
-        type: string
     Compress:
       name: compress
       in: query
@@ -122,12 +116,16 @@ components:
       description: Output format (TabSeparated, JSON, CSV, Pretty, etc.)
       schema:
         type: string
-    QueryParam:
-      name: query
+    SessionId:
+      name: session_id
       in: query
-      description: SQL statement to execute
       schema:
         type: string
+    SessionTimeout:
+      name: session_timeout
+      in: query
+      schema:
+        type: integer
   securitySchemes:
     basicAuth:
       type: http

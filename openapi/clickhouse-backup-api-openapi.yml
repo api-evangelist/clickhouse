@@ -1,0 +1,963 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI spec for ClickHouse Cloud Backup API
+  version: '1.0'
+  contact:
+    name: ClickHouse Support
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    email: support@clickhouse.com
+servers:
+- url: https://api.clickhouse.cloud
+security:
+- basicAuth: []
+tags:
+- name: Backup
+paths:
+  /v1/organizations/{organizationId}/services/{serviceId}/backups:
+    get:
+      summary: List of service backups
+      description: Returns a list of all backups for the service. The most recent backups comes first in the list.
+      operationId: backupGetList
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the backup.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the service the backup was created from.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Backup'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+  /v1/organizations/{organizationId}/services/{serviceId}/backups/{backupId}:
+    get:
+      summary: Get backup details
+      description: Returns a single backup info.
+      operationId: backupGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the backup.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the service the backup was created from.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: backupId
+        description: ID of the requested backup.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/Backup'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+  /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration:
+    get:
+      summary: Get service backup configuration
+      description: Returns the service backup configuration.
+      operationId: backupConfigurationGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/BackupConfiguration'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+    patch:
+      summary: Update service backup configuration
+      description: Updates service backup configuration. Requires ADMIN auth key role. Setting the properties with null value, will reset the properties to theirs default values.
+      operationId: backupConfigurationUpdate
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupConfigurationPatchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/BackupConfiguration'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+  /v1/organizations/{organizationId}/services/{serviceId}/backupBucket:
+    get:
+      summary: Get service backup bucket
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Returns the service backup bucket.'
+      operationId: backupBucketGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/BackupBucket'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+      x-badges:
+      - name: Beta
+        position: after
+    post:
+      summary: Create service backup bucket
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Create service backup bucket. Requires ADMIN auth key role.'
+      operationId: backupBucketCreate
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the requested service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupBucketPostRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/BackupBucket'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+      x-badges:
+      - name: Beta
+        position: after
+    patch:
+      summary: Update service backup bucket
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Update service backup bucket. Requires ADMIN auth key role. The secrets of the specified bucket provider are always required'
+      operationId: backupBucketUpdate
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the requested service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupBucketPatchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/BackupBucket'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+      x-badges:
+      - name: Beta
+        position: after
+    delete:
+      summary: Delete service backup bucket
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Delete service backup bucket. Requires ADMIN auth key role.'
+      operationId: backupBucketDelete
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the requested service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Backup
+      x-badges:
+      - name: Beta
+        position: after
+components:
+  schemas:
+    AzureBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
+          type: string
+    AwsBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS Role ARN
+          type: string
+        iamRoleSessionName:
+          description: AWS  Role session name
+          type: string
+    AwsBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS IAM Role
+          type: string
+        iamRoleSessionName:
+          description: AWS IAM Role
+          type: string
+    GcpBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    AzureBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID.
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    BackupConfigurationPatchRequest:
+      properties:
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type: number
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type: number
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type: string
+    AzureBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
+          type: string
+    BackupBucket:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucket'
+      - $ref: '#/components/schemas/GcpBackupBucket'
+      - $ref: '#/components/schemas/AzureBackupBucket'
+    AwsBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS Role ARN
+          type: string
+        iamRoleSessionName:
+          description: AWS IAM Role session name
+          type:
+          - string
+          - 'null'
+    BackupBucketPatchRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
+    AwsBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS Role ARN
+          type: string
+        iamRoleSessionName:
+          description: AWS Role session name
+          type: string
+    AzureBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    Backup:
+      properties:
+        id:
+          description: Unique backup ID.
+          type: string
+          format: uuid
+        status:
+          description: 'Status of the backup: ''done'', ''error'', ''in_progress''.'
+          type: string
+          enum:
+          - done
+          - error
+          - in_progress
+        serviceId:
+          description: 'Name '
+          type: string
+        startedAt:
+          description: Backup start timestamp. ISO-8601.
+          type: string
+          format: date-time
+        finishedAt:
+          description: Backup finish timestamp. ISO-8601. Available only for finished backups
+          type: string
+          format: date-time
+        sizeInBytes:
+          description: Size of the backup in bytes.
+          type: number
+        durationInSeconds:
+          description: Time in seconds it took to perform the backup. If the status still in_progress, this is the time in seconds since the backup started until now.
+          type: number
+        type:
+          description: Backup type ("full" or "incremental").
+          type: string
+          enum:
+          - full
+          - incremental
+        backupName:
+          description: Backup name on the external backup bucket.
+          type: string
+        bucket:
+          description: Backup bucket where the backup is stored.
+          oneOf:
+          - $ref: '#/components/schemas/AwsBackupBucketProperties'
+          - $ref: '#/components/schemas/GcpBackupBucketProperties'
+          - $ref: '#/components/schemas/AzureBackupBucketProperties'
+    BackupConfiguration:
+      properties:
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type: number
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type: number
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type: string
+    BackupBucketPostRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
+    GcpBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+        secretAccessKey:
+          description: Secret Access Key (HMAC secret key)
+          type: string
+    GcpBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+        secretAccessKey:
+          description: Secret Access Key (HMAC secret key)
+          type: string
+    GcpBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+x-tagGroups:
+- name: Organization
+  tags:
+  - Organization
+  - Billing
+  - User management
+  - Role Management
+  - UDF
+- name: Service
+  tags:
+  - Service
+  - Backup
+- name: API keys
+  tags:
+  - API keys
+- name: Prometheus
+  tags:
+  - Prometheus
+- name: ClickPipes
+  tags:
+  - ClickPipes
+- name: ClickStack
+  tags:
+  - ClickStack
+- name: Postgres
+  tags:
+  - Postgres

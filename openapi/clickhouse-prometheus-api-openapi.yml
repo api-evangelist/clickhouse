@@ -1,0 +1,431 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI spec for ClickHouse Cloud Prometheus API
+  version: '1.0'
+  contact:
+    name: ClickHouse Support
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    email: support@clickhouse.com
+servers:
+- url: https://api.clickhouse.cloud
+security:
+- basicAuth: []
+tags:
+- name: Prometheus
+paths:
+  /v1/organizations/{organizationId}/prometheus:
+    get:
+      summary: Get organization metrics
+      description: Deprecated. Use the Prometheus service discovery endpoint (/v1/organizations/{organizationId}/prometheus/discovery) instead. This endpoint is not available for new organizations; contact ClickHouse support to request access. Returns Prometheus metrics for the services in an organization that the caller is authorized to view. Services the caller lacks view access to are omitted.
+      operationId: organizationPrometheusGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: filtered_metrics
+        description: Return a filtered list of Prometheus metrics.
+        schema:
+          type: string
+          format: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      deprecated: true
+      tags:
+      - Prometheus
+  /v1/organizations/{organizationId}/prometheus/discovery:
+    get:
+      summary: List Prometheus scrape targets
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Returns one Prometheus scrape target per service in the organization, in the HTTP service discovery (`http_sd`) format. Only services the API key is authorized to view are included; services that are being deleted or have been deleted are omitted.
+
+
+        Point an `http_sd_configs` job at this endpoint to discover and scrape all services in the organization automatically. Prometheus refreshes the target list on every discovery poll, so newly created and deleted services are picked up without configuration changes.
+
+
+        Discovered targets scrape with `filtered_metrics=true` by default; pass `?filtered_metrics=false` to this endpoint to discover unfiltered targets. See the Prometheus integration guide for more on the exported metrics.'
+      operationId: organizationPrometheusDiscoveryGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: filtered_metrics
+        description: Whether discovered targets scrape a filtered list of metrics. Sets the filtered_metrics parameter on each discovered target. Defaults to true.
+        schema:
+          type: string
+          format: boolean
+        example: 'true'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrometheusDiscoveryTargetGroup'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Prometheus
+      x-badges:
+      - name: Beta
+        position: after
+  /v1/organizations/{organizationId}/services/{serviceId}/prometheus:
+    get:
+      summary: Get service metrics
+      description: Returns prometheus metrics for a service.
+      operationId: instancePrometheusGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: serviceId
+        description: ID of the requested service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: filtered_metrics
+        description: Return a filtered list of Prometheus metrics.
+        schema:
+          type: string
+          format: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Prometheus
+  /v1/organizations/{organizationId}/postgres/prometheus:
+    get:
+      summary: Get organization PostgreSQL metrics
+      description: '**Disclaimer:** This beta endpoint is evolving; the API contract may change.
+
+
+        Returns Prometheus metrics for all PostgreSQL services in an organization. Maximum 100 services supported.'
+      operationId: postgresOrgPrometheusGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain; charset=UTF-8:
+              schema:
+                type: string
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Prometheus
+      x-badges:
+      - name: Beta
+        position: after
+  /v1/organizations/{organizationId}/postgres/{postgresId}/prometheus:
+    get:
+      summary: Get PostgreSQL service metrics
+      description: '**Disclaimer:** This beta endpoint is evolving; the API contract may change.
+
+
+        Returns Prometheus metrics for a PostgreSQL service.'
+      operationId: postgresInstancePrometheusGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the organization that owns the Postgres service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: postgresId
+        description: ID of the requested Postgres service.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain; charset=UTF-8:
+              schema:
+                type: string
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - Prometheus
+      x-badges:
+      - name: Beta
+        position: after
+components:
+  schemas:
+    PrometheusDiscoveryLabels:
+      properties:
+        __scheme__:
+          description: URL scheme Prometheus must scrape the target with.
+          type: string
+        __metrics_path__:
+          description: Path of the per-service Prometheus metrics endpoint.
+          type: string
+        __param_filtered_metrics:
+          description: Value passed as the filtered_metrics query parameter on each scrape.
+          type: string
+          format: boolean
+        clickhouse_org_id:
+          description: Organization ID the service belongs to.
+          type: string
+          format: uuid
+        clickhouse_service_id:
+          description: Service ID.
+          type: string
+          format: uuid
+        clickhouse_discovery_service_name:
+          description: Service name.
+          type: string
+    PrometheusDiscoveryTargetGroup:
+      properties:
+        targets:
+          type: array
+          description: Host (and port) of the ClickHouse Cloud API.
+          items:
+            type: string
+        labels:
+          $ref: '#/components/schemas/PrometheusDiscoveryLabels'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+x-tagGroups:
+- name: Organization
+  tags:
+  - Organization
+  - Billing
+  - User management
+  - Role Management
+  - UDF
+- name: Service
+  tags:
+  - Service
+  - Backup
+- name: API keys
+  tags:
+  - API keys
+- name: Prometheus
+  tags:
+  - Prometheus
+- name: ClickPipes
+  tags:
+  - ClickPipes
+- name: ClickStack
+  tags:
+  - ClickStack
+- name: Postgres
+  tags:
+  - Postgres

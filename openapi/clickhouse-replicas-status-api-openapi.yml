@@ -5,9 +5,7 @@ info:
 
     monitoring server health. Authentication is performed with HTTP Basic, URL
 
-    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.
-
-    '
+    parameters, or the X-ClickHouse-User / X-ClickHouse-Key headers.'
   version: 1.0.0
 servers:
 - url: http://localhost:8123
@@ -30,6 +28,8 @@ paths:
                 type: string
       tags:
       - Replicas Status
+      operationId: getReplicasStatus
+      x-operation-id-source: derived
 components:
   securitySchemes:
     basicAuth:

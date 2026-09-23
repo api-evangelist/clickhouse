@@ -1,12 +1,22 @@
 {
   "provider": "clickhouse",
   "sources": [
-    "clickhouse-clickhouse-http-interface-api-openapi.yml",
-    "clickhouse-ping-api-openapi.yml",
-    "clickhouse-play-api-openapi.yml",
-    "clickhouse-replicas-status-api-openapi.yml"
+    "_original/clickhouse-cloud-api-openapi.json",
+    "_original/clickhouse-openapi.yml"
   ],
   "outputs": [
+    "clickhouse-api-keys-api-openapi.yml",
+    "clickhouse-backup-api-openapi.yml",
+    "clickhouse-billing-api-openapi.yml",
+    "clickhouse-clickpipes-api-openapi.yml",
+    "clickhouse-clickstack-api-openapi.yml",
+    "clickhouse-organization-api-openapi.yml",
+    "clickhouse-postgres-api-openapi.yml",
+    "clickhouse-prometheus-api-openapi.yml",
+    "clickhouse-role-management-api-openapi.yml",
+    "clickhouse-service-api-openapi.yml",
+    "clickhouse-udf-api-openapi.yml",
+    "clickhouse-user-management-api-openapi.yml",
     "clickhouse-clickhouse-http-interface-api-openapi.yml",
     "clickhouse-ping-api-openapi.yml",
     "clickhouse-play-api-openapi.yml",
@@ -16,11 +26,36 @@
   "errors": [],
   "warnings": [],
   "notes": [
-    "clickhouse-clickhouse-http-interface-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "clickhouse-ping-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "clickhouse-play-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "clickhouse-replicas-status-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "clickhouse-cloud-api-openapi.json: upgraded openapi 3.1.2 -> OpenAPI 3.2.0",
+    "clickhouse-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "clickhouse-openapi.yml: tagged paths GET / -> ClickHouse HTTP Interface",
+    "clickhouse-openapi.yml: tagged paths POST / -> ClickHouse HTTP Interface",
+    "clickhouse-openapi.yml: tagged paths GET /ping -> Ping",
+    "clickhouse-openapi.yml: tagged paths GET /replicas_status -> Replicas Status",
+    "clickhouse-openapi.yml: tagged paths GET /play -> Play",
+    "clickhouse-openapi.yml: declared missing tag: ClickHouse HTTP Interface",
+    "clickhouse-openapi.yml: declared missing tag: Ping",
+    "clickhouse-openapi.yml: declared missing tag: Play",
+    "clickhouse-openapi.yml: declared missing tag: Replicas Status",
     "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "clickhouse-api-keys-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-backup-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-billing-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-clickhouse-http-interface-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-clickpipes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-clickstack-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-organization-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-ping-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-play-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-postgres-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-prometheus-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-replicas-status-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-role-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-service-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-udf-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "clickhouse-user-management-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
