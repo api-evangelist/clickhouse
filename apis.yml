@@ -2,16 +2,22 @@ aid: clickhouse
 name: ClickHouse
 url: https://raw.githubusercontent.com/api-evangelist/clickhouse/refs/heads/main/apis.yml
 deliveryModel:
-  model: saas
-  open_source: false
+  model: open-core
+  license: Apache-2.0
+  license_evidence:
+    repo: clickhouse/clickhouse
+    spdx: Apache-2.0
+    stars: 50068
+  open_source: true
   commercial: true
-  callable_host: false
-  label: Hosted service · you call their endpoint
+  callable_host: true
+  label: Open core · an OSS project plus a commercial hosted product
   confidence: medium
   source:
   - openapi
   - pricing
-  generated: '2026-08-28'
+  - repository-license
+  generated: '2026-09-25'
   method: derived
 accessModel:
   pricing: freemium
@@ -36,6 +42,9 @@ position: Consuming
 specificationVersion: '0.23'
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/clickhouse.png
 kind: opensource
+x-docs-platform: redocly
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-09-24
 tags:
 - ClickHouse
 - Analytics
@@ -43,7 +52,7 @@ tags:
 - Column-Oriented
 - Database
 - OLAP
-- Open-Source
+- Open Source
 - Real-Time
 - SQL
 tags_raw:
@@ -56,6 +65,7 @@ tags_raw:
 - Open Source
 - Real-Time
 - SQL
+- Open-Source
 description: ClickHouse is a fast open-source column-oriented database management system that enables
   real-time analytical reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface
   for SQL queries, native TCP, MySQL and PostgreSQL wire-compatible interfaces, and a gRPC interface -
@@ -305,6 +315,8 @@ apis:
   humanURL: https://clickhouse.com/docs/en/interfaces/http
   baseURL: https://{clickhouse-host}:8443
   tags:
+  - PostgreSQL
+  tags_raw:
   - Postgres
   properties:
   - type: OpenAPI

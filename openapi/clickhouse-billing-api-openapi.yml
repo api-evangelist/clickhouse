@@ -272,6 +272,49 @@ paths:
         position: after
 components:
   schemas:
+    ActiveBalance:
+      properties:
+        id:
+          description: Unique ID of the prepaid balance.
+          type: string
+          format: uuid
+        remainingPrepaidCredits:
+          description: Remaining credits available on this balance, in ClickHouse Credits (CHCs).
+          type: number
+        totalAmount:
+          description: Total credits granted on this balance, in ClickHouse Credits (CHCs).
+          type: number
+        amountSpent:
+          description: Credits spent from this balance, in ClickHouse Credits (CHCs).
+          type: number
+        startDate:
+          description: Date the balance became active. ISO-8601, based on the UTC timezone.
+          type: string
+          format: date-time
+        expirationDate:
+          description: Date the balance expires. ISO-8601, based on the UTC timezone.
+          type: string
+          format: date-time
+    UsageCost:
+      properties:
+        grandTotalCHC:
+          description: Grand total cost of usage in ClickHouse Credits (CHCs).
+          type: number
+        costs:
+          type: array
+          description: List of daily, per-entity usage cost records.
+          items:
+            $ref: '#/components/schemas/UsageCostRecord'
+    CreditBalances:
+      properties:
+        totalRemainingCredits:
+          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
+          type: number
+        balances:
+          type: array
+          description: List of active balances for the organization. Empty when the organization has none.
+          items:
+            $ref: '#/components/schemas/CreditBalance'
     ActiveBalances:
       properties:
         totalRemainingPrepaidCredits:
@@ -311,49 +354,38 @@ components:
           description: Date the balance expires. ISO-8601, based on the UTC timezone.
           type: string
           format: date-time
-    UsageCost:
+    UsageCostMetrics:
       properties:
-        grandTotalCHC:
-          description: Grand total cost of usage in ClickHouse Credits (CHCs).
+        storageCHC:
+          description: Cost of storage in ClickHouse Credits (CHCs). Applies to dataWarehouse entities.
           type: number
-        costs:
-          type: array
-          description: List of daily, per-entity usage cost records.
-          items:
-            $ref: '#/components/schemas/UsageCostRecord'
-    ActiveBalance:
-      properties:
-        id:
-          description: Unique ID of the prepaid balance.
-          type: string
-          format: uuid
-        remainingPrepaidCredits:
-          description: Remaining credits available on this balance, in ClickHouse Credits (CHCs).
+        backupCHC:
+          description: Cost of backup in ClickHouse Credits (CHCs). Applies to dataWarehouse entities.
           type: number
-        totalAmount:
-          description: Total credits granted on this balance, in ClickHouse Credits (CHCs).
+        computeCHC:
+          description: Cost of compute in ClickHouse Credits (CHCs). Applies to service and clickpipe entities.
           type: number
-        amountSpent:
-          description: Credits spent from this balance, in ClickHouse Credits (CHCs).
+        dataTransferCHC:
+          description: Cost of data transfer in ClickHouse Credits (CHCs). Applies to clickpipe entities.
           type: number
-        startDate:
-          description: Date the balance became active. ISO-8601, based on the UTC timezone.
-          type: string
-          format: date-time
-        expirationDate:
-          description: Date the balance expires. ISO-8601, based on the UTC timezone.
-          type: string
-          format: date-time
-    CreditBalances:
-      properties:
-        totalRemainingCredits:
-          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
+        initialLoadCHC:
+          description: Cost of initial load and resyncs in ClickHouse Credits (CHCs). Applies to clickpipe entities.
           type: number
-        balances:
-          type: array
-          description: List of active balances for the organization. Empty when the organization has none.
-          items:
-            $ref: '#/components/schemas/CreditBalance'
+        publicDataTransferCHC:
+          description: Cost of data transfer in ClickHouse Credits (CHCs). Applies to service entities.
+          type: number
+        interRegionTier1DataTransferCHC:
+          description: Cost of tier1 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
+          type: number
+        interRegionTier2DataTransferCHC:
+          description: Cost of tier2 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
+          type: number
+        interRegionTier3DataTransferCHC:
+          description: Cost of tier3 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
+          type: number
+        interRegionTier4DataTransferCHC:
+          description: Cost of tier4 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
+          type: number
     UsageCostRecord:
       properties:
         dataWarehouseId:
@@ -392,38 +424,6 @@ components:
         locked:
           description: When true, the record is immutable. Unlocked records are subject to change until locked.
           type: boolean
-    UsageCostMetrics:
-      properties:
-        storageCHC:
-          description: Cost of storage in ClickHouse Credits (CHCs). Applies to dataWarehouse entities.
-          type: number
-        backupCHC:
-          description: Cost of backup in ClickHouse Credits (CHCs). Applies to dataWarehouse entities.
-          type: number
-        computeCHC:
-          description: Cost of compute in ClickHouse Credits (CHCs). Applies to service and clickpipe entities.
-          type: number
-        dataTransferCHC:
-          description: Cost of data transfer in ClickHouse Credits (CHCs). Applies to clickpipe entities.
-          type: number
-        initialLoadCHC:
-          description: Cost of initial load and resyncs in ClickHouse Credits (CHCs). Applies to clickpipe entities.
-          type: number
-        publicDataTransferCHC:
-          description: Cost of data transfer in ClickHouse Credits (CHCs). Applies to service entities.
-          type: number
-        interRegionTier1DataTransferCHC:
-          description: Cost of tier1 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
-          type: number
-        interRegionTier2DataTransferCHC:
-          description: Cost of tier2 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
-          type: number
-        interRegionTier3DataTransferCHC:
-          description: Cost of tier3 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
-          type: number
-        interRegionTier4DataTransferCHC:
-          description: Cost of tier4 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
-          type: number
   securitySchemes:
     basicAuth:
       type: http

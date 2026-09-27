@@ -2145,403 +2145,6 @@ components:
       - status
       - version
       additionalProperties: false
-    Udf:
-      type: object
-      properties:
-        functionName:
-          description: Name of the UDF. Unique within the organization.
-          type: string
-        version:
-          description: Version number of the UDF.
-          example: 1
-          type: integer
-          exclusiveMinimum: 0
-        status:
-          description: Build state of this UDF version.
-          type: string
-          enum:
-          - building
-          - error
-          - ready
-        runtime:
-          description: Runtime used to execute the UDF command.
-          type: string
-          enum:
-          - python3.11
-          - native
-        type:
-          description: Executable UDF type.
-          type: string
-          enum:
-          - executable
-          - executable_pool
-        arguments:
-          description: Arguments passed to the UDF command.
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                description: Name of the argument. Required for Native and JSONEachRow formats.
-                type: string
-                pattern: ^[A-Za-z][A-Za-z0-9_]*$
-              type:
-                description: ClickHouse data type of the argument.
-                type: string
-            required:
-            - name
-            - type
-            additionalProperties: false
-        returnType:
-          description: ClickHouse data type of the returned value.
-          type: string
-        returnName:
-          description: Name of the returned value, or null when unnamed.
-          anyOf:
-          - type: string
-          - type: 'null'
-        poolSize:
-          description: Command pool size for executable_pool UDFs.
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0
-          - type: 'null'
-        commandReadTimeout:
-          description: Command stdout read timeout in milliseconds.
-          type: integer
-          exclusiveMinimum: 0
-        commandWriteTimeout:
-          description: Command stdin write timeout in milliseconds.
-          type: integer
-          exclusiveMinimum: 0
-        maxCommandExecutionTime:
-          description: Maximum command execution time in seconds for executable_pool UDFs.
-          anyOf:
-          - type: integer
-            exclusiveMinimum: 0
-          - type: 'null'
-        memoryLimitMib:
-          description: Maximum memory, in MiB, available to each UDF sandbox process. Null uses the sandbox default.
-          default: null
-          anyOf:
-          - type: integer
-            minimum: 1
-            maximum: 1048576
-          - type: 'null'
-        sendChunkHeader:
-          description: Whether ClickHouse sends a row-count chunk header.
-          type: boolean
-        deterministic:
-          description: Whether ClickHouse may reuse cached query results for this UDF.
-          type: boolean
-        format:
-          description: Input and output format used by the UDF command.
-          type: string
-        sandboxType:
-          description: Sandbox isolation level.
-          type: string
-          enum:
-          - basic
-          - netenable
-        sandboxVersion:
-          description: Sandbox runtime version.
-          type: string
-          enum:
-          - v1
-          - v2
-          - v3
-        error:
-          description: Build error, or null when no build error is present.
-          anyOf:
-          - type: string
-          - type: 'null'
-        createdAt:
-          description: Creation timestamp.
-          type: string
-          format: date-time
-        updatedAt:
-          description: Last-update timestamp.
-          type: string
-          format: date-time
-      required:
-      - functionName
-      - version
-      - status
-      - runtime
-      - type
-      - arguments
-      - returnType
-      - returnName
-      - poolSize
-      - commandReadTimeout
-      - commandWriteTimeout
-      - maxCommandExecutionTime
-      - memoryLimitMib
-      - sendChunkHeader
-      - deterministic
-      - format
-      - sandboxType
-      - sandboxVersion
-      - error
-      - createdAt
-      - updatedAt
-      additionalProperties: false
-    UdfAttachmentListResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/UdfAttachment'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-      required:
-      - items
-      - pagination
-      additionalProperties: false
-    UdfVersionCreateRequest:
-      oneOf:
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  description: Name of the argument. Required for Native and JSONEachRow formats.
-                  type: string
-                  pattern: ^[A-Za-z][A-Za-z0-9_]*$
-                type:
-                  description: ClickHouse data type of the argument.
-                  type: string
-              required:
-              - name
-              - type
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          sandboxVersion:
-            default: v2
-            type: string
-            enum:
-            - v1
-            - v2
-            - v3
-          type:
-            type: string
-            const: executable
-          poolSize:
-            default: null
-            type: 'null'
-          maxCommandExecutionTime:
-            default: 10
-            anyOf:
-            - type: integer
-              exclusiveMinimum: 0
-            - type: 'null'
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  description: Name of the argument. Required for Native and JSONEachRow formats.
-                  type: string
-                  pattern: ^[A-Za-z][A-Za-z0-9_]*$
-                type:
-                  description: ClickHouse data type of the argument.
-                  type: string
-              required:
-              - name
-              - type
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          sandboxVersion:
-            default: v2
-            type: string
-            enum:
-            - v1
-            - v2
-            - v3
-          type:
-            type: string
-            const: executable_pool
-          poolSize:
-            default: 3
-            type: integer
-            exclusiveMinimum: 0
-          maxCommandExecutionTime:
-            default: 10
-            type: integer
-            exclusiveMinimum: 0
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-      type: object
-    Pagination:
-      type: object
-      properties:
-        totalRecords:
-          description: Total number of records available.
-          type: integer
-        currentCursor:
-          description: Cursor for the current page. Null for the first page.
-          anyOf:
-          - type: string
-          - type: 'null'
-        nextCursor:
-          description: Cursor for the next page. Null if there are no more results.
-          anyOf:
-          - type: string
-          - type: 'null'
-        limit:
-          description: Maximum number of records returned per page.
-          type: integer
-      required:
-      - totalRecords
-      - currentCursor
-      - nextCursor
-      - limit
-      additionalProperties: false
-    UdfVersionListResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Udf'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-      required:
-      - items
-      - pagination
-      additionalProperties: false
-    UdfUploadSession:
-      type: object
-      properties:
-        uploadId:
-          description: Identifier of the uploaded source archive.
-          type: string
-          format: uuid
-          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        uploadUrl:
-          description: Presigned URL for uploading the source archive.
-          type: string
-          format: uri
-        expiresAt:
-          description: Presigned-URL expiry timestamp.
-          type: string
-          format: date-time
-      required:
-      - uploadId
-      - uploadUrl
-      - expiresAt
-      additionalProperties: false
     UdfCreateRequest:
       oneOf:
       - type: object
@@ -2734,6 +2337,185 @@ components:
         - type
         - functionName
       type: object
+    Udf:
+      type: object
+      properties:
+        functionName:
+          description: Name of the UDF. Unique within the organization.
+          type: string
+        version:
+          description: Version number of the UDF.
+          example: 1
+          type: integer
+          exclusiveMinimum: 0
+        status:
+          description: Build state of this UDF version.
+          type: string
+          enum:
+          - building
+          - error
+          - ready
+        runtime:
+          description: Runtime used to execute the UDF command.
+          type: string
+          enum:
+          - python3.11
+          - native
+        type:
+          description: Executable UDF type.
+          type: string
+          enum:
+          - executable
+          - executable_pool
+        arguments:
+          description: Arguments passed to the UDF command.
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                description: Name of the argument. Required for Native and JSONEachRow formats.
+                type: string
+                pattern: ^[A-Za-z][A-Za-z0-9_]*$
+              type:
+                description: ClickHouse data type of the argument.
+                type: string
+            required:
+            - name
+            - type
+            additionalProperties: false
+        returnType:
+          description: ClickHouse data type of the returned value.
+          type: string
+        returnName:
+          description: Name of the returned value, or null when unnamed.
+          anyOf:
+          - type: string
+          - type: 'null'
+        poolSize:
+          description: Command pool size for executable_pool UDFs.
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+        commandReadTimeout:
+          description: Command stdout read timeout in milliseconds.
+          type: integer
+          exclusiveMinimum: 0
+        commandWriteTimeout:
+          description: Command stdin write timeout in milliseconds.
+          type: integer
+          exclusiveMinimum: 0
+        maxCommandExecutionTime:
+          description: Maximum command execution time in seconds for executable_pool UDFs.
+          anyOf:
+          - type: integer
+            exclusiveMinimum: 0
+          - type: 'null'
+        memoryLimitMib:
+          description: Maximum memory, in MiB, available to each UDF sandbox process. Null uses the sandbox default.
+          default: null
+          anyOf:
+          - type: integer
+            minimum: 1
+            maximum: 1048576
+          - type: 'null'
+        sendChunkHeader:
+          description: Whether ClickHouse sends a row-count chunk header.
+          type: boolean
+        deterministic:
+          description: Whether ClickHouse may reuse cached query results for this UDF.
+          type: boolean
+        format:
+          description: Input and output format used by the UDF command.
+          type: string
+        sandboxType:
+          description: Sandbox isolation level.
+          type: string
+          enum:
+          - basic
+          - netenable
+        sandboxVersion:
+          description: Sandbox runtime version.
+          type: string
+          enum:
+          - v1
+          - v2
+          - v3
+        error:
+          description: Build error, or null when no build error is present.
+          anyOf:
+          - type: string
+          - type: 'null'
+        createdAt:
+          description: Creation timestamp.
+          type: string
+          format: date-time
+        updatedAt:
+          description: Last-update timestamp.
+          type: string
+          format: date-time
+      required:
+      - functionName
+      - version
+      - status
+      - runtime
+      - type
+      - arguments
+      - returnType
+      - returnName
+      - poolSize
+      - commandReadTimeout
+      - commandWriteTimeout
+      - maxCommandExecutionTime
+      - memoryLimitMib
+      - sendChunkHeader
+      - deterministic
+      - format
+      - sandboxType
+      - sandboxVersion
+      - error
+      - createdAt
+      - updatedAt
+      additionalProperties: false
+    Pagination:
+      type: object
+      properties:
+        totalRecords:
+          description: Total number of records available.
+          type: integer
+        currentCursor:
+          description: Cursor for the current page. Null for the first page.
+          anyOf:
+          - type: string
+          - type: 'null'
+        nextCursor:
+          description: Cursor for the next page. Null if there are no more results.
+          anyOf:
+          - type: string
+          - type: 'null'
+        limit:
+          description: Maximum number of records returned per page.
+          type: integer
+      required:
+      - totalRecords
+      - currentCursor
+      - nextCursor
+      - limit
+      additionalProperties: false
+    UdfVersionListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Udf'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+      required:
+      - items
+      - pagination
+      additionalProperties: false
     UdfListResponse:
       type: object
       properties:
@@ -2747,6 +2529,224 @@ components:
       required:
       - items
       - pagination
+      additionalProperties: false
+    UdfVersionCreateRequest:
+      oneOf:
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: Name of the argument. Required for Native and JSONEachRow formats.
+                  type: string
+                  pattern: ^[A-Za-z][A-Za-z0-9_]*$
+                type:
+                  description: ClickHouse data type of the argument.
+                  type: string
+              required:
+              - name
+              - type
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          sandboxVersion:
+            default: v2
+            type: string
+            enum:
+            - v1
+            - v2
+            - v3
+          type:
+            type: string
+            const: executable
+          poolSize:
+            default: null
+            type: 'null'
+          maxCommandExecutionTime:
+            default: 10
+            anyOf:
+            - type: integer
+              exclusiveMinimum: 0
+            - type: 'null'
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  description: Name of the argument. Required for Native and JSONEachRow formats.
+                  type: string
+                  pattern: ^[A-Za-z][A-Za-z0-9_]*$
+                type:
+                  description: ClickHouse data type of the argument.
+                  type: string
+              required:
+              - name
+              - type
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          sandboxVersion:
+            default: v2
+            type: string
+            enum:
+            - v1
+            - v2
+            - v3
+          type:
+            type: string
+            const: executable_pool
+          poolSize:
+            default: 3
+            type: integer
+            exclusiveMinimum: 0
+          maxCommandExecutionTime:
+            default: 10
+            type: integer
+            exclusiveMinimum: 0
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+      type: object
+    UdfAttachmentListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UdfAttachment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+      required:
+      - items
+      - pagination
+      additionalProperties: false
+    UdfUploadSession:
+      type: object
+      properties:
+        uploadId:
+          description: Identifier of the uploaded source archive.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        uploadUrl:
+          description: Presigned URL for uploading the source archive.
+          type: string
+          format: uri
+        expiresAt:
+          description: Presigned-URL expiry timestamp.
+          type: string
+          format: date-time
+      required:
+      - uploadId
+      - uploadUrl
+      - expiresAt
       additionalProperties: false
   securitySchemes:
     basicAuth:

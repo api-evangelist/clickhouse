@@ -388,6 +388,25 @@ paths:
       - Role Management
 components:
   schemas:
+    RoleCreateRequest:
+      properties:
+        name:
+          description: Name of the role
+          type: string
+        actors:
+          type: array
+          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
+          items:
+            type: string
+        policies:
+          type: array
+          description: List of policies to create for this role
+          items:
+            $ref: '#/components/schemas/RBACPolicyCreateRequest'
+      required:
+      - name
+      - actors
+      - policies
     RBACPolicy:
       properties:
         id:
@@ -417,30 +436,6 @@ components:
             type: string
         tags:
           $ref: '#/components/schemas/RBACPolicyTags'
-    RBACPolicyCreateRequest:
-      properties:
-        allowDeny:
-          description: Whether this policy allows or denies access
-          type: string
-          enum:
-          - ALLOW
-          - DENY
-        permissions:
-          type: array
-          description: List of permissions to grant or deny (e.g., ["control-plane:organization:view"])
-          items:
-            type: string
-        resources:
-          type: array
-          description: List of resource IDs this policy applies to (e.g., ["instance/uuid", "instance/*"])
-          items:
-            type: string
-        tags:
-          $ref: '#/components/schemas/RBACPolicyTags'
-      required:
-      - allowDeny
-      - permissions
-      - resources
     RBACPolicyTags:
       properties:
         grants:
@@ -454,21 +449,6 @@ components:
           enum:
           - sql-console-readonly
           - sql-console-admin
-    RoleUpdateRequest:
-      properties:
-        name:
-          description: New name for the role
-          type: string
-        actors:
-          type: array
-          description: New list of actor resource IDs (replaces existing actors)
-          items:
-            type: string
-        policies:
-          type: array
-          description: New list of policies (replaces existing policies)
-          items:
-            $ref: '#/components/schemas/RBACPolicyCreateRequest'
     RBACRole:
       properties:
         id:
@@ -507,25 +487,45 @@ components:
           description: Timestamp when the role was last updated. ISO-8601.
           type: string
           format: date-time
-    RoleCreateRequest:
+    RoleUpdateRequest:
       properties:
         name:
-          description: Name of the role
+          description: New name for the role
           type: string
         actors:
           type: array
-          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
+          description: New list of actor resource IDs (replaces existing actors)
           items:
             type: string
         policies:
           type: array
-          description: List of policies to create for this role
+          description: New list of policies (replaces existing policies)
           items:
             $ref: '#/components/schemas/RBACPolicyCreateRequest'
+    RBACPolicyCreateRequest:
+      properties:
+        allowDeny:
+          description: Whether this policy allows or denies access
+          type: string
+          enum:
+          - ALLOW
+          - DENY
+        permissions:
+          type: array
+          description: List of permissions to grant or deny (e.g., ["control-plane:organization:view"])
+          items:
+            type: string
+        resources:
+          type: array
+          description: List of resource IDs this policy applies to (e.g., ["instance/uuid", "instance/*"])
+          items:
+            type: string
+        tags:
+          $ref: '#/components/schemas/RBACPolicyTags'
       required:
-      - name
-      - actors
-      - policies
+      - allowDeny
+      - permissions
+      - resources
   securitySchemes:
     basicAuth:
       type: http

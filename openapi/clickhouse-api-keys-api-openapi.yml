@@ -388,17 +388,6 @@ paths:
       - API Keys
 components:
   schemas:
-    ApiKeyHashData:
-      properties:
-        keyIdHash:
-          description: 'Hash of the key ID. '
-          type: string
-        keyIdSuffix:
-          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
-        keySecretHash:
-          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
     ApiKeyPostRequest:
       properties:
         name:
@@ -477,28 +466,26 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    AssignedRole:
+    ApiKeyPostResponse:
       properties:
-        roleId:
-          description: Unique identifier of the role
+        key:
+          $ref: '#/components/schemas/ApiKey'
+        keyId:
+          description: Generated key ID. Provided only if there was no 'hashData' in the request.
           type: string
-          format: uuid
-        roleName:
-          description: Human-readable name of the role
+        keySecret:
+          description: Generated key secret. Provided only if there was no 'hashData' in the request.
           type: string
-        roleType:
-          description: 'Type of role: system (predefined) or custom (organization-defined)'
-          type: string
-          enum:
-          - system
-          - custom
-    IpAccessListEntry:
+    ApiKeyHashData:
       properties:
-        source:
-          description: IP or CIDR
+        keyIdHash:
+          description: 'Hash of the key ID. '
           type: string
-        description:
-          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
+        keyIdSuffix:
+          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+          type: string
+        keySecretHash:
+          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
           type: string
     ApiKey:
       properties:
@@ -552,15 +539,28 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    ApiKeyPostResponse:
+    AssignedRole:
       properties:
-        key:
-          $ref: '#/components/schemas/ApiKey'
-        keyId:
-          description: Generated key ID. Provided only if there was no 'hashData' in the request.
+        roleId:
+          description: Unique identifier of the role
           type: string
-        keySecret:
-          description: Generated key secret. Provided only if there was no 'hashData' in the request.
+          format: uuid
+        roleName:
+          description: Human-readable name of the role
+          type: string
+        roleType:
+          description: 'Type of role: system (predefined) or custom (organization-defined)'
+          type: string
+          enum:
+          - system
+          - custom
+    IpAccessListEntry:
+      properties:
+        source:
+          description: IP or CIDR
+          type: string
+        description:
+          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
           type: string
   securitySchemes:
     basicAuth:

@@ -638,21 +638,6 @@ components:
           description: Custom roles and System roles that will be assigned to the user when they accept the invitation
           items:
             $ref: '#/components/schemas/AssignedRole'
-    AssignedRole:
-      properties:
-        roleId:
-          description: Unique identifier of the role
-          type: string
-          format: uuid
-        roleName:
-          description: Human-readable name of the role
-          type: string
-        roleType:
-          description: 'Type of role: system (predefined) or custom (organization-defined)'
-          type: string
-          enum:
-          - system
-          - custom
     Member:
       properties:
         userId:
@@ -681,6 +666,35 @@ components:
           description: Custom roles and System roles assigned to this member
           items:
             $ref: '#/components/schemas/AssignedRole'
+    MemberPatchRequest:
+      properties:
+        role:
+          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
+          type: string
+          enum:
+          - admin
+          - developer
+          deprecated: true
+        assignedRoleIds:
+          type: array
+          description: List of role IDs to assign to the member
+          items:
+            type: string
+    AssignedRole:
+      properties:
+        roleId:
+          description: Unique identifier of the role
+          type: string
+          format: uuid
+        roleName:
+          description: Human-readable name of the role
+          type: string
+        roleType:
+          description: 'Type of role: system (predefined) or custom (organization-defined)'
+          type: string
+          enum:
+          - system
+          - custom
     InvitationPostRequest:
       properties:
         email:
@@ -697,20 +711,6 @@ components:
         assignedRoleIds:
           type: array
           description: List of role IDs to assign to the invited user when they accept the invitation
-          items:
-            type: string
-    MemberPatchRequest:
-      properties:
-        role:
-          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
-          type: string
-          enum:
-          - admin
-          - developer
-          deprecated: true
-        assignedRoleIds:
-          type: array
-          description: List of role IDs to assign to the member
           items:
             type: string
   securitySchemes:
