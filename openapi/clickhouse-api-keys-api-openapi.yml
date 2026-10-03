@@ -388,46 +388,21 @@ paths:
       - API Keys
 components:
   schemas:
-    ApiKeyPostRequest:
+    AssignedRole:
       properties:
-        name:
-          description: Name of the key.
+        roleId:
+          description: Unique identifier of the role
           type: string
-        expireAt:
-          description: Timestamp the key expires. If not present, `null` or is empty the key never expires. ISO-8601.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        state:
-          description: 'Initial state of the key: ''enabled'', ''disabled''. If not provided the new key will be ''enabled''.'
+          format: uuid
+        roleName:
+          description: Human-readable name of the role
+          type: string
+        roleType:
+          description: 'Type of role: system (predefined) or custom (organization-defined)'
           type: string
           enum:
-          - enabled
-          - disabled
-        hashData:
-          $ref: '#/components/schemas/ApiKeyHashData'
-        roles:
-          type: array
-          description: DEPRECATED. Use `assignedRoleIds` instead. List of roles assigned to the key. Contains at least 1 element.
-          items:
-            type: string
-            enum:
-            - admin
-            - developer
-            - query_endpoints
-          deprecated: true
-        assignedRoleIds:
-          type: array
-          description: Array of role UUIDs to assign to the API key
-          items:
-            type: string
-            format: uuid
-        ipAccessList:
-          type: array
-          description: List of IP addresses allowed to access the API using this key
-          items:
-            $ref: '#/components/schemas/IpAccessListEntry'
+          - system
+          - custom
     ApiKeyPatchRequest:
       properties:
         name:
@@ -466,26 +441,13 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    ApiKeyPostResponse:
+    IpAccessListEntry:
       properties:
-        key:
-          $ref: '#/components/schemas/ApiKey'
-        keyId:
-          description: Generated key ID. Provided only if there was no 'hashData' in the request.
+        source:
+          description: IP or CIDR
           type: string
-        keySecret:
-          description: Generated key secret. Provided only if there was no 'hashData' in the request.
-          type: string
-    ApiKeyHashData:
-      properties:
-        keyIdHash:
-          description: 'Hash of the key ID. '
-          type: string
-        keyIdSuffix:
-          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
-        keySecretHash:
-          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+        description:
+          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
           type: string
     ApiKey:
       properties:
@@ -539,29 +501,67 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    AssignedRole:
+    ApiKeyPostResponse:
       properties:
-        roleId:
-          description: Unique identifier of the role
+        key:
+          $ref: '#/components/schemas/ApiKey'
+        keyId:
+          description: Generated key ID. Provided only if there was no 'hashData' in the request.
           type: string
-          format: uuid
-        roleName:
-          description: Human-readable name of the role
+        keySecret:
+          description: Generated key secret. Provided only if there was no 'hashData' in the request.
           type: string
-        roleType:
-          description: 'Type of role: system (predefined) or custom (organization-defined)'
+    ApiKeyHashData:
+      properties:
+        keyIdHash:
+          description: 'Hash of the key ID. '
+          type: string
+        keyIdSuffix:
+          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+          type: string
+        keySecretHash:
+          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+          type: string
+    ApiKeyPostRequest:
+      properties:
+        name:
+          description: Name of the key.
+          type: string
+        expireAt:
+          description: Timestamp the key expires. If not present, `null` or is empty the key never expires. ISO-8601.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        state:
+          description: 'Initial state of the key: ''enabled'', ''disabled''. If not provided the new key will be ''enabled''.'
           type: string
           enum:
-          - system
-          - custom
-    IpAccessListEntry:
-      properties:
-        source:
-          description: IP or CIDR
-          type: string
-        description:
-          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
-          type: string
+          - enabled
+          - disabled
+        hashData:
+          $ref: '#/components/schemas/ApiKeyHashData'
+        roles:
+          type: array
+          description: DEPRECATED. Use `assignedRoleIds` instead. List of roles assigned to the key. Contains at least 1 element.
+          items:
+            type: string
+            enum:
+            - admin
+            - developer
+            - query_endpoints
+          deprecated: true
+        assignedRoleIds:
+          type: array
+          description: Array of role UUIDs to assign to the API key
+          items:
+            type: string
+            format: uuid
+        ipAccessList:
+          type: array
+          description: List of IP addresses allowed to access the API using this key
+          items:
+            $ref: '#/components/schemas/IpAccessListEntry'
   securitySchemes:
     basicAuth:
       type: http

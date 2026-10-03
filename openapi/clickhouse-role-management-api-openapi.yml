@@ -388,25 +388,6 @@ paths:
       - Role Management
 components:
   schemas:
-    RoleCreateRequest:
-      properties:
-        name:
-          description: Name of the role
-          type: string
-        actors:
-          type: array
-          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
-          items:
-            type: string
-        policies:
-          type: array
-          description: List of policies to create for this role
-          items:
-            $ref: '#/components/schemas/RBACPolicyCreateRequest'
-      required:
-      - name
-      - actors
-      - policies
     RBACPolicy:
       properties:
         id:
@@ -449,6 +430,25 @@ components:
           enum:
           - sql-console-readonly
           - sql-console-admin
+    RoleCreateRequest:
+      properties:
+        name:
+          description: Name of the role
+          type: string
+        actors:
+          type: array
+          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
+          items:
+            type: string
+        policies:
+          type: array
+          description: List of policies to create for this role
+          items:
+            $ref: '#/components/schemas/RBACPolicyCreateRequest'
+      required:
+      - name
+      - actors
+      - policies
     RBACRole:
       properties:
         id:

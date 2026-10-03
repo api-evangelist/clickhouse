@@ -2123,43 +2123,6 @@ paths:
         position: after
 components:
   schemas:
-    IpAccessListPatch:
-      properties:
-        add:
-          type: array
-          description: Elements to add. Executed after "remove" part is processed.
-          items:
-            $ref: '#/components/schemas/IpAccessListEntry'
-        remove:
-          type: array
-          description: Elements to remove. Executed before "add" part is processed.
-          items:
-            $ref: '#/components/schemas/IpAccessListEntry'
-    UpgradeWindowPutRequest:
-      properties:
-        weekday:
-          description: Day of the week the upgrade window starts. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
-          type: integer
-          minimum: 0
-          maximum: 6
-          example: 3
-        startHourUtc:
-          description: UTC hour when the upgrade window starts. Must be one of 0, 6, 12, or 18. The upgrade window currently lasts 6 hours from this start time.
-          type: integer
-          enum:
-          - 0
-          - 6
-          - 12
-          - 18
-          example: 12
-      required:
-      - weekday
-      - startHourUtc
-    ServicePasswordPatchResponse:
-      properties:
-        password:
-          description: New service password. Provided only if there was no 'newPasswordHash' in the request
-          type: string
     ScalingSchedule:
       properties:
         entries:
@@ -2176,81 +2139,143 @@ components:
       required:
       - entries
       - baseConfig
-    InstanceServiceQueryApiEndpointsPostRequest:
+    ServicePasswordPatchRequest:
       properties:
-        roles:
-          type: array
-          description: The roles
-          items:
-            type: string
-            enum:
-            - sql_console_read_only
-            - sql_console_admin
-        openApiKeys:
-          type: array
-          description: The version of the service query endpoint
-          items:
-            type: string
-        allowedOrigins:
-          description: The allowed origins as comma separated list of domains
+        newPasswordHash:
+          description: 'Optional password hash. Used to avoid password transmission over network. If not provided a new password is generated and is provided in the response. Otherwise this hash is used. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
           type: string
-    ServiceClickhouseSettingsSchema:
+        newDoubleSha1Hash:
+          description: 'Optional double SHA1 password hash for MySQL protocol. If newPasswordHash is not provided this key will be ignored and the generated password will be used. Algorithm: echo -n "yourpassword" | sha1sum | tr -d ''-'' | xxd -r -p | sha1sum | tr -d ''-'''
+          type: string
+    ServiceClickhouseSettingSchemaEntry:
       properties:
-        settings:
+        name:
+          description: Name of the setting.
+          type: string
+          example: compatibility
+        type:
+          description: Data type of the setting value.
+          type: string
+          example: string
+        description:
+          description: Description of the setting.
+          type: string
+          example: ClickHouse version compatibility setting.
+        enum:
           type: array
-          description: List of all configurable ClickHouse settings with their types, descriptions, and constraints.
+          description: List of allowed values, if the setting is an enum.
           items:
-            $ref: '#/components/schemas/ServiceClickhouseSettingSchemaEntry'
-    InstancePrivateEndpointsPatch:
+            type: integer
+          example:
+          - 0
+          - 1
+        warning:
+          description: Warning message about potential disruptive effects of changing this setting.
+          type: string
+          example: Changing this setting without comprehensive testing can cause instability.
+        deprecationNotice:
+          description: Deprecation notice, if applicable.
+          type: string
+          example: This setting may become obsolete with Cloud v2 stateless workers.
+        example:
+          description: Example value for the setting.
+          type: string
+          example: '24.8'
+    PrivateEndpointConfig:
       properties:
-        add:
-          type: array
-          description: Elements to add. Executed after "remove" part is processed.
-          items:
-            type: string
-        remove:
-          type: array
-          description: Elements to remove. Executed before "add" part is processed.
-          items:
-            type: string
-    ServiceScalingPatchRequest:
+        endpointServiceId:
+          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name), GCP(Target Service) or AZURE (Private Link Service) resource
+          type: string
+        privateDnsHostname:
+          description: Private DNS Hostname of the VPC you created
+          type: string
+    ServiceClickhouseSetting:
       properties:
-        minTotalMemoryGb:
-          description: DEPRECATED - inaccurate for services with non-default numbers of replicas. Use `minReplicaMemoryGb` instead. Minimum memory of three workers during auto-scaling in Gb. Available only for 'production' services. Must be a multiple of 12 and greater than or equal to 24. Always absent for horizontal-autoscaling services (replica count is variable).
-          type: number
-          minimum: 24
-          maximum: 1068
-          multipleOf: 12
-          example: 48
-          deprecated: true
-        maxTotalMemoryGb:
-          description: DEPRECATED - inaccurate for services with non-default numbers of replicas. Use `maxReplicaMemoryGb` instead. Maximum memory of three workers during auto-scaling in Gb. Available only for 'production' services. Must be a multiple of 12 and lower than or equal to 360 for non paid services or 1068 for paid services. Always absent for horizontal-autoscaling services (replica count is variable).
-          type: number
-          minimum: 24
-          maximum: 1068
-          multipleOf: 12
-          example: 360
-          deprecated: true
-        numReplicas:
-          description: Number of replicas for the service. The number of replicas must be between 2 and 20 for the first service in a warehouse. Services that are created in an existing warehouse can have a number of replicas as low as 1. Further restrictions may apply based on your organization's tier. It defaults to 1 for the BASIC tier and 3 for the SCALE and ENTERPRISE tiers.
+        name:
+          description: Name of the setting.
+          type: string
+          example: compatibility
+        value:
+          description: Current value of the setting. Returned as a string for all setting types.
+          type: string
+          example: '24.8'
+    ScalingScheduleEntryRequest:
+      properties:
+        name:
+          description: Human-readable label for this schedule entry.
+          type: string
+          example: Business hours
+        weekdays:
+          type: array
+          description: Days of the week this entry applies to. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
+          items:
+            type: integer
+          example:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          minItems: 1
+        startHourUtc:
+          description: UTC hour (0–23) when this entry becomes active (inclusive).
+          type: integer
+          minimum: 0
+          maximum: 23
+          example: 9
+        endHourUtc:
+          description: UTC hour (1–24) when this entry deactivates (exclusive). Must differ from startHourUtc. Set to 24 to end at midnight. Values less than startHourUtc create an overnight window spanning midnight.
           type: integer
           minimum: 1
-          maximum: 20
+          maximum: 24
+          example: 17
+        autoscalingMode:
+          description: Autoscaling mode for this entry. "vertical" (the default when omitted) runs a fixed replica count while memory scales between minReplicaMemoryGb and maxReplicaMemoryGb; "horizontal" scales the replica count between minReplicas and maxReplicas at a fixed per-replica memory (minReplicaMemoryGb equal to maxReplicaMemoryGb). Horizontal requires the feature to be enabled for the organization.
+          type: string
+          enum:
+          - vertical
+          - horizontal
+          example: vertical
+        minReplicaMemoryGb:
+          description: Minimum memory per replica (Gb). Optional for vertical entries — provide both bounds for a memory range, or omit both to inherit memory from the base scaling config. Required for horizontal (both bounds, equal to maxReplicaMemoryGb — memory is fixed while the replica count scales). The upper bound is tier-dependent (lower for non-paid organizations) and enforced when the entry is applied.
+          type: number
+          minimum: 8
+          maximum: 356
+          multipleOf: 4
+          example: 16
+        maxReplicaMemoryGb:
+          description: Maximum memory per replica (Gb). Optional for vertical entries — provide both bounds for a memory range, or omit both to inherit memory from the base scaling config. Required for horizontal (both bounds, equal to minReplicaMemoryGb — memory is fixed while the replica count scales). The upper bound is tier-dependent (lower for non-paid organizations) and enforced when the entry is applied.
+          type: number
+          minimum: 8
+          maximum: 356
+          multipleOf: 4
+          example: 16
+        numReplicas:
+          description: Fixed replica count for a vertical entry (autoscalingMode "vertical" or omitted). Mutually exclusive with minReplicas/maxReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
+          type: integer
+          minimum: 1
+          example: 3
+        minReplicas:
+          description: Minimum number of replicas. A minReplicas/maxReplicas band scales the replica count in a horizontal entry (autoscalingMode "horizontal"); when autoscalingMode is omitted or "vertical", an equal band (minReplicas === maxReplicas) is instead an accepted vertical fixed count and needs no horizontal entitlement. Must be provided together with maxReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
+          type: integer
+          minimum: 1
+          example: 2
+        maxReplicas:
+          description: Maximum number of replicas. A minReplicas/maxReplicas band scales the replica count in a horizontal entry (autoscalingMode "horizontal"); when autoscalingMode is omitted or "vertical", an equal band (minReplicas === maxReplicas) is instead an accepted vertical fixed count and needs no horizontal entitlement. Must be provided together with minReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
+          type: integer
+          minimum: 1
           example: 3
         idleScaling:
-          description: When set to true the service is allowed to scale down to zero when idle. True by default.
+          description: Whether idle scaling is enabled during this window.
           type: boolean
         idleTimeoutMinutes:
-          description: Set minimum idling timeout (in minutes). Must be >= 5 minutes.
-          type: number
-    IpAccessListEntry:
-      properties:
-        source:
-          description: IP or CIDR
-          type: string
-        description:
-          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
-          type: string
+          description: Idle timeout in minutes during this window.
+          type: integer
+      required:
+      - name
+      - weekdays
+      - startHourUtc
+      - endHourUtc
     ServiceStatePatchRequest:
       properties:
         command:
@@ -2260,85 +2285,27 @@ components:
           - start
           - stop
           - awake
-    ServiceClickhouseSettingWarning:
-      properties:
-        name:
-          description: Name of the setting the warning applies to.
-          type: string
-          example: compatibility
-        message:
-          description: Warning message.
-          type: string
-          example: Changing the compatibility version without comprehensive testing can cause query failures or instability.
-    InstanceTagsPatch:
+    IpAccessListPatch:
       properties:
         add:
           type: array
           description: Elements to add. Executed after "remove" part is processed.
           items:
-            $ref: '#/components/schemas/ResourceTagsV1'
-          maxItems: 50
+            $ref: '#/components/schemas/IpAccessListEntry'
         remove:
           type: array
           description: Elements to remove. Executed before "add" part is processed.
           items:
-            $ref: '#/components/schemas/ResourceTagsV1'
-          maxItems: 50
-    UpgradeWindow:
+            $ref: '#/components/schemas/IpAccessListEntry'
+    ScalingSchedulePostRequest:
       properties:
-        weekday:
-          description: Day of the week the upgrade window starts. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
-          type: integer
-          minimum: 0
-          maximum: 6
-          example: 3
-        startHourUtc:
-          description: UTC hour when the upgrade window starts. Must be one of 0, 6, 12, or 18.
-          type: integer
-          enum:
-          - 0
-          - 6
-          - 12
-          - 18
-          example: 12
-        duration:
-          description: Length of the upgrade window in hours. Currently only a 6-hour window is supported.
-          type: integer
-          enum:
-          - 6
-          example: 6
+        entries:
+          type: array
+          description: List of schedule entries. Pass an empty array to clear the schedule.
+          items:
+            $ref: '#/components/schemas/ScalingScheduleEntryRequest'
       required:
-      - weekday
-      - startHourUtc
-      - duration
-    ServiceQueryAPIEndpoint:
-      properties:
-        id:
-          description: The id of the service query endpoint
-          type: string
-        openApiKeys:
-          type: array
-          description: List of OpenAPI keys that can access the service query endpoint
-          items:
-            type: string
-        roles:
-          type: array
-          description: List of roles that can access the service query endpoint
-          items:
-            type: string
-            enum:
-            - sql_console_read_only
-            - sql_console_admin
-        allowedOrigins:
-          description: The allowed origins as comma separated list of domains
-          type: string
-    ServicePostResponse:
-      properties:
-        service:
-          $ref: '#/components/schemas/Service'
-        password:
-          description: Password for the newly created service.
-          type: string
+      - entries
     Service:
       properties:
         id:
@@ -2576,190 +2543,22 @@ components:
       required:
       - autoscalingMode
       - currentScaling
-    ResourceTagsV1:
-      type: object
+    ServiceClickhouseSettingsPatchResponse:
       properties:
-        key:
+        settings:
+          description: 'JSON object of setting names to their applied values. Example: {"compatibility": "24.8"}'
           type: string
-          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
-          minLength: 1
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9._-]+$
-        value:
-          type: string
-          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9._-]+$
-      required:
-      - key
-      example:
-        key: Environment
-        value: staging
-    ScalingScheduleEntryRequest:
-      properties:
-        name:
-          description: Human-readable label for this schedule entry.
-          type: string
-          example: Business hours
-        weekdays:
+          example: '{"compatibility": "24.8"}'
+        warnings:
           type: array
-          description: Days of the week this entry applies to. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
+          description: Warnings for settings that may have disruptive effects.
           items:
-            type: integer
-          example:
-          - 1
-          - 2
-          - 3
-          - 4
-          - 5
-          minItems: 1
-        startHourUtc:
-          description: UTC hour (0–23) when this entry becomes active (inclusive).
-          type: integer
-          minimum: 0
-          maximum: 23
-          example: 9
-        endHourUtc:
-          description: UTC hour (1–24) when this entry deactivates (exclusive). Must differ from startHourUtc. Set to 24 to end at midnight. Values less than startHourUtc create an overnight window spanning midnight.
-          type: integer
-          minimum: 1
-          maximum: 24
-          example: 17
-        autoscalingMode:
-          description: Autoscaling mode for this entry. "vertical" (the default when omitted) runs a fixed replica count while memory scales between minReplicaMemoryGb and maxReplicaMemoryGb; "horizontal" scales the replica count between minReplicas and maxReplicas at a fixed per-replica memory (minReplicaMemoryGb equal to maxReplicaMemoryGb). Horizontal requires the feature to be enabled for the organization.
-          type: string
-          enum:
-          - vertical
-          - horizontal
-          example: vertical
-        minReplicaMemoryGb:
-          description: Minimum memory per replica (Gb). Optional for vertical entries — provide both bounds for a memory range, or omit both to inherit memory from the base scaling config. Required for horizontal (both bounds, equal to maxReplicaMemoryGb — memory is fixed while the replica count scales). The upper bound is tier-dependent (lower for non-paid organizations) and enforced when the entry is applied.
-          type: number
-          minimum: 8
-          maximum: 356
-          multipleOf: 4
-          example: 16
-        maxReplicaMemoryGb:
-          description: Maximum memory per replica (Gb). Optional for vertical entries — provide both bounds for a memory range, or omit both to inherit memory from the base scaling config. Required for horizontal (both bounds, equal to minReplicaMemoryGb — memory is fixed while the replica count scales). The upper bound is tier-dependent (lower for non-paid organizations) and enforced when the entry is applied.
-          type: number
-          minimum: 8
-          maximum: 356
-          multipleOf: 4
-          example: 16
-        numReplicas:
-          description: Fixed replica count for a vertical entry (autoscalingMode "vertical" or omitted). Mutually exclusive with minReplicas/maxReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
-          type: integer
-          minimum: 1
-          example: 3
-        minReplicas:
-          description: Minimum number of replicas. A minReplicas/maxReplicas band scales the replica count in a horizontal entry (autoscalingMode "horizontal"); when autoscalingMode is omitted or "vertical", an equal band (minReplicas === maxReplicas) is instead an accepted vertical fixed count and needs no horizontal entitlement. Must be provided together with maxReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
-          type: integer
-          minimum: 1
-          example: 2
-        maxReplicas:
-          description: Maximum number of replicas. A minReplicas/maxReplicas band scales the replica count in a horizontal entry (autoscalingMode "horizontal"); when autoscalingMode is omitted or "vertical", an equal band (minReplicas === maxReplicas) is instead an accepted vertical fixed count and needs no horizontal entitlement. Must be provided together with minReplicas. The per-service replica maximum is variable (tier-dependent, configurable per service) and enforced when the entry is applied, not at request time.
-          type: integer
-          minimum: 1
-          example: 3
-        idleScaling:
-          description: Whether idle scaling is enabled during this window.
-          type: boolean
-        idleTimeoutMinutes:
-          description: Idle timeout in minutes during this window.
-          type: integer
-      required:
-      - name
-      - weekdays
-      - startHourUtc
-      - endHourUtc
-    ServiceReplicaScalingPatchRequest:
+            $ref: '#/components/schemas/ServiceClickhouseSettingWarning'
+    ServicePasswordPatchResponse:
       properties:
-        minReplicaMemoryGb:
-          description: Minimum auto-scaling memory in Gb for a single replica. Available only for 'production' services. Must be a multiple of 4 and greater than or equal to 8. A range in vertical autoscaling; equal to maxReplicaMemoryGb in horizontal.
-          type: number
-          minimum: 8
-          maximum: 356
-          multipleOf: 4
-          example: 16
-        maxReplicaMemoryGb:
-          description: Maximum auto-scaling memory in Gb for a single replica. Available only for 'production' services. Must be a multiple of 4 and lower than or equal to 120 for non paid services or 356 for paid services. A range in vertical autoscaling; equal to minReplicaMemoryGb in horizontal.
-          type: number
-          minimum: 8
-          maximum: 356
-          multipleOf: 4
-          example: 120
-        autoscalingMode:
-          description: Target autoscaling mode. Omit to keep the service on its current mode. "vertical" runs a fixed replica count while memory scales between minReplicaMemoryGb and maxReplicaMemoryGb; "horizontal" scales the replica count between minReplicas and maxReplicas at a fixed per-replica memory (minReplicaMemoryGb equal to maxReplicaMemoryGb). Switching to horizontal requires the feature to be enabled for the organization.
+        password:
+          description: New service password. Provided only if there was no 'newPasswordHash' in the request
           type: string
-          enum:
-          - vertical
-          - horizontal
-          example: vertical
-        numReplicas:
-          description: Fixed replica count for vertical autoscaling (autoscalingMode "vertical"). Mutually exclusive with minReplicas/maxReplicas. When switching to vertical (autoscalingMode "vertical") with numReplicas and no memory, the service's stored baseline per-replica memory is kept as the new vertical range. Please contact support to enable adjustment of numReplicas.
-          type: integer
-          minimum: 1
-          maximum: 20
-          example: 3
-        minReplicas:
-          description: Minimum number of replicas. A minReplicas/maxReplicas band scales the replica count in horizontal autoscaling (autoscalingMode "horizontal"). Must be provided together with maxReplicas. Mutually exclusive with numReplicas. Requires horizontal autoscaling to be enabled for the service, unless autoscalingMode is omitted or "vertical" and minReplicas equals maxReplicas (an equal band is then an accepted vertical fixed count and needs no horizontal entitlement).
-          type: integer
-          minimum: 1
-          maximum: 20
-          example: 1
-        maxReplicas:
-          description: Maximum number of replicas. A minReplicas/maxReplicas band scales the replica count in horizontal autoscaling (autoscalingMode "horizontal"). Must be provided together with minReplicas. Mutually exclusive with numReplicas. Requires horizontal autoscaling to be enabled for the service, unless autoscalingMode is omitted or "vertical" and minReplicas equals maxReplicas (an equal band is then an accepted vertical fixed count and needs no horizontal entitlement).
-          type: integer
-          minimum: 1
-          maximum: 20
-          example: 5
-        idleScaling:
-          description: When set to true the service is allowed to scale down to zero when idle. True by default.
-          type: boolean
-        idleTimeoutMinutes:
-          description: Set minimum idling timeout (in minutes). Must be >= 5 minutes.
-          type: number
-    CurrentScaling:
-      properties:
-        effectiveAutoscalingMode:
-          description: Autoscaling mode currently in effect on the running service. May diverge from the configured baseline mode while a schedule entry is active.
-          type: string
-          enum:
-          - vertical
-          - horizontal
-        effectiveMinReplicaMemoryGb:
-          description: Minimum memory per replica (Gb) currently applied to the running service. May diverge from the top-level `minReplicaMemoryGb` baseline while a schedule entry is active.
-          type: number
-        effectiveMaxReplicaMemoryGb:
-          description: 'Maximum memory per replica (Gb) currently applied to the running service. May diverge from the top-level `maxReplicaMemoryGb` baseline while a schedule entry is active. Reflects the stored value: normally equal to `effectiveMinReplicaMemoryGb` in horizontal mode, but a legacy service stored with an unequal memory range reports the stored bounds as-is.'
-          type: number
-        effectiveMinReplicas:
-          description: 'Minimum number of replicas currently applied to the running service. May diverge from the baseline while a schedule entry is active. Reflects the stored value: normally equal to `effectiveMaxReplicas` in vertical mode (a fixed replica count), but a legacy service stored with an unequal replica range reports the stored bounds as-is.'
-          type: integer
-        effectiveMaxReplicas:
-          description: Maximum number of replicas currently applied to the running service. May diverge from the baseline while a schedule entry is active.
-          type: integer
-        effectiveIdleScaling:
-          description: Whether idle scaling is currently in effect on the service. May diverge from the top-level `idleScaling` baseline while a schedule entry is active.
-          type: boolean
-        effectiveIdleTimeoutMinutes:
-          description: Idle timeout in minutes currently in effect on the service. May diverge from the top-level `idleTimeoutMinutes` baseline while a schedule entry is active.
-          type: integer
-        activeEntryId:
-          description: ID of the schedule entry whose values are currently applied to the service. Absent when no entry is active.
-          type: string
-          format: uuid
-    ServiceProfile:
-      properties:
-        profile:
-          description: Profile name to pass as `profile` when creating a service (e.g. 'v1-standard-byoc-4').
-          type: string
-        cpuCores:
-          description: Number of vCPUs per replica.
-          type: number
-        memoryGi:
-          description: Memory per replica in GiB. When creating a BYOC service with this profile, minReplicaMemoryGb and maxReplicaMemoryGb must both equal this value.
-          type: number
     ScalingScheduleBaseConfig:
       properties:
         autoscalingMode:
@@ -2786,68 +2585,6 @@ components:
         idleTimeoutMinutes:
           description: Idle timeout in minutes when no schedule entry is active.
           type: integer
-    ServiceEndpoint:
-      properties:
-        protocol:
-          description: 'Endpoint protocol: ''https'', ''nativesecure'', ''mysql''.'
-          type: string
-          enum:
-          - https
-          - nativesecure
-          - mysql
-          example: mysql
-        host:
-          description: Service host name
-          type: string
-        port:
-          description: Numeric port
-          type: number
-        username:
-          description: Optional username for the endpoint
-          type:
-          - string
-          - 'null'
-    ServiceClickhouseSettingsPatchRequest:
-      properties:
-        settings:
-          description: 'JSON object of setting names to values. Example: {"compatibility": "24.8"}'
-          type: string
-          example: '{"compatibility": "24.8"}'
-      required:
-      - settings
-    ServiceClickhouseSetting:
-      properties:
-        name:
-          description: Name of the setting.
-          type: string
-          example: compatibility
-        value:
-          description: Current value of the setting. Returned as a string for all setting types.
-          type: string
-          example: '24.8'
-    ServicePasswordPatchRequest:
-      properties:
-        newPasswordHash:
-          description: 'Optional password hash. Used to avoid password transmission over network. If not provided a new password is generated and is provided in the response. Otherwise this hash is used. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
-        newDoubleSha1Hash:
-          description: 'Optional double SHA1 password hash for MySQL protocol. If newPasswordHash is not provided this key will be ignored and the generated password will be used. Algorithm: echo -n "yourpassword" | sha1sum | tr -d ''-'' | xxd -r -p | sha1sum | tr -d ''-'''
-          type: string
-    ServicPrivateEndpointePostRequest:
-      properties:
-        id:
-          description: Private endpoint identifier
-          type: string
-        description:
-          description: Description of private endpoint
-          type: string
-    ServiceClickhouseSettingsList:
-      properties:
-        settings:
-          type: array
-          description: List of ClickHouse settings with their current values.
-          items:
-            $ref: '#/components/schemas/ServiceClickhouseSetting'
     ServicePostRequest:
       properties:
         name:
@@ -3033,15 +2770,53 @@ components:
         enableCoreDumps:
           description: Enables the underlying infra for collecting core dumps. Default is enabled.
           type: boolean
-    ScalingSchedulePostRequest:
+    UpgradeWindowPutRequest:
       properties:
-        entries:
-          type: array
-          description: List of schedule entries. Pass an empty array to clear the schedule.
-          items:
-            $ref: '#/components/schemas/ScalingScheduleEntryRequest'
+        weekday:
+          description: Day of the week the upgrade window starts. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
+          type: integer
+          minimum: 0
+          maximum: 6
+          example: 3
+        startHourUtc:
+          description: UTC hour when the upgrade window starts. Must be one of 0, 6, 12, or 18. The upgrade window currently lasts 6 hours from this start time.
+          type: integer
+          enum:
+          - 0
+          - 6
+          - 12
+          - 18
+          example: 12
       required:
-      - entries
+      - weekday
+      - startHourUtc
+    UpgradeWindow:
+      properties:
+        weekday:
+          description: Day of the week the upgrade window starts. 0 = Sunday, 1 = Monday, …, 6 = Saturday.
+          type: integer
+          minimum: 0
+          maximum: 6
+          example: 3
+        startHourUtc:
+          description: UTC hour when the upgrade window starts. Must be one of 0, 6, 12, or 18.
+          type: integer
+          enum:
+          - 0
+          - 6
+          - 12
+          - 18
+          example: 12
+        duration:
+          description: Length of the upgrade window in hours. Currently only a 6-hour window is supported.
+          type: integer
+          enum:
+          - 6
+          example: 6
+      required:
+      - weekday
+      - startHourUtc
+      - duration
     ServicePatchRequest:
       properties:
         name:
@@ -3073,28 +2848,138 @@ components:
         enableCoreDumps:
           description: If true, the underlying infra is enabled for collecting core dumps.
           type: boolean
-    ServiceEndpointChange:
+    InstanceTagsPatch:
       properties:
-        protocol:
-          description: Endpoint protocol
+        add:
+          type: array
+          description: Elements to add. Executed after "remove" part is processed.
+          items:
+            $ref: '#/components/schemas/ResourceTagsV1'
+          maxItems: 50
+        remove:
+          type: array
+          description: Elements to remove. Executed before "add" part is processed.
+          items:
+            $ref: '#/components/schemas/ResourceTagsV1'
+          maxItems: 50
+    InstanceServiceQueryApiEndpointsPostRequest:
+      properties:
+        roles:
+          type: array
+          description: The roles
+          items:
+            type: string
+            enum:
+            - sql_console_read_only
+            - sql_console_admin
+        openApiKeys:
+          type: array
+          description: The version of the service query endpoint
+          items:
+            type: string
+        allowedOrigins:
+          description: The allowed origins as comma separated list of domains
           type: string
-          enum:
-          - mysql
-          example: mysql
-        enabled:
-          description: Enable or disable the endpoint
-          type: boolean
-    ServiceClickhouseSettingsPatchResponse:
+    ServicePostResponse:
+      properties:
+        service:
+          $ref: '#/components/schemas/Service'
+        password:
+          description: Password for the newly created service.
+          type: string
+    ResourceTagsV1:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
+          minLength: 1
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._-]+$
+        value:
+          type: string
+          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
+          maxLength: 256
+          pattern: ^[a-zA-Z0-9._-]+$
+      required:
+      - key
+      example:
+        key: Environment
+        value: staging
+    ServiceClickhouseSettingsSchema:
       properties:
         settings:
-          description: 'JSON object of setting names to their applied values. Example: {"compatibility": "24.8"}'
+          type: array
+          description: List of all configurable ClickHouse settings with their types, descriptions, and constraints.
+          items:
+            $ref: '#/components/schemas/ServiceClickhouseSettingSchemaEntry'
+    CurrentScaling:
+      properties:
+        effectiveAutoscalingMode:
+          description: Autoscaling mode currently in effect on the running service. May diverge from the configured baseline mode while a schedule entry is active.
+          type: string
+          enum:
+          - vertical
+          - horizontal
+        effectiveMinReplicaMemoryGb:
+          description: Minimum memory per replica (Gb) currently applied to the running service. May diverge from the top-level `minReplicaMemoryGb` baseline while a schedule entry is active.
+          type: number
+        effectiveMaxReplicaMemoryGb:
+          description: 'Maximum memory per replica (Gb) currently applied to the running service. May diverge from the top-level `maxReplicaMemoryGb` baseline while a schedule entry is active. Reflects the stored value: normally equal to `effectiveMinReplicaMemoryGb` in horizontal mode, but a legacy service stored with an unequal memory range reports the stored bounds as-is.'
+          type: number
+        effectiveMinReplicas:
+          description: 'Minimum number of replicas currently applied to the running service. May diverge from the baseline while a schedule entry is active. Reflects the stored value: normally equal to `effectiveMaxReplicas` in vertical mode (a fixed replica count), but a legacy service stored with an unequal replica range reports the stored bounds as-is.'
+          type: integer
+        effectiveMaxReplicas:
+          description: Maximum number of replicas currently applied to the running service. May diverge from the baseline while a schedule entry is active.
+          type: integer
+        effectiveIdleScaling:
+          description: Whether idle scaling is currently in effect on the service. May diverge from the top-level `idleScaling` baseline while a schedule entry is active.
+          type: boolean
+        effectiveIdleTimeoutMinutes:
+          description: Idle timeout in minutes currently in effect on the service. May diverge from the top-level `idleTimeoutMinutes` baseline while a schedule entry is active.
+          type: integer
+        activeEntryId:
+          description: ID of the schedule entry whose values are currently applied to the service. Absent when no entry is active.
+          type: string
+          format: uuid
+    IpAccessListEntry:
+      properties:
+        source:
+          description: IP or CIDR
+          type: string
+        description:
+          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
+          type: string
+    ServiceClickhouseSettingsPatchRequest:
+      properties:
+        settings:
+          description: 'JSON object of setting names to values. Example: {"compatibility": "24.8"}'
           type: string
           example: '{"compatibility": "24.8"}'
-        warnings:
+      required:
+      - settings
+    ServiceQueryAPIEndpoint:
+      properties:
+        id:
+          description: The id of the service query endpoint
+          type: string
+        openApiKeys:
           type: array
-          description: Warnings for settings that may have disruptive effects.
+          description: List of OpenAPI keys that can access the service query endpoint
           items:
-            $ref: '#/components/schemas/ServiceClickhouseSettingWarning'
+            type: string
+        roles:
+          type: array
+          description: List of roles that can access the service query endpoint
+          items:
+            type: string
+            enum:
+            - sql_console_read_only
+            - sql_console_admin
+        allowedOrigins:
+          description: The allowed origins as comma separated list of domains
+          type: string
     InstancePrivateEndpoint:
       properties:
         id:
@@ -3138,6 +3023,50 @@ components:
           - westus3
           - germanywestcentral
           - centralus
+    ServiceProfile:
+      properties:
+        profile:
+          description: Profile name to pass as `profile` when creating a service (e.g. 'v1-standard-byoc-4').
+          type: string
+        cpuCores:
+          description: Number of vCPUs per replica.
+          type: number
+        memoryGi:
+          description: Memory per replica in GiB. When creating a BYOC service with this profile, minReplicaMemoryGb and maxReplicaMemoryGb must both equal this value.
+          type: number
+    ServiceEndpoint:
+      properties:
+        protocol:
+          description: 'Endpoint protocol: ''https'', ''nativesecure'', ''mysql''.'
+          type: string
+          enum:
+          - https
+          - nativesecure
+          - mysql
+          example: mysql
+        host:
+          description: Service host name
+          type: string
+        port:
+          description: Numeric port
+          type: number
+        username:
+          description: Optional username for the endpoint
+          type:
+          - string
+          - 'null'
+    InstancePrivateEndpointsPatch:
+      properties:
+        add:
+          type: array
+          description: Elements to add. Executed after "remove" part is processed.
+          items:
+            type: string
+        remove:
+          type: array
+          description: Elements to remove. Executed before "add" part is processed.
+          items:
+            type: string
     ServiceScalingPatchResponse:
       properties:
         id:
@@ -3375,13 +3304,107 @@ components:
       required:
       - autoscalingMode
       - currentScaling
-    PrivateEndpointConfig:
+    ServiceReplicaScalingPatchRequest:
       properties:
-        endpointServiceId:
-          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name), GCP(Target Service) or AZURE (Private Link Service) resource
+        minReplicaMemoryGb:
+          description: Minimum auto-scaling memory in Gb for a single replica. Available only for 'production' services. Must be a multiple of 4 and greater than or equal to 8. A range in vertical autoscaling; equal to maxReplicaMemoryGb in horizontal.
+          type: number
+          minimum: 8
+          maximum: 356
+          multipleOf: 4
+          example: 16
+        maxReplicaMemoryGb:
+          description: Maximum auto-scaling memory in Gb for a single replica. Available only for 'production' services. Must be a multiple of 4 and lower than or equal to 120 for non paid services or 356 for paid services. A range in vertical autoscaling; equal to minReplicaMemoryGb in horizontal.
+          type: number
+          minimum: 8
+          maximum: 356
+          multipleOf: 4
+          example: 120
+        autoscalingMode:
+          description: Target autoscaling mode. Omit to keep the service on its current mode. "vertical" runs a fixed replica count while memory scales between minReplicaMemoryGb and maxReplicaMemoryGb; "horizontal" scales the replica count between minReplicas and maxReplicas at a fixed per-replica memory (minReplicaMemoryGb equal to maxReplicaMemoryGb). Switching to horizontal requires the feature to be enabled for the organization.
           type: string
-        privateDnsHostname:
-          description: Private DNS Hostname of the VPC you created
+          enum:
+          - vertical
+          - horizontal
+          example: vertical
+        numReplicas:
+          description: Fixed replica count for vertical autoscaling (autoscalingMode "vertical"). Mutually exclusive with minReplicas/maxReplicas. When switching to vertical (autoscalingMode "vertical") with numReplicas and no memory, the service's stored baseline per-replica memory is kept as the new vertical range. Please contact support to enable adjustment of numReplicas.
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 3
+        minReplicas:
+          description: Minimum number of replicas. A minReplicas/maxReplicas band scales the replica count in horizontal autoscaling (autoscalingMode "horizontal"). Must be provided together with maxReplicas. Mutually exclusive with numReplicas. Requires horizontal autoscaling to be enabled for the service, unless autoscalingMode is omitted or "vertical" and minReplicas equals maxReplicas (an equal band is then an accepted vertical fixed count and needs no horizontal entitlement).
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 1
+        maxReplicas:
+          description: Maximum number of replicas. A minReplicas/maxReplicas band scales the replica count in horizontal autoscaling (autoscalingMode "horizontal"). Must be provided together with minReplicas. Mutually exclusive with numReplicas. Requires horizontal autoscaling to be enabled for the service, unless autoscalingMode is omitted or "vertical" and minReplicas equals maxReplicas (an equal band is then an accepted vertical fixed count and needs no horizontal entitlement).
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 5
+        idleScaling:
+          description: When set to true the service is allowed to scale down to zero when idle. True by default.
+          type: boolean
+        idleTimeoutMinutes:
+          description: Set minimum idling timeout (in minutes). Must be >= 5 minutes.
+          type: number
+    ServiceClickhouseSettingsList:
+      properties:
+        settings:
+          type: array
+          description: List of ClickHouse settings with their current values.
+          items:
+            $ref: '#/components/schemas/ServiceClickhouseSetting'
+    ServiceClickhouseSettingWarning:
+      properties:
+        name:
+          description: Name of the setting the warning applies to.
+          type: string
+          example: compatibility
+        message:
+          description: Warning message.
+          type: string
+          example: Changing the compatibility version without comprehensive testing can cause query failures or instability.
+    ServiceScalingPatchRequest:
+      properties:
+        minTotalMemoryGb:
+          description: DEPRECATED - inaccurate for services with non-default numbers of replicas. Use `minReplicaMemoryGb` instead. Minimum memory of three workers during auto-scaling in Gb. Available only for 'production' services. Must be a multiple of 12 and greater than or equal to 24. Always absent for horizontal-autoscaling services (replica count is variable).
+          type: number
+          minimum: 24
+          maximum: 1068
+          multipleOf: 12
+          example: 48
+          deprecated: true
+        maxTotalMemoryGb:
+          description: DEPRECATED - inaccurate for services with non-default numbers of replicas. Use `maxReplicaMemoryGb` instead. Maximum memory of three workers during auto-scaling in Gb. Available only for 'production' services. Must be a multiple of 12 and lower than or equal to 360 for non paid services or 1068 for paid services. Always absent for horizontal-autoscaling services (replica count is variable).
+          type: number
+          minimum: 24
+          maximum: 1068
+          multipleOf: 12
+          example: 360
+          deprecated: true
+        numReplicas:
+          description: Number of replicas for the service. The number of replicas must be between 2 and 20 for the first service in a warehouse. Services that are created in an existing warehouse can have a number of replicas as low as 1. Further restrictions may apply based on your organization's tier. It defaults to 1 for the BASIC tier and 3 for the SCALE and ENTERPRISE tiers.
+          type: integer
+          minimum: 1
+          maximum: 20
+          example: 3
+        idleScaling:
+          description: When set to true the service is allowed to scale down to zero when idle. True by default.
+          type: boolean
+        idleTimeoutMinutes:
+          description: Set minimum idling timeout (in minutes). Must be >= 5 minutes.
+          type: number
+    ServicPrivateEndpointePostRequest:
+      properties:
+        id:
+          description: Private endpoint identifier
+          type: string
+        description:
+          description: Description of private endpoint
           type: string
     ScalingScheduleEntry:
       properties:
@@ -3443,40 +3466,17 @@ components:
       - endHourUtc
       - autoscalingMode
       - isActiveNow
-    ServiceClickhouseSettingSchemaEntry:
+    ServiceEndpointChange:
       properties:
-        name:
-          description: Name of the setting.
+        protocol:
+          description: Endpoint protocol
           type: string
-          example: compatibility
-        type:
-          description: Data type of the setting value.
-          type: string
-          example: string
-        description:
-          description: Description of the setting.
-          type: string
-          example: ClickHouse version compatibility setting.
-        enum:
-          type: array
-          description: List of allowed values, if the setting is an enum.
-          items:
-            type: integer
-          example:
-          - 0
-          - 1
-        warning:
-          description: Warning message about potential disruptive effects of changing this setting.
-          type: string
-          example: Changing this setting without comprehensive testing can cause instability.
-        deprecationNotice:
-          description: Deprecation notice, if applicable.
-          type: string
-          example: This setting may become obsolete with Cloud v2 stateless workers.
-        example:
-          description: Example value for the setting.
-          type: string
-          example: '24.8'
+          enum:
+          - mysql
+          example: mysql
+        enabled:
+          description: Enable or disable the endpoint
+          type: boolean
   securitySchemes:
     basicAuth:
       type: http

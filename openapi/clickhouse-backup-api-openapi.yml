@@ -665,6 +665,27 @@ paths:
         position: after
 components:
   schemas:
+    AwsBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS IAM Role
+          type: string
+        iamRoleSessionName:
+          description: AWS IAM Role
+          type: string
+    BackupBucketPatchRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
     AzureBackupBucket:
       properties:
         id:
@@ -679,25 +700,8 @@ components:
         containerName:
           description: Container Name
           type: string
-    GcpBackupBucketProperties:
+    AwsBackupBucketPostRequestV1:
       properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-    AwsBackupBucket:
-      properties:
-        id:
-          description: Unique backup bucket ID
-          type: string
-          format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
@@ -710,13 +714,8 @@ components:
           description: AWS Role ARN
           type: string
         iamRoleSessionName:
-          description: AWS  Role session name
+          description: AWS Role session name
           type: string
-    BackupBucketPatchRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
     AwsBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
@@ -735,59 +734,7 @@ components:
           type:
           - string
           - 'null'
-    AzureBackupBucketPostRequestV1:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-        connectionString:
-          description: Connection String
-          type: string
-    AzureBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-    BackupConfiguration:
-      properties:
-        backupPeriodInHours:
-          description: The interval in hours between each backup.
-          type: number
-        backupRetentionPeriodInHours:
-          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
-          type: number
-        backupStartTime:
-          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
-          type: string
-    BackupBucket:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucket'
-      - $ref: '#/components/schemas/GcpBackupBucket'
-      - $ref: '#/components/schemas/AzureBackupBucket'
-    AzureBackupBucketPatchRequestV1:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-        connectionString:
-          description: Connection String
-          type: string
-    GcpBackupBucketPatchRequestV1:
+    GcpBackupBucketPostRequestV1:
       properties:
         bucketProvider:
           description: Bucket provider
@@ -803,22 +750,46 @@ components:
         secretAccessKey:
           description: Secret Access Key (HMAC secret key)
           type: string
-    GcpBackupBucket:
+    AzureBackupBucketProperties:
       properties:
-        id:
-          description: Unique backup bucket ID
-          type: string
-          format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
           enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
+          - AZURE
+        containerName:
+          description: Container Name
           type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
+    BackupBucketPostRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
+    AzureBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
+          type: string
+    AzureBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
           type: string
     Backup:
       properties:
@@ -865,8 +836,12 @@ components:
           - $ref: '#/components/schemas/AwsBackupBucketProperties'
           - $ref: '#/components/schemas/GcpBackupBucketProperties'
           - $ref: '#/components/schemas/AzureBackupBucketProperties'
-    AwsBackupBucketPostRequestV1:
+    AwsBackupBucket:
       properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
@@ -879,8 +854,37 @@ components:
           description: AWS Role ARN
           type: string
         iamRoleSessionName:
-          description: AWS Role session name
+          description: AWS  Role session name
           type: string
+    GcpBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    BackupConfiguration:
+      properties:
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type: number
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type: number
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type: string
+    BackupBucket:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucket'
+      - $ref: '#/components/schemas/GcpBackupBucket'
+      - $ref: '#/components/schemas/AzureBackupBucket'
     BackupConfigurationPatchRequest:
       properties:
         backupPeriodInHours:
@@ -892,7 +896,24 @@ components:
         backupStartTime:
           description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
           type: string
-    GcpBackupBucketPostRequestV1:
+    GcpBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    GcpBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
           description: Bucket provider
@@ -908,27 +929,6 @@ components:
         secretAccessKey:
           description: Secret Access Key (HMAC secret key)
           type: string
-    AwsBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AWS
-        bucketPath:
-          description: Bucket path
-          type: string
-        iamRoleArn:
-          description: AWS IAM Role
-          type: string
-        iamRoleSessionName:
-          description: AWS IAM Role
-          type: string
-    BackupBucketPostRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
   securitySchemes:
     basicAuth:
       type: http

@@ -1615,6 +1615,627 @@ paths:
         position: after
 components:
   schemas:
+    pgRegion:
+      type: string
+      title: Service region
+      description: The cloud region for a Postgres service.
+    PostgresQueryExecution:
+      properties:
+        timestamp:
+          description: Execution timestamp (RFC 3339).
+          type: string
+          format: date-time
+        queryId:
+          description: Stable identifier for the query pattern.
+          type: string
+        dbName:
+          description: Database the query ran in.
+          type: string
+        dbUser:
+          description: Database user that executed the query.
+          type: string
+        dbOperation:
+          description: Top-level SQL operation type.
+          type: string
+        app:
+          description: Value of the Postgres `application_name` for this execution.
+          type: string
+        queryText:
+          description: Normalized query text for this execution.
+          type: string
+        pid:
+          description: Postgres backend process ID that executed the query.
+          type: string
+        durationUs:
+          description: Execution duration in microseconds.
+          type: integer
+        rows:
+          description: Rows returned or affected.
+          type: integer
+        sharedBlksHit:
+          description: Shared buffer blocks hit.
+          type: integer
+        sharedBlksRead:
+          description: Shared buffer blocks read from disk.
+          type: integer
+        sharedBlksWritten:
+          description: Shared buffer blocks written.
+          type: integer
+        sharedBlksDirtied:
+          description: Shared buffer blocks dirtied.
+          type: integer
+        sharedBlkReadTimeUs:
+          description: Time spent reading shared blocks, in microseconds.
+          type: integer
+        sharedBlkWriteTimeUs:
+          description: Time spent writing shared blocks, in microseconds.
+          type: integer
+        localBlksHit:
+          description: Local buffer blocks hit (temp tables).
+          type: integer
+        localBlksRead:
+          description: Local buffer blocks read (temp tables).
+          type: integer
+        localBlksWritten:
+          description: Local buffer blocks written (temp tables).
+          type: integer
+        localBlksDirtied:
+          description: Local buffer blocks dirtied (temp tables).
+          type: integer
+        tempBlksRead:
+          description: Temp blocks read (spills to disk).
+          type: integer
+        tempBlksWritten:
+          description: Temp blocks written (spills to disk).
+          type: integer
+        tempBlkReadTimeUs:
+          description: Time spent reading temp blocks, in microseconds.
+          type: integer
+        tempBlkWriteTimeUs:
+          description: Time spent writing temp blocks, in microseconds.
+          type: integer
+        walRecords:
+          description: Number of WAL records produced.
+          type: integer
+        walBytes:
+          description: Number of WAL bytes produced.
+          type: integer
+        walFpi:
+          description: Number of WAL full-page images produced.
+          type: integer
+        cpuUserTimeUs:
+          description: CPU time spent in user mode, in microseconds.
+          type: integer
+        cpuSysTimeUs:
+          description: CPU time spent in kernel mode, in microseconds.
+          type: integer
+        jitFunctions:
+          description: Number of JIT-compiled functions.
+          type: integer
+        jitGenerationTimeUs:
+          description: JIT generation time, in microseconds.
+          type: integer
+        jitInliningTimeUs:
+          description: JIT inlining time, in microseconds.
+          type: integer
+        jitOptimizationTimeUs:
+          description: JIT optimization time, in microseconds.
+          type: integer
+        jitEmissionTimeUs:
+          description: JIT emission time, in microseconds.
+          type: integer
+        jitDeformTimeUs:
+          description: JIT deform time, in microseconds.
+          type: integer
+        parallelWorkersPlanned:
+          description: Parallel workers planned for this execution.
+          type: integer
+        parallelWorkersLaunched:
+          description: Parallel workers actually launched for this execution.
+          type: integer
+        errMessage:
+          description: Error message if the execution raised an error.
+          type: string
+        errSqlstate:
+          description: Postgres SQLSTATE code if the execution raised an error.
+          type: string
+        errElevel:
+          description: Postgres error severity level if the execution raised an error.
+          type: integer
+        serverRole:
+          description: Role of the server that executed the query (for example, primary or standby).
+          type: string
+        traceId:
+          description: OpenTelemetry trace ID associated with the execution.
+          type: string
+        spanId:
+          description: OpenTelemetry span ID associated with the execution.
+          type: string
+      required:
+      - timestamp
+      - queryId
+      - dbName
+      - dbUser
+      - dbOperation
+      - app
+      - queryText
+      - pid
+      - durationUs
+      - rows
+      - sharedBlksHit
+      - sharedBlksRead
+      - sharedBlksWritten
+      - sharedBlksDirtied
+      - sharedBlkReadTimeUs
+      - sharedBlkWriteTimeUs
+      - localBlksHit
+      - localBlksRead
+      - localBlksWritten
+      - localBlksDirtied
+      - tempBlksRead
+      - tempBlksWritten
+      - tempBlkReadTimeUs
+      - tempBlkWriteTimeUs
+      - walRecords
+      - walBytes
+      - walFpi
+      - cpuUserTimeUs
+      - cpuSysTimeUs
+      - jitFunctions
+      - jitGenerationTimeUs
+      - jitInliningTimeUs
+      - jitOptimizationTimeUs
+      - jitEmissionTimeUs
+      - jitDeformTimeUs
+      - parallelWorkersPlanned
+      - parallelWorkersLaunched
+      - serverRole
+    PostgresMetric:
+      properties:
+        key:
+          description: Stable metric identifier (for example cpu_usage, connection_count, cache_hit_ratio).
+          type: string
+        name:
+          description: Human-readable metric name.
+          type: string
+        unit:
+          description: Unit of the metric values (for example %, IOPS, bytes/s, count).
+          type: string
+        description:
+          description: Human-readable description of what the metric measures.
+          type: string
+        series:
+          type: array
+          description: One series per label dimension of the metric.
+          items:
+            $ref: '#/components/schemas/PostgresMetricSeries'
+      required:
+      - key
+      - name
+      - unit
+      - description
+      - series
+    PostgresServiceSetPassword:
+      properties:
+        password:
+          $ref: '#/components/schemas/pgPassword'
+    pgIdProperty:
+      type: string
+      title: Unique Postgres service ID
+      format: uuid
+      example: f71df78e-ddad-82d0-8dfa-abbec741b82e
+    PostgresSlowQueryPatternDetail:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/PostgresSlowQueryPattern'
+        recentExecutions:
+          type: array
+          description: Recent individual executions matching the pattern.
+          items:
+            $ref: '#/components/schemas/PostgresQueryExecution'
+      required:
+      - recentExecutions
+    PostgresServiceSetState:
+      properties:
+        command:
+          description: Postgres status, which initiates a process.
+          type: string
+          enum:
+          - restart
+          - promote
+          - switchover
+    pgVersion:
+      type: string
+      title: Postgres major version
+      enum:
+      - '18'
+      - '17'
+    pgPassword:
+      title: Password
+      type: string
+      description: 'Optional password. If not provided a new password is generated and provided in the response. Must contain:
+
+
+        * At least one lowercase letter
+
+        * At least one uppercase letter
+
+        * At least one digit
+
+        '
+      minLength: 12
+      maxLength: 1024
+      allOf:
+      - pattern: '[a-z]'
+      - pattern: '[A-Z]'
+      - pattern: '[0-9]'
+    pgBouncerConfig:
+      type: object
+      title: PgBouncer Configuration
+      description: PgBouncer [runtime configuration](https://www.pgbouncer.org/config.html) configuration.
+      additionalProperties:
+        type: string
+        description: Any PgBouncer configuration parameter.
+      minProperties: 1
+      maxProperties: 64
+      example:
+        default_pool_size: '16'
+    pgIsPrimaryProperty:
+      type: boolean
+      title: Postgres Service is Primary
+      description: True if this service is the primary service in the data warehouse
+      default: false
+    PostgresServicePostRequest:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        provider:
+          $ref: '#/components/schemas/pgProvider'
+        region:
+          $ref: '#/components/schemas/pgRegion'
+        postgresVersion:
+          $ref: '#/components/schemas/pgVersion'
+        size:
+          $ref: '#/components/schemas/pgSize'
+        haType:
+          $ref: '#/components/schemas/pgHaType'
+        tags:
+          $ref: '#/components/schemas/pgTags'
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+      required:
+      - name
+      - provider
+      - region
+      - size
+    PostgresSlowQueryPattern:
+      properties:
+        queryId:
+          description: Stable identifier for the query pattern (normalized SQL).
+          type: string
+        queryText:
+          description: Normalized query text with literals replaced by placeholders.
+          type: string
+        dbName:
+          description: Database the query ran in.
+          type: string
+        dbUser:
+          description: Database user that executed the query.
+          type: string
+        dbOperation:
+          description: Top-level SQL operation type (for example, SELECT, INSERT, UPDATE, DELETE, UTILITY).
+          type: string
+        app:
+          description: Value of the Postgres `application_name` for executions matching this pattern.
+          type: string
+        callCount:
+          description: Number of times the pattern executed in the window.
+          type: integer
+        errorCount:
+          description: Number of executions of the pattern that raised an error.
+          type: integer
+        totalDurationUs:
+          description: Total execution time across all calls, in microseconds.
+          type: integer
+        avgDurationUs:
+          description: Average execution time per call, in microseconds.
+          type: integer
+        maxDurationUs:
+          description: Maximum execution time of any call, in microseconds.
+          type: integer
+        p50DurationUs:
+          description: 50th percentile execution time, in microseconds.
+          type: integer
+        p95DurationUs:
+          description: 95th percentile execution time, in microseconds.
+          type: integer
+        p99DurationUs:
+          description: 99th percentile execution time, in microseconds.
+          type: integer
+        totalRows:
+          description: Total number of rows returned or affected across all calls.
+          type: integer
+        totalSharedBlksRead:
+          description: Total shared buffer blocks read from disk (cache misses) across all calls.
+          type: integer
+        totalSharedBlksHit:
+          description: Total shared buffer blocks hit (cache hits) across all calls.
+          type: integer
+        totalCpuTimeUs:
+          description: Total CPU time across all calls, in microseconds.
+          type: integer
+        totalWalBytes:
+          description: Total WAL (write-ahead log) bytes generated across all calls.
+          type: integer
+      required:
+      - queryId
+      - queryText
+      - dbName
+      - dbUser
+      - dbOperation
+      - app
+      - callCount
+      - errorCount
+      - totalDurationUs
+      - avgDurationUs
+      - maxDurationUs
+      - p50DurationUs
+      - p95DurationUs
+      - p99DurationUs
+      - totalRows
+      - totalSharedBlksRead
+      - totalSharedBlksHit
+      - totalCpuTimeUs
+      - totalWalBytes
+    postgresInstanceUpdateConfigResponse:
+      properties:
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+        message:
+          description: Informational message about the configuration update, such as restart requirements.
+          type: string
+      required:
+      - pgConfig
+      - pgBouncerConfig
+    PostgresLogEntry:
+      properties:
+        timestamp:
+          description: Time the entry was logged (RFC 3339).
+          type: string
+          format: date-time
+        severity:
+          description: PostgreSQL severity of the entry (for example, LOG, WARNING, ERROR, FATAL, PANIC).
+          type: string
+        body:
+          description: Raw log entry body as emitted by PostgreSQL. Structured bodies are returned as a JSON-encoded string.
+          type: string
+      required:
+      - timestamp
+      - severity
+      - body
+    pgProvider:
+      type: string
+      enum:
+      - aws
+      - gcp
+      title: Cloud provider
+      description: The cloud provider for a Postgres service.
+    PostgresServicePatchRequest:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        size:
+          $ref: '#/components/schemas/pgSize'
+        haType:
+          $ref: '#/components/schemas/pgHaType'
+        tags:
+          $ref: '#/components/schemas/pgTags'
+    pgCreatedAtProperty:
+      type: string
+      format: date-time
+      title: Postgres Service creation timestamp
+      example: '2026-03-26T20:51:16.384Z'
+    ResourceTagsV1:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
+          minLength: 1
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._-]+$
+        value:
+          type: string
+          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
+          maxLength: 256
+          pattern: ^[a-zA-Z0-9._-]+$
+      required:
+      - key
+      example:
+        key: Environment
+        value: staging
+    postgresInstanceConfig:
+      properties:
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+      required:
+      - pgConfig
+      - pgBouncerConfig
+    pgSize:
+      type: string
+      title: VM size
+      description: The VM size for a Postgres service.
+      enum:
+      - c6gd.large
+      - c6gd.xlarge
+      - c6gd.2xlarge
+      - c6gd.4xlarge
+      - c6gd.8xlarge
+      - c6gd.16xlarge
+      - i7i.large
+      - i7i.xlarge
+      - i7i.2xlarge
+      - i7i.4xlarge
+      - i7i.8xlarge
+      - i7i.12xlarge
+      - i7i.16xlarge
+      - i7i.24xlarge
+      - i7ie.large
+      - i7ie.xlarge
+      - i7ie.2xlarge
+      - i7ie.3xlarge
+      - i7ie.6xlarge
+      - i7ie.12xlarge
+      - i7ie.18xlarge
+      - i7ie.24xlarge
+      - i8g.large
+      - i8g.xlarge
+      - i8g.2xlarge
+      - i8g.4xlarge
+      - i8g.8xlarge
+      - i8g.16xlarge
+      - i8g.24xlarge
+      - i8ge.large
+      - i8ge.xlarge
+      - i8ge.2xlarge
+      - i8ge.3xlarge
+      - i8ge.6xlarge
+      - i8ge.12xlarge
+      - i8ge.18xlarge
+      - i8ge.24xlarge
+      - m6gd.large
+      - m6gd.xlarge
+      - m6gd.2xlarge
+      - m6gd.4xlarge
+      - m6gd.8xlarge
+      - m6gd.16xlarge
+      - m6id.large
+      - m6id.xlarge
+      - m6id.2xlarge
+      - m6id.4xlarge
+      - m6id.8xlarge
+      - m6id.16xlarge
+      - m8gd.large
+      - m8gd.xlarge
+      - m8gd.2xlarge
+      - m8gd.4xlarge
+      - m8gd.8xlarge
+      - m8gd.16xlarge
+      - r6gd.medium
+      - r6gd.large
+      - r6gd.xlarge
+      - r6gd.2xlarge
+      - r6gd.4xlarge
+      - r6gd.8xlarge
+      - r6gd.12xlarge
+      - r6gd.16xlarge
+      - r6id.large
+      - r6id.xlarge
+      - r6id.2xlarge
+      - r6id.4xlarge
+      - r6id.8xlarge
+      - r6id.12xlarge
+      - r6id.16xlarge
+      - r6id.24xlarge
+      - r6id.32xlarge
+      - r8gd.medium
+      - r8gd.large
+      - r8gd.xlarge
+      - r8gd.2xlarge
+      - r8gd.4xlarge
+      - r8gd.8xlarge
+      - r8gd.12xlarge
+      - r8gd.16xlarge
+      - r8gd.24xlarge
+      - r8gd.48xlarge
+      - c4a-highmem-4
+      - c4a-highmem-8
+      - c4a-highmem-16
+      - c4a-highmem-32
+      - c4a-highmem-48
+      - c4a-highmem-64
+      - c4a-highmem-72
+      - c4a-standard-4
+      - c4a-standard-8
+      - c4a-standard-16
+      - c4a-standard-32
+      - c4a-standard-48
+      - c4a-standard-64
+      - c4a-standard-72
+      - c4-highmem-4
+      - c4-highmem-8
+      - c4-highmem-16
+      - c4-highmem-24
+      - c4-highmem-32
+      - c4-highmem-48
+      - c4-highmem-96
+      - c4-highmem-144
+      - c4-highmem-192
+      - c4-highmem-288
+      - c4-standard-4
+      - c4-standard-8
+      - c4-standard-16
+      - c4-standard-24
+      - c4-standard-32
+      - c4-standard-48
+      - c4-standard-96
+      - c4-standard-144
+      - c4-standard-192
+      - c4-standard-288
+      - c4d-highmem-8
+      - c4d-highmem-16
+      - c4d-highmem-32
+      - c4d-highmem-48
+      - c4d-highmem-64
+      - c4d-highmem-96
+      - c4d-highmem-192
+      - c4d-highmem-384
+      - c4d-standard-8
+      - c4d-standard-16
+      - c4d-standard-32
+      - c4d-standard-48
+      - c4d-standard-64
+      - c4d-standard-96
+      - c4d-standard-192
+      - c4d-standard-384
+      - z3-highlssd-8
+      - z3-highlssd-16
+      - z3-highlssd-22
+      - z3-highlssd-32
+      - z3-highlssd-44
+      - z3-highlssd-88
+      - z3-standardlssd-14
+      - z3-standardlssd-22
+      - z3-standardlssd-44
+      - z3-standardlssd-88
+      - z3-standardlssd-176
+    pgStateProperty:
+      type: string
+      title: Postgres Service State
+      description: Current state of the service
+      enum:
+      - creating
+      - restarting
+      - running
+      - replaying_wal
+      - restoring_backup
+      - finalizing_restore
+      - unavailable
+      - stopped
+      - deleting
+    pgTags:
+      type: array
+      items:
+        $ref: '#/components/schemas/ResourceTagsV1'
+      maxItems: 50
+      title: Postgres Tags
+      description: Tags associated with the Postgres service. Tag keys starting with “chc_” are reserved for internal use.
     pgConfig:
       type: object
       title: Postgres Configuration
@@ -1908,96 +2529,18 @@ components:
       minProperties: 1
       example:
         max_connections: 100
-    pgStorageSize:
-      type: integer
-      title: Storage Size
-      description: The storage size, in GiB, which must be supported by the specified `size`.
-    pgIsPrimaryProperty:
-      type: boolean
-      title: Postgres Service is Primary
-      description: True if this service is the primary service in the data warehouse
-      default: false
-    pgPitrRestoreTargetProperty:
-      type: string
-      format: date-time
-      title: PITR Restore Target as an RFC 3339-formatted timestamp in UTC time.
-      example: '2026-03-31T18:17:37Z'
-      description: The point in time at which to recover, as either date/time, named restore point, or a specific transaction ID.
-    pgTags:
-      type: array
-      items:
-        $ref: '#/components/schemas/ResourceTagsV1'
-      maxItems: 50
-      title: Postgres Tags
-      description: Tags associated with the Postgres service. Tag keys starting with “chc_” are reserved for internal use.
-    pgBouncerConfig:
-      type: object
-      title: PgBouncer Configuration
-      description: PgBouncer [runtime configuration](https://www.pgbouncer.org/config.html) configuration.
-      additionalProperties:
-        type: string
-        description: Any PgBouncer configuration parameter.
-      minProperties: 1
-      maxProperties: 64
-      example:
-        default_pool_size: '16'
-    PostgresServicePostRequest:
+    PostgresServiceReadReplicaRequest:
       properties:
         name:
           $ref: '#/components/schemas/pgNameProperty'
-        provider:
-          $ref: '#/components/schemas/pgProvider'
-        region:
-          $ref: '#/components/schemas/pgRegion'
-        postgresVersion:
-          $ref: '#/components/schemas/pgVersion'
-        size:
-          $ref: '#/components/schemas/pgSize'
-        haType:
-          $ref: '#/components/schemas/pgHaType'
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
         tags:
           $ref: '#/components/schemas/pgTags'
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
       required:
       - name
-      - provider
-      - region
-      - size
-    postgresInstanceUpdateConfigResponse:
-      properties:
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-        message:
-          description: Informational message about the configuration update, such as restart requirements.
-          type: string
-      required:
-      - pgConfig
-      - pgBouncerConfig
-    PostgresLogEntry:
-      properties:
-        timestamp:
-          description: Time the entry was logged (RFC 3339).
-          type: string
-          format: date-time
-        severity:
-          description: PostgreSQL severity of the entry (for example, LOG, WARNING, ERROR, FATAL, PANIC).
-          type: string
-        body:
-          description: Raw log entry body as emitted by PostgreSQL. Structured bodies are returned as a JSON-encoded string.
-          type: string
-      required:
-      - timestamp
-      - severity
-      - body
-    PostgresServiceSetPassword:
-      properties:
-        password:
-          $ref: '#/components/schemas/pgPassword'
     PostgresService:
       properties:
         name:
@@ -2036,132 +2579,24 @@ components:
         hostname:
           description: Hostname for the Postgres service
           type: string
-    PostgresServiceReadReplicaRequest:
+    PostgresMetrics:
       properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-        tags:
-          $ref: '#/components/schemas/pgTags'
-      required:
-      - name
-    PostgresSlowQueryPatternDetail:
-      properties:
-        aggregate:
-          $ref: '#/components/schemas/PostgresSlowQueryPattern'
-        recentExecutions:
+        metrics:
           type: array
-          description: Recent individual executions matching the pattern.
+          description: Available metrics, each with its bucketed time series.
           items:
-            $ref: '#/components/schemas/PostgresQueryExecution'
+            $ref: '#/components/schemas/PostgresMetric'
       required:
-      - recentExecutions
-    pgCreatedAtProperty:
-      type: string
-      format: date-time
-      title: Postgres Service creation timestamp
-      example: '2026-03-26T20:51:16.384Z'
-    PostgresSlowQueryPattern:
+      - metrics
+    pgStorageSize:
+      type: integer
+      title: Storage Size
+      description: The storage size, in GiB, which must be supported by the specified `size`.
+    PostgresServicePasswordResource:
       properties:
-        queryId:
-          description: Stable identifier for the query pattern (normalized SQL).
+        password:
+          description: New Postgres superuser password. Provided only if there was no 'password' in the request.
           type: string
-        queryText:
-          description: Normalized query text with literals replaced by placeholders.
-          type: string
-        dbName:
-          description: Database the query ran in.
-          type: string
-        dbUser:
-          description: Database user that executed the query.
-          type: string
-        dbOperation:
-          description: Top-level SQL operation type (for example, SELECT, INSERT, UPDATE, DELETE, UTILITY).
-          type: string
-        app:
-          description: Value of the Postgres `application_name` for executions matching this pattern.
-          type: string
-        callCount:
-          description: Number of times the pattern executed in the window.
-          type: integer
-        errorCount:
-          description: Number of executions of the pattern that raised an error.
-          type: integer
-        totalDurationUs:
-          description: Total execution time across all calls, in microseconds.
-          type: integer
-        avgDurationUs:
-          description: Average execution time per call, in microseconds.
-          type: integer
-        maxDurationUs:
-          description: Maximum execution time of any call, in microseconds.
-          type: integer
-        p50DurationUs:
-          description: 50th percentile execution time, in microseconds.
-          type: integer
-        p95DurationUs:
-          description: 95th percentile execution time, in microseconds.
-          type: integer
-        p99DurationUs:
-          description: 99th percentile execution time, in microseconds.
-          type: integer
-        totalRows:
-          description: Total number of rows returned or affected across all calls.
-          type: integer
-        totalSharedBlksRead:
-          description: Total shared buffer blocks read from disk (cache misses) across all calls.
-          type: integer
-        totalSharedBlksHit:
-          description: Total shared buffer blocks hit (cache hits) across all calls.
-          type: integer
-        totalCpuTimeUs:
-          description: Total CPU time across all calls, in microseconds.
-          type: integer
-        totalWalBytes:
-          description: Total WAL (write-ahead log) bytes generated across all calls.
-          type: integer
-      required:
-      - queryId
-      - queryText
-      - dbName
-      - dbUser
-      - dbOperation
-      - app
-      - callCount
-      - errorCount
-      - totalDurationUs
-      - avgDurationUs
-      - maxDurationUs
-      - p50DurationUs
-      - p95DurationUs
-      - p99DurationUs
-      - totalRows
-      - totalSharedBlksRead
-      - totalSharedBlksHit
-      - totalCpuTimeUs
-      - totalWalBytes
-    ResourceTagsV1:
-      type: object
-      properties:
-        key:
-          type: string
-          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
-          minLength: 1
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9._-]+$
-        value:
-          type: string
-          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9._-]+$
-      required:
-      - key
-      example:
-        key: Environment
-        value: staging
     PostgresServiceListItem:
       properties:
         name:
@@ -2186,32 +2621,23 @@ components:
           $ref: '#/components/schemas/pgCreatedAtProperty'
         isPrimary:
           $ref: '#/components/schemas/pgIsPrimaryProperty'
+    PostgresMetricDataPoint:
+      properties:
+        timestamp:
+          description: Bucket start time as a Unix timestamp in seconds.
+          type: integer
+        value:
+          description: Metric value for the bucket.
+          type: number
+      required:
+      - timestamp
+      - value
     pgNameProperty:
       type: string
       title: Postgres Service Name
       description: Name of the Postgres service. Alphanumerical string with whitespaces up to 50 characters.
       minLength: 1
       maxLength: 50
-    PostgresServiceSetState:
-      properties:
-        command:
-          description: Postgres status, which initiates a process.
-          type: string
-          enum:
-          - restart
-          - promote
-          - switchover
-    pgProvider:
-      type: string
-      enum:
-      - aws
-      - gcp
-      title: Cloud provider
-      description: The cloud provider for a Postgres service.
-    pgRegion:
-      type: string
-      title: Service region
-      description: The cloud region for a Postgres service.
     PostgresMetricSeries:
       properties:
         label:
@@ -2225,55 +2651,6 @@ components:
       required:
       - label
       - dataPoints
-    postgresInstanceConfig:
-      properties:
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-      required:
-      - pgConfig
-      - pgBouncerConfig
-    PostgresServicePasswordResource:
-      properties:
-        password:
-          description: New Postgres superuser password. Provided only if there was no 'password' in the request.
-          type: string
-    PostgresMetricDataPoint:
-      properties:
-        timestamp:
-          description: Bucket start time as a Unix timestamp in seconds.
-          type: integer
-        value:
-          description: Metric value for the bucket.
-          type: number
-      required:
-      - timestamp
-      - value
-    pgStateProperty:
-      type: string
-      title: Postgres Service State
-      description: Current state of the service
-      enum:
-      - creating
-      - restarting
-      - running
-      - replaying_wal
-      - restoring_backup
-      - finalizing_restore
-      - unavailable
-      - stopped
-      - deleting
-    PostgresServicePatchRequest:
-      properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        size:
-          $ref: '#/components/schemas/pgSize'
-        haType:
-          $ref: '#/components/schemas/pgHaType'
-        tags:
-          $ref: '#/components/schemas/pgTags'
     pgHaType:
       type: string
       description: 'Type of high availability: “none” for no replication, “async” for asynchronous replication to a single standby, and “sync” for synchronous replication to two standbys.'
@@ -2281,40 +2658,6 @@ components:
       - none
       - async
       - sync
-    PostgresMetrics:
-      properties:
-        metrics:
-          type: array
-          description: Available metrics, each with its bucketed time series.
-          items:
-            $ref: '#/components/schemas/PostgresMetric'
-      required:
-      - metrics
-    PostgresMetric:
-      properties:
-        key:
-          description: Stable metric identifier (for example cpu_usage, connection_count, cache_hit_ratio).
-          type: string
-        name:
-          description: Human-readable metric name.
-          type: string
-        unit:
-          description: Unit of the metric values (for example %, IOPS, bytes/s, count).
-          type: string
-        description:
-          description: Human-readable description of what the metric measures.
-          type: string
-        series:
-          type: array
-          description: One series per label dimension of the metric.
-          items:
-            $ref: '#/components/schemas/PostgresMetricSeries'
-      required:
-      - key
-      - name
-      - unit
-      - description
-      - series
     PostgresServiceRestoreRequest:
       properties:
         name:
@@ -2330,355 +2673,12 @@ components:
       required:
       - name
       - restoreTarget
-    PostgresQueryExecution:
-      properties:
-        timestamp:
-          description: Execution timestamp (RFC 3339).
-          type: string
-          format: date-time
-        queryId:
-          description: Stable identifier for the query pattern.
-          type: string
-        dbName:
-          description: Database the query ran in.
-          type: string
-        dbUser:
-          description: Database user that executed the query.
-          type: string
-        dbOperation:
-          description: Top-level SQL operation type.
-          type: string
-        app:
-          description: Value of the Postgres `application_name` for this execution.
-          type: string
-        queryText:
-          description: Normalized query text for this execution.
-          type: string
-        pid:
-          description: Postgres backend process ID that executed the query.
-          type: string
-        durationUs:
-          description: Execution duration in microseconds.
-          type: integer
-        rows:
-          description: Rows returned or affected.
-          type: integer
-        sharedBlksHit:
-          description: Shared buffer blocks hit.
-          type: integer
-        sharedBlksRead:
-          description: Shared buffer blocks read from disk.
-          type: integer
-        sharedBlksWritten:
-          description: Shared buffer blocks written.
-          type: integer
-        sharedBlksDirtied:
-          description: Shared buffer blocks dirtied.
-          type: integer
-        sharedBlkReadTimeUs:
-          description: Time spent reading shared blocks, in microseconds.
-          type: integer
-        sharedBlkWriteTimeUs:
-          description: Time spent writing shared blocks, in microseconds.
-          type: integer
-        localBlksHit:
-          description: Local buffer blocks hit (temp tables).
-          type: integer
-        localBlksRead:
-          description: Local buffer blocks read (temp tables).
-          type: integer
-        localBlksWritten:
-          description: Local buffer blocks written (temp tables).
-          type: integer
-        localBlksDirtied:
-          description: Local buffer blocks dirtied (temp tables).
-          type: integer
-        tempBlksRead:
-          description: Temp blocks read (spills to disk).
-          type: integer
-        tempBlksWritten:
-          description: Temp blocks written (spills to disk).
-          type: integer
-        tempBlkReadTimeUs:
-          description: Time spent reading temp blocks, in microseconds.
-          type: integer
-        tempBlkWriteTimeUs:
-          description: Time spent writing temp blocks, in microseconds.
-          type: integer
-        walRecords:
-          description: Number of WAL records produced.
-          type: integer
-        walBytes:
-          description: Number of WAL bytes produced.
-          type: integer
-        walFpi:
-          description: Number of WAL full-page images produced.
-          type: integer
-        cpuUserTimeUs:
-          description: CPU time spent in user mode, in microseconds.
-          type: integer
-        cpuSysTimeUs:
-          description: CPU time spent in kernel mode, in microseconds.
-          type: integer
-        jitFunctions:
-          description: Number of JIT-compiled functions.
-          type: integer
-        jitGenerationTimeUs:
-          description: JIT generation time, in microseconds.
-          type: integer
-        jitInliningTimeUs:
-          description: JIT inlining time, in microseconds.
-          type: integer
-        jitOptimizationTimeUs:
-          description: JIT optimization time, in microseconds.
-          type: integer
-        jitEmissionTimeUs:
-          description: JIT emission time, in microseconds.
-          type: integer
-        jitDeformTimeUs:
-          description: JIT deform time, in microseconds.
-          type: integer
-        parallelWorkersPlanned:
-          description: Parallel workers planned for this execution.
-          type: integer
-        parallelWorkersLaunched:
-          description: Parallel workers actually launched for this execution.
-          type: integer
-        errMessage:
-          description: Error message if the execution raised an error.
-          type: string
-        errSqlstate:
-          description: Postgres SQLSTATE code if the execution raised an error.
-          type: string
-        errElevel:
-          description: Postgres error severity level if the execution raised an error.
-          type: integer
-        serverRole:
-          description: Role of the server that executed the query (for example, primary or standby).
-          type: string
-        traceId:
-          description: OpenTelemetry trace ID associated with the execution.
-          type: string
-        spanId:
-          description: OpenTelemetry span ID associated with the execution.
-          type: string
-      required:
-      - timestamp
-      - queryId
-      - dbName
-      - dbUser
-      - dbOperation
-      - app
-      - queryText
-      - pid
-      - durationUs
-      - rows
-      - sharedBlksHit
-      - sharedBlksRead
-      - sharedBlksWritten
-      - sharedBlksDirtied
-      - sharedBlkReadTimeUs
-      - sharedBlkWriteTimeUs
-      - localBlksHit
-      - localBlksRead
-      - localBlksWritten
-      - localBlksDirtied
-      - tempBlksRead
-      - tempBlksWritten
-      - tempBlkReadTimeUs
-      - tempBlkWriteTimeUs
-      - walRecords
-      - walBytes
-      - walFpi
-      - cpuUserTimeUs
-      - cpuSysTimeUs
-      - jitFunctions
-      - jitGenerationTimeUs
-      - jitInliningTimeUs
-      - jitOptimizationTimeUs
-      - jitEmissionTimeUs
-      - jitDeformTimeUs
-      - parallelWorkersPlanned
-      - parallelWorkersLaunched
-      - serverRole
-    pgIdProperty:
+    pgPitrRestoreTargetProperty:
       type: string
-      title: Unique Postgres service ID
-      format: uuid
-      example: f71df78e-ddad-82d0-8dfa-abbec741b82e
-    pgSize:
-      type: string
-      title: VM size
-      description: The VM size for a Postgres service.
-      enum:
-      - c6gd.large
-      - c6gd.xlarge
-      - c6gd.2xlarge
-      - c6gd.4xlarge
-      - c6gd.8xlarge
-      - c6gd.16xlarge
-      - i7i.large
-      - i7i.xlarge
-      - i7i.2xlarge
-      - i7i.4xlarge
-      - i7i.8xlarge
-      - i7i.12xlarge
-      - i7i.16xlarge
-      - i7i.24xlarge
-      - i7ie.large
-      - i7ie.xlarge
-      - i7ie.2xlarge
-      - i7ie.3xlarge
-      - i7ie.6xlarge
-      - i7ie.12xlarge
-      - i7ie.18xlarge
-      - i7ie.24xlarge
-      - i8g.large
-      - i8g.xlarge
-      - i8g.2xlarge
-      - i8g.4xlarge
-      - i8g.8xlarge
-      - i8g.16xlarge
-      - i8g.24xlarge
-      - i8ge.large
-      - i8ge.xlarge
-      - i8ge.2xlarge
-      - i8ge.3xlarge
-      - i8ge.6xlarge
-      - i8ge.12xlarge
-      - i8ge.18xlarge
-      - i8ge.24xlarge
-      - m6gd.large
-      - m6gd.xlarge
-      - m6gd.2xlarge
-      - m6gd.4xlarge
-      - m6gd.8xlarge
-      - m6gd.16xlarge
-      - m6id.large
-      - m6id.xlarge
-      - m6id.2xlarge
-      - m6id.4xlarge
-      - m6id.8xlarge
-      - m6id.16xlarge
-      - m8gd.large
-      - m8gd.xlarge
-      - m8gd.2xlarge
-      - m8gd.4xlarge
-      - m8gd.8xlarge
-      - m8gd.16xlarge
-      - r6gd.medium
-      - r6gd.large
-      - r6gd.xlarge
-      - r6gd.2xlarge
-      - r6gd.4xlarge
-      - r6gd.8xlarge
-      - r6gd.12xlarge
-      - r6gd.16xlarge
-      - r6id.large
-      - r6id.xlarge
-      - r6id.2xlarge
-      - r6id.4xlarge
-      - r6id.8xlarge
-      - r6id.12xlarge
-      - r6id.16xlarge
-      - r6id.24xlarge
-      - r6id.32xlarge
-      - r8gd.medium
-      - r8gd.large
-      - r8gd.xlarge
-      - r8gd.2xlarge
-      - r8gd.4xlarge
-      - r8gd.8xlarge
-      - r8gd.12xlarge
-      - r8gd.16xlarge
-      - r8gd.24xlarge
-      - r8gd.48xlarge
-      - c4a-highmem-4
-      - c4a-highmem-8
-      - c4a-highmem-16
-      - c4a-highmem-32
-      - c4a-highmem-48
-      - c4a-highmem-64
-      - c4a-highmem-72
-      - c4a-standard-4
-      - c4a-standard-8
-      - c4a-standard-16
-      - c4a-standard-32
-      - c4a-standard-48
-      - c4a-standard-64
-      - c4a-standard-72
-      - c4-highmem-4
-      - c4-highmem-8
-      - c4-highmem-16
-      - c4-highmem-24
-      - c4-highmem-32
-      - c4-highmem-48
-      - c4-highmem-96
-      - c4-highmem-144
-      - c4-highmem-192
-      - c4-highmem-288
-      - c4-standard-4
-      - c4-standard-8
-      - c4-standard-16
-      - c4-standard-24
-      - c4-standard-32
-      - c4-standard-48
-      - c4-standard-96
-      - c4-standard-144
-      - c4-standard-192
-      - c4-standard-288
-      - c4d-highmem-8
-      - c4d-highmem-16
-      - c4d-highmem-32
-      - c4d-highmem-48
-      - c4d-highmem-64
-      - c4d-highmem-96
-      - c4d-highmem-192
-      - c4d-highmem-384
-      - c4d-standard-8
-      - c4d-standard-16
-      - c4d-standard-32
-      - c4d-standard-48
-      - c4d-standard-64
-      - c4d-standard-96
-      - c4d-standard-192
-      - c4d-standard-384
-      - z3-highlssd-8
-      - z3-highlssd-16
-      - z3-highlssd-22
-      - z3-highlssd-32
-      - z3-highlssd-44
-      - z3-highlssd-88
-      - z3-standardlssd-14
-      - z3-standardlssd-22
-      - z3-standardlssd-44
-      - z3-standardlssd-88
-      - z3-standardlssd-176
-    pgVersion:
-      type: string
-      title: Postgres major version
-      enum:
-      - '18'
-      - '17'
-    pgPassword:
-      title: Password
-      type: string
-      description: 'Optional password. If not provided a new password is generated and provided in the response. Must contain:
-
-
-        * At least one lowercase letter
-
-        * At least one uppercase letter
-
-        * At least one digit
-
-        '
-      minLength: 12
-      maxLength: 1024
-      allOf:
-      - pattern: '[a-z]'
-      - pattern: '[A-Z]'
-      - pattern: '[0-9]'
+      format: date-time
+      title: PITR Restore Target as an RFC 3339-formatted timestamp in UTC time.
+      example: '2026-03-31T18:17:37Z'
+      description: The point in time at which to recover, as either date/time, named restore point, or a specific transaction ID.
   securitySchemes:
     basicAuth:
       type: http
