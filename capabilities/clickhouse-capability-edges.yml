@@ -1,0 +1,102 @@
+slug: clickhouse
+provider: ClickHouse
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 8
+edges:
+- tag: Role Management
+  spec_file: clickhouse-role-management-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.85
+  evidence: 'POST /v1/organizations/{organizationId}/roles  organizationRolePost  Create a new role; schemas:
+    RBACPolicy, RBACRole, RoleCreateRequest'
+  reason: CRUD over RBAC roles and policies scoped to an organization — role-based access control administration,
+    which is Identity & Access Management.
+- tag: Billing
+  spec_file: clickhouse-billing-api-openapi.yml
+  capability_id: BC-4250
+  capability_id_l1: BC-4250
+  capability_name: Subscription Billing & Revenue Management
+  confidence: 0.8
+  evidence: GET /v1/organizations/{organizationId}/usageCost usageCostGet 'Get organization usage costs';
+    schemas UsageCostRecord, CreditBalance, ActiveBalances
+  reason: Usage-cost retrieval and prepaid/credit balance exposure is consumption-based billing for the
+    SaaS offering. L1 confident; the specific sub-capability (metering vs rating vs invoicing) is not
+    clearly delineated by three read-only endpoints.
+- tag: User Management
+  spec_file: clickhouse-user-management-api-openapi.yml
+  capability_id: BC-620.20
+  capability_id_l1: BC-620
+  capability_name: Identity & Access Management
+  confidence: 0.78
+  evidence: 'GET /v1/organizations/{organizationId}/members  memberGetList  List organization members;
+    POST .../invitations  invitationCreate  Create an invitation; schemas: AssignedRole, Member'
+  reason: Administration of organization member accounts, invitations and assigned roles — joiner/leaver
+    and access administration for a cloud platform, i.e. Identity & Access Management rather than HR records.
+- tag: ClickStack
+  spec_file: clickhouse-clickstack-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.75
+  evidence: '''ClickStack: Create Alert'', ''ClickStack: Create Dashboard'', ''ClickStack: List Sources'';
+    schemas ClickStackPagerDutyAPIWebhook, ClickStackLineChartConfig'
+  reason: 'ClickStack is ClickHouse''s observability stack: telemetry sources, dashboards, charts and
+    alerting routed to PagerDuty — logs/metrics/traces monitoring of running systems, not financial or
+    business alerting.'
+- tag: Postgres
+  spec_file: clickhouse-postgres-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.72
+  evidence: POST /v1/organizations/{organizationId}/postgres  postgresServiceCreate  Create new Postgres
+    service; POST .../readReplica  Create a read replica for a Postgres service
+  reason: Management-plane operations that provision, configure, scale, restore and delete managed PostgreSQL
+    database services — i.e. provisioning and stewardship of cloud compute/storage infrastructure. Mapped
+    to IT Infrastructure Management; some ambiguity against tenant/service provisioning readings, hence
+    moderate confidence.
+- tag: Backup
+  spec_file: clickhouse-backup-api-openapi.yml
+  capability_id: BC-4220.60
+  capability_id_l1: BC-4220
+  capability_name: Disaster Recovery & Resilience
+  confidence: 0.7
+  evidence: GET /v1/organizations/{organizationId}/services/{serviceId}/backups backupGetList 'List of
+    service backups'; 'Update service backup configuration'; schema BackupConfiguration
+  reason: Operations manage backups and backup buckets for a running cloud service, i.e. backup and restore
+    for the managed service — Disaster Recovery & Resilience. Overlaps with per-tenant backup/export,
+    hence 0.7.
+- tag: Prometheus
+  spec_file: clickhouse-prometheus-api-openapi.yml
+  capability_id: BC-4220.20
+  capability_id_l1: BC-4220
+  capability_name: Observability Management
+  confidence: 0.7
+  evidence: GET /v1/organizations/{organizationId}/services/{serviceId}/prometheus  instancePrometheusGet  Get
+    service metrics; PrometheusDiscoveryTargetGroup
+  reason: Exposes Prometheus-format metrics and scrape-target discovery for running services — metrics
+    collection that makes the running service observable in production. Could equally be read as generic
+    IT operations monitoring, so confidence is moderate.
+- tag: Service
+  spec_file: clickhouse-service-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.7
+  evidence: POST /v1/organizations/{organizationId}/services  instanceCreate  Create new service; PATCH
+    .../scaling  instanceScalingUpdate  Update service auto scaling settings
+  reason: Provisioning, state control, private endpoint configuration, auto-scaling and upgrade windows
+    for managed cloud database instances — cloud infrastructure management. Alternative readings (capacity
+    management, tenant provisioning) keep confidence moderate.

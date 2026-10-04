@@ -430,6 +430,9 @@ apis:
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
 common:
+- type: CapabilityMap
+  url: capabilities/clickhouse-capability-edges.yml
+  name: ClickHouse Business Capability Map
 - type: VulnerabilityDisclosure
   url: security/clickhouse-vulnerability-disclosure.yml
 - type: PostmanWorkspace
