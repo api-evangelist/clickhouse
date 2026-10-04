@@ -310,6 +310,26 @@ components:
         locked:
           description: When true, the record is immutable. Unlocked records are subject to change until locked.
           type: boolean
+    CreditBalances:
+      properties:
+        totalRemainingCredits:
+          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
+          type: number
+        balances:
+          type: array
+          description: List of active balances for the organization. Empty when the organization has none.
+          items:
+            $ref: '#/components/schemas/CreditBalance'
+    UsageCost:
+      properties:
+        grandTotalCHC:
+          description: Grand total cost of usage in ClickHouse Credits (CHCs).
+          type: number
+        costs:
+          type: array
+          description: List of daily, per-entity usage cost records.
+          items:
+            $ref: '#/components/schemas/UsageCostRecord'
     UsageCostMetrics:
       properties:
         storageCHC:
@@ -371,16 +391,6 @@ components:
           description: Date the balance expires. ISO-8601, based on the UTC timezone.
           type: string
           format: date-time
-    UsageCost:
-      properties:
-        grandTotalCHC:
-          description: Grand total cost of usage in ClickHouse Credits (CHCs).
-          type: number
-        costs:
-          type: array
-          description: List of daily, per-entity usage cost records.
-          items:
-            $ref: '#/components/schemas/UsageCostRecord'
     ActiveBalances:
       properties:
         totalRemainingPrepaidCredits:
@@ -391,16 +401,6 @@ components:
           description: List of active prepaid balances for the organization.
           items:
             $ref: '#/components/schemas/ActiveBalance'
-    CreditBalances:
-      properties:
-        totalRemainingCredits:
-          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
-          type: number
-        balances:
-          type: array
-          description: List of active balances for the organization. Empty when the organization has none.
-          items:
-            $ref: '#/components/schemas/CreditBalance'
     ActiveBalance:
       properties:
         id:

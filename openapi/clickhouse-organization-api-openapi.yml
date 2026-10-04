@@ -847,37 +847,102 @@ paths:
       - Organization
 components:
   schemas:
-    OrganizationCloudRegionPrivateEndpointConfig:
+    ByocInfrastructurePostRequest:
       properties:
-        endpointServiceId:
-          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name) or GCP(Target Service) resource
+        regionId:
+          description: Region in which the BYOC infrastructure will be located
           type: string
-    Organization:
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        accountId:
+          description: Cloud account ID the BYOC infrastructure is configured for
+          type: string
+        availabilityZoneSuffixes:
+          type: array
+          description: List of availability zone suffixes
+          items:
+            type: string
+            enum:
+            - a
+            - b
+            - c
+            - d
+            - e
+            - f
+        vpcCidrRange:
+          description: CIDR range for VPC
+          type: string
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
+    OrganizationQuota:
       properties:
-        id:
-          description: Unique organization ID.
+        quotaCode:
+          description: Stable identifier of the quota. Use it to request a single quota by code.
           type: string
-          format: uuid
-        createdAt:
-          description: The timestamp the organization was created. ISO-8601.
-          type: string
-          format: date-time
+          enum:
+          - services-per-organization
+          - postgres-services-per-organization
+          - replicas-per-warehouse
+          - api-keys-per-organization
+          example: services-per-organization
         name:
-          description: Name of the organization.
+          description: Human-readable name of the quota.
           type: string
-        privateEndpoints:
-          type: array
-          description: List of private endpoints for organization
-          items:
-            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
-        byocConfig:
-          type: array
-          description: BYOC configuration for the organization
-          items:
-            $ref: '#/components/schemas/ByocConfig'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          example: Services per organization
+        description:
+          description: Explanation of the resource the quota limits and how the limit is applied.
+          type: string
+        scope:
+          description: Granularity at which the limit is applied. For example, `replicas-per-warehouse` is an organization-wide setting that limits each warehouse individually.
+          type: string
+          enum:
+          - organization
+          - warehouse
+          example: organization
+        value:
+          description: Limit currently applied to the organization, including any adjustments made for the organization. The value can change when the billing status of the organization changes.
+          type: integer
+          minimum: 0
+          example: 20
+        usage:
+          description: Current consumption of the quota. Omitted for quotas that do not report usage. Usage can exceed `value` when a limit was lowered after resources were created; existing resources are not affected.
+          type: integer
+          minimum: 0
+          example: 3
+        adjustable:
+          description: Whether the limit can be raised for the organization by contacting ClickHouse support.
           type: boolean
+      required:
+      - quotaCode
+      - name
+      - description
+      - scope
+      - value
+      - adjustable
     Activity:
       properties:
         id:
@@ -1073,66 +1138,6 @@ components:
           description: 'For ''role_resources_delete'' activities: IDs of the deleted resources the roles referenced.'
           items:
             type: string
-    ByocInfrastructurePatchRequest:
-      properties:
-        displayName:
-          description: Human readable name for infrastructure object
-          type: string
-    OrganizationPatchRequest:
-      properties:
-        name:
-          description: Name of the organization.
-          type: string
-        privateEndpoints:
-          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
-          type: boolean
-    OrganizationQuota:
-      properties:
-        quotaCode:
-          description: Stable identifier of the quota. Use it to request a single quota by code.
-          type: string
-          enum:
-          - services-per-organization
-          - postgres-services-per-organization
-          - replicas-per-warehouse
-          - api-keys-per-organization
-          example: services-per-organization
-        name:
-          description: Human-readable name of the quota.
-          type: string
-          example: Services per organization
-        description:
-          description: Explanation of the resource the quota limits and how the limit is applied.
-          type: string
-        scope:
-          description: Granularity at which the limit is applied. For example, `replicas-per-warehouse` is an organization-wide setting that limits each warehouse individually.
-          type: string
-          enum:
-          - organization
-          - warehouse
-          example: organization
-        value:
-          description: Limit currently applied to the organization, including any adjustments made for the organization. The value can change when the billing status of the organization changes.
-          type: integer
-          minimum: 0
-          example: 20
-        usage:
-          description: Current consumption of the quota. Omitted for quotas that do not report usage. Usage can exceed `value` when a limit was lowered after resources were created; existing resources are not affected.
-          type: integer
-          minimum: 0
-          example: 3
-        adjustable:
-          description: Whether the limit can be raised for the organization by contacting ClickHouse support.
-          type: boolean
-      required:
-      - quotaCode
-      - name
-      - description
-      - scope
-      - value
-      - adjustable
     OrganizationPrivateEndpointsPatch:
       properties:
         add:
@@ -1146,6 +1151,92 @@ components:
           description: Elements to remove. Executed before "add" part is processed.
           items:
             $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
+    OrganizationPatchPrivateEndpoint:
+      properties:
+        id:
+          description: Private endpoint identifier
+          type: string
+        description:
+          description: Optional description of private endpoint
+          type: string
+        cloudProvider:
+          description: Cloud provider in which the private endpoint is lcoated
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        region:
+          description: Region in which the private endpoint is located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+    OrganizationPrivateEndpoint:
+      properties:
+        id:
+          description: Private endpoint identifier
+          type: string
+        description:
+          description: Description of private endpoint
+          type: string
+        cloudProvider:
+          description: Cloud provider in which the private endpoint is lcoated
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        region:
+          description: Region in which the private endpoint is located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
     ByocConfig:
       properties:
         id:
@@ -1199,143 +1290,52 @@ components:
         displayName:
           description: Human readable name for infrastructure
           type: string
-    ByocInfrastructurePostRequest:
+    ByocInfrastructurePatchRequest:
       properties:
-        regionId:
-          description: Region in which the BYOC infrastructure will be located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        accountId:
-          description: Cloud account ID the BYOC infrastructure is configured for
-          type: string
-        availabilityZoneSuffixes:
-          type: array
-          description: List of availability zone suffixes
-          items:
-            type: string
-            enum:
-            - a
-            - b
-            - c
-            - d
-            - e
-            - f
-        vpcCidrRange:
-          description: CIDR range for VPC
-          type: string
         displayName:
-          description: Human readable name for infrastructure
+          description: Human readable name for infrastructure object
           type: string
-    OrganizationPrivateEndpoint:
+    Organization:
       properties:
         id:
-          description: Private endpoint identifier
+          description: Unique organization ID.
           type: string
-        description:
-          description: Description of private endpoint
+          format: uuid
+        createdAt:
+          description: The timestamp the organization was created. ISO-8601.
           type: string
-        cloudProvider:
-          description: Cloud provider in which the private endpoint is lcoated
+          format: date-time
+        name:
+          description: Name of the organization.
           type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        region:
-          description: Region in which the private endpoint is located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-    OrganizationPatchPrivateEndpoint:
+        privateEndpoints:
+          type: array
+          description: List of private endpoints for organization
+          items:
+            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
+        byocConfig:
+          type: array
+          description: BYOC configuration for the organization
+          items:
+            $ref: '#/components/schemas/ByocConfig'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          type: boolean
+    OrganizationPatchRequest:
       properties:
-        id:
-          description: Private endpoint identifier
+        name:
+          description: Name of the organization.
           type: string
-        description:
-          description: Optional description of private endpoint
+        privateEndpoints:
+          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          type: boolean
+    OrganizationCloudRegionPrivateEndpointConfig:
+      properties:
+        endpointServiceId:
+          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name) or GCP(Target Service) resource
           type: string
-        cloudProvider:
-          description: Cloud provider in which the private endpoint is lcoated
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        region:
-          description: Region in which the private endpoint is located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
   securitySchemes:
     basicAuth:
       type: http

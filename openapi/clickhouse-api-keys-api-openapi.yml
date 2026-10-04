@@ -403,44 +403,6 @@ components:
           enum:
           - system
           - custom
-    ApiKeyPatchRequest:
-      properties:
-        name:
-          description: Name of the key
-          type: string
-        roles:
-          type: array
-          description: DEPRECATED. Use `assignedRoleIds` instead. List of roles assigned to the key.
-          items:
-            type: string
-            enum:
-            - admin
-            - developer
-            - query_endpoints
-          deprecated: true
-        assignedRoleIds:
-          type: array
-          description: Array of role UUIDs to assign to the API key
-          items:
-            type: string
-            format: uuid
-        expireAt:
-          description: Timestamp the key expires. If `null` or is empty the key never expires. ISO-8601.
-          type:
-          - string
-          - 'null'
-          format: date-time
-        state:
-          description: 'State of the key: ''enabled'', ''disabled''.'
-          type: string
-          enum:
-          - enabled
-          - disabled
-        ipAccessList:
-          type: array
-          description: List of IP addresses allowed to access the API using this key
-          items:
-            $ref: '#/components/schemas/IpAccessListEntry'
     IpAccessListEntry:
       properties:
         source:
@@ -501,16 +463,6 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    ApiKeyPostResponse:
-      properties:
-        key:
-          $ref: '#/components/schemas/ApiKey'
-        keyId:
-          description: Generated key ID. Provided only if there was no 'hashData' in the request.
-          type: string
-        keySecret:
-          description: Generated key secret. Provided only if there was no 'hashData' in the request.
-          type: string
     ApiKeyHashData:
       properties:
         keyIdHash:
@@ -522,6 +474,54 @@ components:
         keySecretHash:
           description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
           type: string
+    ApiKeyPostResponse:
+      properties:
+        key:
+          $ref: '#/components/schemas/ApiKey'
+        keyId:
+          description: Generated key ID. Provided only if there was no 'hashData' in the request.
+          type: string
+        keySecret:
+          description: Generated key secret. Provided only if there was no 'hashData' in the request.
+          type: string
+    ApiKeyPatchRequest:
+      properties:
+        name:
+          description: Name of the key
+          type: string
+        roles:
+          type: array
+          description: DEPRECATED. Use `assignedRoleIds` instead. List of roles assigned to the key.
+          items:
+            type: string
+            enum:
+            - admin
+            - developer
+            - query_endpoints
+          deprecated: true
+        assignedRoleIds:
+          type: array
+          description: Array of role UUIDs to assign to the API key
+          items:
+            type: string
+            format: uuid
+        expireAt:
+          description: Timestamp the key expires. If `null` or is empty the key never expires. ISO-8601.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        state:
+          description: 'State of the key: ''enabled'', ''disabled''.'
+          type: string
+          enum:
+          - enabled
+          - disabled
+        ipAccessList:
+          type: array
+          description: List of IP addresses allowed to access the API using this key
+          items:
+            $ref: '#/components/schemas/IpAccessListEntry'
     ApiKeyPostRequest:
       properties:
         name:
