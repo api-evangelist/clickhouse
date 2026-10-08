@@ -430,6 +430,8 @@ apis:
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
 common:
+- type: FinOps
+  url: finops/clickhouse-finops.yml
 - type: CapabilityMap
   url: capabilities/clickhouse-capability-edges.yml
   name: ClickHouse Business Capability Map
