@@ -124,3 +124,21 @@ probes:
   status: 404
 - url: https://clickhouse.com/mcp
   status: 404
+rfc9728:
+  endpoint: https://mcp.clickhouse.cloud/mcp
+  metadata_url: https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource/mcp
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://mcp.clickhouse.cloud/mcp
+    authorization_servers:
+    - https://mcp.clickhouse.cloud
+    scopes_supported:
+    - mcp:access
+    - openid
+    - profile
+    - email
+    bearer_methods_supported:
+    - header
