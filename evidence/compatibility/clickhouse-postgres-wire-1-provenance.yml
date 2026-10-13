@@ -1,0 +1,12 @@
+fetched: '2026-10-13'
+method: fetched
+source: https://clickhouse.com/docs/interfaces/postgresql
+page: https://clickhouse.com/docs/interfaces/postgresql
+file: clickhouse-postgres-wire-1.md
+bytes: 5977
+sha256: 8ec26e7c2bf165f6a3b0bdaf8689ab2a0c63f1436e4e199d8835a26813bdae85
+anchor: postgresql
+shape: postgres-wire
+classification: declares-compatibility
+quote: PostgreSQL interface - ClickHouse Documentation
+note: text extracted from the provider's own page (tags stripped), saved for evidence
