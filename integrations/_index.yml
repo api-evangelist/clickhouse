@@ -50,3 +50,38 @@
   relationship: distribution-channel
   status: not-a-workflow
   arazzo: null
+- slug: clickhouse-postgresql
+  label: PostgreSQL
+  partner: postgresql
+  partner_name: PostgreSQL
+  type: docs
+  channel: provider-built
+  evidence: https://clickhouse.com/docs/interfaces/postgresql
+  source: edge
+  relationship: compatible
+  status: not-a-workflow
+  arazzo: null
+- slug: clickhouse-rudderstack
+  label: RudderStack
+  partner: rudderstack
+  partner_name: RudderStack
+  type: coverage
+  marketplace: coverage
+  channel: partner-built
+  evidence: https://github.com/rudderlabs/rudder-integrations-config/tree/main/src/configurations/destinations/clickhouse
+  source: edge
+  relationship: connector-coverage
+  status: not-a-workflow
+  arazzo: null
+- slug: clickhouse-hightouch
+  label: Hightouch
+  partner: hightouch
+  partner_name: Hightouch
+  type: coverage
+  marketplace: coverage
+  channel: partner-built
+  evidence: https://hightouch.com/docs/sources/clickhouse
+  source: edge
+  relationship: connector-coverage
+  status: not-a-workflow
+  arazzo: null
