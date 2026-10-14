@@ -7,6 +7,7 @@ checked:
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/registry/
 - https://github.com/rudderlabs/rudder-integrations-config/tree/main/src/configurations/destinations/clickhouse
 - https://hightouch.com/docs/sources/clickhouse
+- splunk/integrations/splunk-integration-edges.yml
 marketplace_apps: []
 edges:
 - partner_name: OpenTelemetry
@@ -116,6 +117,23 @@ edges:
       status: released
   detected_by: sweep-cdp.py
   first_seen: '2026-10-14'
+- partner_name: Splunk (own)
+  partner: splunk
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://splunkbase.splunk.com/app/7709/
+  mirror_of: splunk/integrations/splunk-integration-edges.yml
+  apps:
+  - ClickHouse Cloud Audit Add-on for Splunk
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: addon
 source:
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/ecosystem/vendors.yaml
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/registry/
