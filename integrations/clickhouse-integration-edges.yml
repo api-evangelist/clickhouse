@@ -6,6 +6,7 @@ checked:
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/ecosystem/vendors.yaml
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/registry/
 - https://github.com/rudderlabs/rudder-integrations-config/tree/main/src/configurations/destinations/clickhouse
+- https://github.com/run-llama/llama_index/tree/main/llama-index-integrations
 - https://hightouch.com/docs/sources/clickhouse
 - splunk/integrations/splunk-integration-edges.yml
 marketplace_apps: []
@@ -134,6 +135,25 @@ edges:
   detected: '2026-10-14'
   detected_by: mirror-platform-listings.py
   category: addon
+- partner_name: LlamaIndex
+  partner: llamaindex
+  partner_match: framework
+  channel: partner-built
+  direction: partner-built
+  type: coverage
+  relationship: system-coverage
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/vector_stores/llama-index-vector-stores-clickhouse
+  coverage_role:
+  - vector-store
+  framework_signals:
+    packages:
+    - llama-index-vector-stores-clickhouse
+    roles:
+    - vector-store
+    vendor_domain: clickhouse.com
+  matched_by: verified-domain-table
+  detected_by: sweep-rag-vector.py
+  first_seen: '2026-10-15'
 source:
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/ecosystem/vendors.yaml
 - https://github.com/open-telemetry/opentelemetry.io/blob/main/data/registry/
