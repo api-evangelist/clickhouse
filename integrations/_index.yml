@@ -85,6 +85,17 @@
   relationship: connector-coverage
   status: not-a-workflow
   arazzo: null
+- slug: clickhouse-llamaindex
+  label: LlamaIndex
+  partner: llamaindex
+  partner_name: LlamaIndex
+  type: coverage
+  channel: partner-built
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/vector_stores/llama-index-vector-stores-clickhouse
+  source: edge
+  relationship: system-coverage
+  status: not-a-workflow
+  arazzo: null
 - slug: clickhouse-splunk-own
   label: Splunk (own)
   partner: splunk
@@ -98,14 +109,16 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
-- slug: clickhouse-llamaindex
-  label: LlamaIndex
-  partner: llamaindex
-  partner_name: LlamaIndex
-  type: coverage
+- slug: clickhouse-stripe-own
+  label: Stripe (own)
+  partner: stripe
+  partner_name: Stripe (own)
+  category: data_and_analytics, developer_tools
+  type: marketplace
+  marketplace: own
   channel: partner-built
-  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/vector_stores/llama-index-vector-stores-clickhouse
+  evidence: https://marketplace.stripe.com/apps/clickhouse-cloud
   source: edge
-  relationship: system-coverage
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
