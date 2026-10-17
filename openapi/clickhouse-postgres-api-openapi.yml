@@ -1615,124 +1615,99 @@ paths:
         position: after
 components:
   schemas:
-    PostgresLogEntry:
+    PostgresSlowQueryPattern:
       properties:
-        timestamp:
-          description: Time the entry was logged (RFC 3339).
+        queryId:
+          description: Stable identifier for the query pattern (normalized SQL).
           type: string
-          format: date-time
-        severity:
-          description: PostgreSQL severity of the entry (for example, LOG, WARNING, ERROR, FATAL, PANIC).
+        queryText:
+          description: Normalized query text with literals replaced by placeholders.
           type: string
-        body:
-          description: Raw log entry body as emitted by PostgreSQL. Structured bodies are returned as a JSON-encoded string.
+        dbName:
+          description: Database the query ran in.
           type: string
+        dbUser:
+          description: Database user that executed the query.
+          type: string
+        dbOperation:
+          description: Top-level SQL operation type (for example, SELECT, INSERT, UPDATE, DELETE, UTILITY).
+          type: string
+        app:
+          description: Value of the Postgres `application_name` for executions matching this pattern.
+          type: string
+        callCount:
+          description: Number of times the pattern executed in the window.
+          type: integer
+        errorCount:
+          description: Number of executions of the pattern that raised an error.
+          type: integer
+        totalDurationUs:
+          description: Total execution time across all calls, in microseconds.
+          type: integer
+        avgDurationUs:
+          description: Average execution time per call, in microseconds.
+          type: integer
+        maxDurationUs:
+          description: Maximum execution time of any call, in microseconds.
+          type: integer
+        p50DurationUs:
+          description: 50th percentile execution time, in microseconds.
+          type: integer
+        p95DurationUs:
+          description: 95th percentile execution time, in microseconds.
+          type: integer
+        p99DurationUs:
+          description: 99th percentile execution time, in microseconds.
+          type: integer
+        totalRows:
+          description: Total number of rows returned or affected across all calls.
+          type: integer
+        totalSharedBlksRead:
+          description: Total shared buffer blocks read from disk (cache misses) across all calls.
+          type: integer
+        totalSharedBlksHit:
+          description: Total shared buffer blocks hit (cache hits) across all calls.
+          type: integer
+        totalCpuTimeUs:
+          description: Total CPU time across all calls, in microseconds.
+          type: integer
+        totalWalBytes:
+          description: Total WAL (write-ahead log) bytes generated across all calls.
+          type: integer
       required:
-      - timestamp
-      - severity
-      - body
-    PostgresServicePatchRequest:
-      properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        size:
-          $ref: '#/components/schemas/pgSize'
-        haType:
-          $ref: '#/components/schemas/pgHaType'
-        tags:
-          $ref: '#/components/schemas/pgTags'
-    pgNameProperty:
+      - queryId
+      - queryText
+      - dbName
+      - dbUser
+      - dbOperation
+      - app
+      - callCount
+      - errorCount
+      - totalDurationUs
+      - avgDurationUs
+      - maxDurationUs
+      - p50DurationUs
+      - p95DurationUs
+      - p99DurationUs
+      - totalRows
+      - totalSharedBlksRead
+      - totalSharedBlksHit
+      - totalCpuTimeUs
+      - totalWalBytes
+    pgTags:
+      type: array
+      items:
+        $ref: '#/components/schemas/ResourceTagsV1'
+      maxItems: 50
+      title: Postgres Tags
+      description: Tags associated with the Postgres service. Tag keys starting with “chc_” are reserved for internal use.
+    pgProvider:
       type: string
-      title: Postgres Service Name
-      description: Name of the Postgres service. Alphanumerical string with whitespaces up to 50 characters.
-      minLength: 1
-      maxLength: 50
-    PostgresSlowQueryPatternDetail:
-      properties:
-        aggregate:
-          $ref: '#/components/schemas/PostgresSlowQueryPattern'
-        recentExecutions:
-          type: array
-          description: Recent individual executions matching the pattern.
-          items:
-            $ref: '#/components/schemas/PostgresQueryExecution'
-      required:
-      - recentExecutions
-    postgresInstanceConfig:
-      properties:
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-      required:
-      - pgConfig
-      - pgBouncerConfig
-    ResourceTagsV1:
-      type: object
-      properties:
-        key:
-          type: string
-          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
-          minLength: 1
-          maxLength: 128
-          pattern: ^[a-zA-Z0-9._-]+$
-        value:
-          type: string
-          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
-          maxLength: 256
-          pattern: ^[a-zA-Z0-9._-]+$
-      required:
-      - key
-      example:
-        key: Environment
-        value: staging
-    PostgresMetrics:
-      properties:
-        metrics:
-          type: array
-          description: Available metrics, each with its bucketed time series.
-          items:
-            $ref: '#/components/schemas/PostgresMetric'
-      required:
-      - metrics
-    PostgresService:
-      properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        provider:
-          $ref: '#/components/schemas/pgProvider'
-        region:
-          $ref: '#/components/schemas/pgRegion'
-        postgresVersion:
-          $ref: '#/components/schemas/pgVersion'
-        size:
-          $ref: '#/components/schemas/pgSize'
-        haType:
-          $ref: '#/components/schemas/pgHaType'
-        tags:
-          $ref: '#/components/schemas/pgTags'
-        id:
-          $ref: '#/components/schemas/pgIdProperty'
-        storageSize:
-          $ref: '#/components/schemas/pgStorageSize'
-        state:
-          $ref: '#/components/schemas/pgStateProperty'
-        createdAt:
-          $ref: '#/components/schemas/pgCreatedAtProperty'
-        isPrimary:
-          $ref: '#/components/schemas/pgIsPrimaryProperty'
-        connectionString:
-          description: Connection string to the Postgres service. Embeds the service password, so it is only returned when the service is created or its password is reset. Omitted from every other response when Postgres credential redaction is enabled for the organization. Not guaranteed to be present — treat as optional.
-          type: string
-        username:
-          description: Username for the Postgres service
-          type: string
-        password:
-          description: Password for the Postgres service. Only returned when the service is created or its password is reset. Omitted from every other response when Postgres credential redaction is enabled for the organization. Not guaranteed to be present — treat as optional.
-          type: string
-        hostname:
-          description: Hostname for the Postgres service
-          type: string
+      enum:
+      - aws
+      - gcp
+      title: Cloud provider
+      description: The cloud provider for a Postgres service.
     pgSize:
       type: string
       title: VM size
@@ -1881,6 +1856,115 @@ components:
       - z3-standardlssd-44
       - z3-standardlssd-88
       - z3-standardlssd-176
+    postgresInstanceConfig:
+      properties:
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+      required:
+      - pgConfig
+      - pgBouncerConfig
+    PostgresServiceListItem:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        provider:
+          $ref: '#/components/schemas/pgProvider'
+        region:
+          $ref: '#/components/schemas/pgRegion'
+        postgresVersion:
+          $ref: '#/components/schemas/pgVersion'
+        size:
+          $ref: '#/components/schemas/pgSize'
+        haType:
+          $ref: '#/components/schemas/pgHaType'
+        tags:
+          $ref: '#/components/schemas/pgTags'
+        id:
+          $ref: '#/components/schemas/pgIdProperty'
+        state:
+          $ref: '#/components/schemas/pgStateProperty'
+        createdAt:
+          $ref: '#/components/schemas/pgCreatedAtProperty'
+        isPrimary:
+          $ref: '#/components/schemas/pgIsPrimaryProperty'
+    pgIdProperty:
+      type: string
+      title: Unique Postgres service ID
+      format: uuid
+      example: f71df78e-ddad-82d0-8dfa-abbec741b82e
+    pgIsPrimaryProperty:
+      type: boolean
+      title: Postgres Service is Primary
+      description: True if this service is the primary service in the data warehouse
+      default: false
+    pgPassword:
+      title: Password
+      type: string
+      description: 'Optional password. If not provided a new password is generated and provided in the response. Must contain:
+
+
+        * At least one lowercase letter
+
+        * At least one uppercase letter
+
+        * At least one digit
+
+        '
+      minLength: 12
+      maxLength: 1024
+      allOf:
+      - pattern: '[a-z]'
+      - pattern: '[A-Z]'
+      - pattern: '[0-9]'
+    pgVersion:
+      type: string
+      title: Postgres major version
+      enum:
+      - '18'
+      - '17'
+    PostgresMetricDataPoint:
+      properties:
+        timestamp:
+          description: Bucket start time as a Unix timestamp in seconds.
+          type: integer
+        value:
+          description: Metric value for the bucket.
+          type: number
+      required:
+      - timestamp
+      - value
+    PostgresSlowQueryPatternDetail:
+      properties:
+        aggregate:
+          $ref: '#/components/schemas/PostgresSlowQueryPattern'
+        recentExecutions:
+          type: array
+          description: Recent individual executions matching the pattern.
+          items:
+            $ref: '#/components/schemas/PostgresQueryExecution'
+      required:
+      - recentExecutions
+    PostgresServiceSetState:
+      properties:
+        command:
+          description: Postgres status, which initiates a process.
+          type: string
+          enum:
+          - restart
+          - promote
+          - switchover
+    PostgresServicePatchRequest:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        size:
+          $ref: '#/components/schemas/pgSize'
+        haType:
+          $ref: '#/components/schemas/pgHaType'
+        tags:
+          $ref: '#/components/schemas/pgTags'
     PostgresQueryExecution:
       properties:
         timestamp:
@@ -2052,15 +2136,114 @@ components:
       - parallelWorkersPlanned
       - parallelWorkersLaunched
       - serverRole
-    PostgresServiceSetPassword:
+    PostgresServicePasswordResource:
       properties:
         password:
-          $ref: '#/components/schemas/pgPassword'
-    pgCreatedAtProperty:
+          description: New Postgres superuser password. Provided only if there was no 'password' in the request.
+          type: string
+    PostgresServiceReadReplicaRequest:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+        tags:
+          $ref: '#/components/schemas/pgTags'
+      required:
+      - name
+    postgresInstanceUpdateConfigResponse:
+      properties:
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+        message:
+          description: Informational message about the configuration update, such as restart requirements.
+          type: string
+      required:
+      - pgConfig
+      - pgBouncerConfig
+    PostgresServiceRestoreRequest:
+      properties:
+        name:
+          $ref: '#/components/schemas/pgNameProperty'
+        restoreTarget:
+          $ref: '#/components/schemas/pgPitrRestoreTargetProperty'
+        pgConfig:
+          $ref: '#/components/schemas/pgConfig'
+        pgBouncerConfig:
+          $ref: '#/components/schemas/pgBouncerConfig'
+        tags:
+          $ref: '#/components/schemas/pgTags'
+      required:
+      - name
+      - restoreTarget
+    PostgresMetric:
+      properties:
+        key:
+          description: Stable metric identifier (for example cpu_usage, connection_count, cache_hit_ratio).
+          type: string
+        name:
+          description: Human-readable metric name.
+          type: string
+        unit:
+          description: Unit of the metric values (for example %, IOPS, bytes/s, count).
+          type: string
+        description:
+          description: Human-readable description of what the metric measures.
+          type: string
+        series:
+          type: array
+          description: One series per label dimension of the metric.
+          items:
+            $ref: '#/components/schemas/PostgresMetricSeries'
+      required:
+      - key
+      - name
+      - unit
+      - description
+      - series
+    pgStateProperty:
+      type: string
+      title: Postgres Service State
+      description: Current state of the service
+      enum:
+      - creating
+      - restarting
+      - running
+      - replaying_wal
+      - restoring_backup
+      - finalizing_restore
+      - unavailable
+      - stopped
+      - deleting
+    pgPitrRestoreTargetProperty:
       type: string
       format: date-time
-      title: Postgres Service creation timestamp
-      example: '2026-03-26T20:51:16.384Z'
+      title: PITR Restore Target as an RFC 3339-formatted timestamp in UTC time.
+      example: '2026-03-31T18:17:37Z'
+      description: The point in time at which to recover, as either date/time, named restore point, or a specific transaction ID.
+    ResourceTagsV1:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Tag key. Must be alphanumeric with dashes, underscores and dots.
+          minLength: 1
+          maxLength: 128
+          pattern: ^[a-zA-Z0-9._-]+$
+        value:
+          type: string
+          description: Tag value. Must be alphanumeric with dashes, underscores and dots.
+          maxLength: 256
+          pattern: ^[a-zA-Z0-9._-]+$
+      required:
+      - key
+      example:
+        key: Environment
+        value: staging
     pgConfig:
       type: object
       title: Postgres Configuration
@@ -2354,84 +2537,7 @@ components:
       minProperties: 1
       example:
         max_connections: 100
-    pgStorageSize:
-      type: integer
-      title: Storage Size
-      description: The storage size, in GiB, which must be supported by the specified `size`.
-    pgIdProperty:
-      type: string
-      title: Unique Postgres service ID
-      format: uuid
-      example: f71df78e-ddad-82d0-8dfa-abbec741b82e
-    pgPassword:
-      title: Password
-      type: string
-      description: 'Optional password. If not provided a new password is generated and provided in the response. Must contain:
-
-
-        * At least one lowercase letter
-
-        * At least one uppercase letter
-
-        * At least one digit
-
-        '
-      minLength: 12
-      maxLength: 1024
-      allOf:
-      - pattern: '[a-z]'
-      - pattern: '[A-Z]'
-      - pattern: '[0-9]'
-    PostgresMetric:
-      properties:
-        key:
-          description: Stable metric identifier (for example cpu_usage, connection_count, cache_hit_ratio).
-          type: string
-        name:
-          description: Human-readable metric name.
-          type: string
-        unit:
-          description: Unit of the metric values (for example %, IOPS, bytes/s, count).
-          type: string
-        description:
-          description: Human-readable description of what the metric measures.
-          type: string
-        series:
-          type: array
-          description: One series per label dimension of the metric.
-          items:
-            $ref: '#/components/schemas/PostgresMetricSeries'
-      required:
-      - key
-      - name
-      - unit
-      - description
-      - series
-    pgStateProperty:
-      type: string
-      title: Postgres Service State
-      description: Current state of the service
-      enum:
-      - creating
-      - restarting
-      - running
-      - replaying_wal
-      - restoring_backup
-      - finalizing_restore
-      - unavailable
-      - stopped
-      - deleting
-    pgPitrRestoreTargetProperty:
-      type: string
-      format: date-time
-      title: PITR Restore Target as an RFC 3339-formatted timestamp in UTC time.
-      example: '2026-03-31T18:17:37Z'
-      description: The point in time at which to recover, as either date/time, named restore point, or a specific transaction ID.
-    pgRegion:
-      type: string
-      title: Service region
-      description: The cloud region for a Postgres service.
-    PostgresServiceListItem:
+    PostgresService:
       properties:
         name:
           $ref: '#/components/schemas/pgNameProperty'
@@ -2449,19 +2555,37 @@ components:
           $ref: '#/components/schemas/pgTags'
         id:
           $ref: '#/components/schemas/pgIdProperty'
+        storageSize:
+          $ref: '#/components/schemas/pgStorageSize'
         state:
           $ref: '#/components/schemas/pgStateProperty'
         createdAt:
           $ref: '#/components/schemas/pgCreatedAtProperty'
         isPrimary:
           $ref: '#/components/schemas/pgIsPrimaryProperty'
-    pgProvider:
+        connectionString:
+          description: Connection string to the Postgres service. Embeds the service password, so it is only returned when the service is created or its password is reset. Omitted from every other response when Postgres credential redaction is enabled for the organization. Not guaranteed to be present — treat as optional.
+          type: string
+        username:
+          description: Username for the Postgres service
+          type: string
+        password:
+          description: Password for the Postgres service. Only returned when the service is created or its password is reset. Omitted from every other response when Postgres credential redaction is enabled for the organization. Not guaranteed to be present — treat as optional.
+          type: string
+        hostname:
+          description: Hostname for the Postgres service
+          type: string
+    pgCreatedAtProperty:
       type: string
-      enum:
-      - aws
-      - gcp
-      title: Cloud provider
-      description: The cloud provider for a Postgres service.
+      format: date-time
+      title: Postgres Service creation timestamp
+      example: '2026-03-26T20:51:16.384Z'
+    pgNameProperty:
+      type: string
+      title: Postgres Service Name
+      description: Name of the Postgres service. Alphanumerical string with whitespaces up to 50 characters.
+      minLength: 1
+      maxLength: 50
     pgBouncerConfig:
       type: object
       title: PgBouncer Configuration
@@ -2473,28 +2597,6 @@ components:
       maxProperties: 64
       example:
         default_pool_size: '16'
-    PostgresServicePasswordResource:
-      properties:
-        password:
-          description: New Postgres superuser password. Provided only if there was no 'password' in the request.
-          type: string
-    pgIsPrimaryProperty:
-      type: boolean
-      title: Postgres Service is Primary
-      description: True if this service is the primary service in the data warehouse
-      default: false
-    PostgresServiceReadReplicaRequest:
-      properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-        tags:
-          $ref: '#/components/schemas/pgTags'
-      required:
-      - name
     PostgresServicePostRequest:
       properties:
         name:
@@ -2520,39 +2622,6 @@ components:
       - provider
       - region
       - size
-    PostgresServiceRestoreRequest:
-      properties:
-        name:
-          $ref: '#/components/schemas/pgNameProperty'
-        restoreTarget:
-          $ref: '#/components/schemas/pgPitrRestoreTargetProperty'
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-        tags:
-          $ref: '#/components/schemas/pgTags'
-      required:
-      - name
-      - restoreTarget
-    postgresInstanceUpdateConfigResponse:
-      properties:
-        pgConfig:
-          $ref: '#/components/schemas/pgConfig'
-        pgBouncerConfig:
-          $ref: '#/components/schemas/pgBouncerConfig'
-        message:
-          description: Informational message about the configuration update, such as restart requirements.
-          type: string
-      required:
-      - pgConfig
-      - pgBouncerConfig
-    pgVersion:
-      type: string
-      title: Postgres major version
-      enum:
-      - '18'
-      - '17'
     pgHaType:
       type: string
       description: 'Type of high availability: “none” for no replication, “async” for asynchronous replication to a single standby, and “sync” for synchronous replication to two standbys.'
@@ -2560,6 +2629,31 @@ components:
       - none
       - async
       - sync
+    PostgresMetrics:
+      properties:
+        metrics:
+          type: array
+          description: Available metrics, each with its bucketed time series.
+          items:
+            $ref: '#/components/schemas/PostgresMetric'
+      required:
+      - metrics
+    PostgresLogEntry:
+      properties:
+        timestamp:
+          description: Time the entry was logged (RFC 3339).
+          type: string
+          format: date-time
+        severity:
+          description: PostgreSQL severity of the entry (for example, LOG, WARNING, ERROR, FATAL, PANIC).
+          type: string
+        body:
+          description: Raw log entry body as emitted by PostgreSQL. Structured bodies are returned as a JSON-encoded string.
+          type: string
+      required:
+      - timestamp
+      - severity
+      - body
     PostgresMetricSeries:
       properties:
         label:
@@ -2573,112 +2667,18 @@ components:
       required:
       - label
       - dataPoints
-    PostgresSlowQueryPattern:
+    pgStorageSize:
+      type: integer
+      title: Storage Size
+      description: The storage size, in GiB, which must be supported by the specified `size`.
+    PostgresServiceSetPassword:
       properties:
-        queryId:
-          description: Stable identifier for the query pattern (normalized SQL).
-          type: string
-        queryText:
-          description: Normalized query text with literals replaced by placeholders.
-          type: string
-        dbName:
-          description: Database the query ran in.
-          type: string
-        dbUser:
-          description: Database user that executed the query.
-          type: string
-        dbOperation:
-          description: Top-level SQL operation type (for example, SELECT, INSERT, UPDATE, DELETE, UTILITY).
-          type: string
-        app:
-          description: Value of the Postgres `application_name` for executions matching this pattern.
-          type: string
-        callCount:
-          description: Number of times the pattern executed in the window.
-          type: integer
-        errorCount:
-          description: Number of executions of the pattern that raised an error.
-          type: integer
-        totalDurationUs:
-          description: Total execution time across all calls, in microseconds.
-          type: integer
-        avgDurationUs:
-          description: Average execution time per call, in microseconds.
-          type: integer
-        maxDurationUs:
-          description: Maximum execution time of any call, in microseconds.
-          type: integer
-        p50DurationUs:
-          description: 50th percentile execution time, in microseconds.
-          type: integer
-        p95DurationUs:
-          description: 95th percentile execution time, in microseconds.
-          type: integer
-        p99DurationUs:
-          description: 99th percentile execution time, in microseconds.
-          type: integer
-        totalRows:
-          description: Total number of rows returned or affected across all calls.
-          type: integer
-        totalSharedBlksRead:
-          description: Total shared buffer blocks read from disk (cache misses) across all calls.
-          type: integer
-        totalSharedBlksHit:
-          description: Total shared buffer blocks hit (cache hits) across all calls.
-          type: integer
-        totalCpuTimeUs:
-          description: Total CPU time across all calls, in microseconds.
-          type: integer
-        totalWalBytes:
-          description: Total WAL (write-ahead log) bytes generated across all calls.
-          type: integer
-      required:
-      - queryId
-      - queryText
-      - dbName
-      - dbUser
-      - dbOperation
-      - app
-      - callCount
-      - errorCount
-      - totalDurationUs
-      - avgDurationUs
-      - maxDurationUs
-      - p50DurationUs
-      - p95DurationUs
-      - p99DurationUs
-      - totalRows
-      - totalSharedBlksRead
-      - totalSharedBlksHit
-      - totalCpuTimeUs
-      - totalWalBytes
-    pgTags:
-      type: array
-      items:
-        $ref: '#/components/schemas/ResourceTagsV1'
-      maxItems: 50
-      title: Postgres Tags
-      description: Tags associated with the Postgres service. Tag keys starting with “chc_” are reserved for internal use.
-    PostgresMetricDataPoint:
-      properties:
-        timestamp:
-          description: Bucket start time as a Unix timestamp in seconds.
-          type: integer
-        value:
-          description: Metric value for the bucket.
-          type: number
-      required:
-      - timestamp
-      - value
-    PostgresServiceSetState:
-      properties:
-        command:
-          description: Postgres status, which initiates a process.
-          type: string
-          enum:
-          - restart
-          - promote
-          - switchover
+        password:
+          $ref: '#/components/schemas/pgPassword'
+    pgRegion:
+      type: string
+      title: Service region
+      description: The cloud region for a Postgres service.
   securitySchemes:
     basicAuth:
       type: http

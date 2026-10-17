@@ -388,6 +388,21 @@ paths:
       - Role Management
 components:
   schemas:
+    RoleUpdateRequest:
+      properties:
+        name:
+          description: New name for the role
+          type: string
+        actors:
+          type: array
+          description: New list of actor resource IDs (replaces existing actors)
+          items:
+            type: string
+        policies:
+          type: array
+          description: New list of policies (replaces existing policies)
+          items:
+            $ref: '#/components/schemas/RBACPolicyCreateRequest'
     RBACPolicyTags:
       properties:
         grants:
@@ -401,73 +416,6 @@ components:
           enum:
           - sql-console-readonly
           - sql-console-admin
-    RBACRole:
-      properties:
-        id:
-          description: Unique role identifier
-          type: string
-        tenantId:
-          description: Tenant resource ID (e.g., organization/uuid)
-          type: string
-        ownerId:
-          description: Owner resource ID (e.g., organization/uuid)
-          type: string
-        name:
-          description: Name of the role
-          type: string
-        type:
-          description: Whether this is a system role or a custom role
-          type: string
-          enum:
-          - system
-          - custom
-        actors:
-          type: array
-          description: List of actor resource IDs assigned to this role (e.g., user/uuid, apiKey/uuid)
-          items:
-            type: string
-        policies:
-          type: array
-          description: List of policies associated with this role
-          items:
-            $ref: '#/components/schemas/RBACPolicy'
-        createdAt:
-          description: Timestamp when the role was created. ISO-8601.
-          type: string
-          format: date-time
-        updatedAt:
-          description: Timestamp when the role was last updated. ISO-8601.
-          type: string
-          format: date-time
-    RBACPolicy:
-      properties:
-        id:
-          description: Unique policy identifier
-          type: string
-        roleId:
-          description: ID of the role this policy belongs to
-          type: string
-        tenantId:
-          description: Tenant resource ID (e.g., organization/uuid)
-          type: string
-        allowDeny:
-          description: Whether this policy allows or denies access
-          type: string
-          enum:
-          - ALLOW
-          - DENY
-        permissions:
-          type: array
-          description: List of permissions granted or denied by this policy
-          items:
-            type: string
-        resources:
-          type: array
-          description: List of resource IDs this policy applies to (e.g., instance/uuid, instance/*)
-          items:
-            type: string
-        tags:
-          $ref: '#/components/schemas/RBACPolicyTags'
     RBACPolicyCreateRequest:
       properties:
         allowDeny:
@@ -511,21 +459,73 @@ components:
       - name
       - actors
       - policies
-    RoleUpdateRequest:
+    RBACPolicy:
       properties:
-        name:
-          description: New name for the role
+        id:
+          description: Unique policy identifier
           type: string
+        roleId:
+          description: ID of the role this policy belongs to
+          type: string
+        tenantId:
+          description: Tenant resource ID (e.g., organization/uuid)
+          type: string
+        allowDeny:
+          description: Whether this policy allows or denies access
+          type: string
+          enum:
+          - ALLOW
+          - DENY
+        permissions:
+          type: array
+          description: List of permissions granted or denied by this policy
+          items:
+            type: string
+        resources:
+          type: array
+          description: List of resource IDs this policy applies to (e.g., instance/uuid, instance/*)
+          items:
+            type: string
+        tags:
+          $ref: '#/components/schemas/RBACPolicyTags'
+    RBACRole:
+      properties:
+        id:
+          description: Unique role identifier
+          type: string
+        tenantId:
+          description: Tenant resource ID (e.g., organization/uuid)
+          type: string
+        ownerId:
+          description: Owner resource ID (e.g., organization/uuid)
+          type: string
+        name:
+          description: Name of the role
+          type: string
+        type:
+          description: Whether this is a system role or a custom role
+          type: string
+          enum:
+          - system
+          - custom
         actors:
           type: array
-          description: New list of actor resource IDs (replaces existing actors)
+          description: List of actor resource IDs assigned to this role (e.g., user/uuid, apiKey/uuid)
           items:
             type: string
         policies:
           type: array
-          description: New list of policies (replaces existing policies)
+          description: List of policies associated with this role
           items:
-            $ref: '#/components/schemas/RBACPolicyCreateRequest'
+            $ref: '#/components/schemas/RBACPolicy'
+        createdAt:
+          description: Timestamp when the role was created. ISO-8601.
+          type: string
+          format: date-time
+        updatedAt:
+          description: Timestamp when the role was last updated. ISO-8601.
+          type: string
+          format: date-time
   securitySchemes:
     basicAuth:
       type: http
