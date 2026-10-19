@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -15,8 +15,8 @@ tags:
 paths:
   /v1/organizations/{organizationId}/keys:
     get:
-      summary: Get list of all keys
-      description: Returns a list of all keys in the organization.
+      summary: Get list of keys
+      description: Returns a list of keys in the organization, ordered by creation date, oldest first. Results are capped at `limit` (default 250) per page; the server may return fewer and caps the value at its own maximum. Every response carries `limit`, `totalCount` and `nextCursor`; pass `nextCursor` as the `cursor` query parameter to fetch the next page, repeating until it is null.
       operationId: openapiKeyGetList
       parameters:
       - in: path
@@ -26,6 +26,18 @@ paths:
         schema:
           type: string
           format: uuid
+      - in: query
+        name: limit
+        description: Maximum number of results to return.
+        schema:
+          type: integer
+          minimum: 1
+          default: 250
+      - in: query
+        name: cursor
+        description: Opaque cursor from a previous response's `nextCursor`, marking where to resume the list.
+        schema:
+          type: string
       responses:
         '200':
           description: Successful response
@@ -46,6 +58,19 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ApiKey'
+                  limit:
+                    type: integer
+                    description: Maximum number of results returned in this page.
+                  totalCount:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Total number of results across all pages. It has only informative value, thus is not guaranteed and it is provided on a best-effort basis. Null if the total count is unknown.
+                  nextCursor:
+                    type:
+                    - string
+                    - 'null'
+                    description: Cursor for the next page, to be sent as the `cursor` query parameter. Null on the last page.
         '400':
           description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
           content:
@@ -82,6 +107,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-api-keys
       tags:
       - API Keys
     post:
@@ -155,6 +183,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:create-api-keys
       tags:
       - API Keys
   /v1/organizations/{organizationId}/keys/{keyId}:
@@ -231,6 +262,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-api-keys
       tags:
       - API Keys
     patch:
@@ -311,6 +345,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-api-keys
       tags:
       - API Keys
     delete:
@@ -384,10 +421,21 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-api-keys
       tags:
       - API Keys
 components:
   schemas:
+    IpAccessListEntry:
+      properties:
+        source:
+          description: IP or CIDR
+          type: string
+        description:
+          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
+          type: string
     ApiKey:
       properties:
         id:
@@ -440,6 +488,42 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
+    ApiKeyHashData:
+      properties:
+        keyIdHash:
+          description: 'Hash of the key ID. '
+          type: string
+        keyIdSuffix:
+          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+          type: string
+        keySecretHash:
+          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
+          type: string
+    AssignedRole:
+      properties:
+        roleId:
+          description: Unique identifier of the role
+          type: string
+          format: uuid
+        roleName:
+          description: Human-readable name of the role
+          type: string
+        roleType:
+          description: 'Type of role: system (predefined) or custom (organization-defined)'
+          type: string
+          enum:
+          - system
+          - custom
+    ApiKeyPostResponse:
+      properties:
+        key:
+          $ref: '#/components/schemas/ApiKey'
+        keyId:
+          description: Generated key ID. Provided only if there was no 'hashData' in the request.
+          type: string
+        keySecret:
+          description: Generated key secret. Provided only if there was no 'hashData' in the request.
+          type: string
     ApiKeyPatchRequest:
       properties:
         name:
@@ -478,42 +562,6 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    ApiKeyPostResponse:
-      properties:
-        key:
-          $ref: '#/components/schemas/ApiKey'
-        keyId:
-          description: Generated key ID. Provided only if there was no 'hashData' in the request.
-          type: string
-        keySecret:
-          description: Generated key secret. Provided only if there was no 'hashData' in the request.
-          type: string
-    AssignedRole:
-      properties:
-        roleId:
-          description: Unique identifier of the role
-          type: string
-          format: uuid
-        roleName:
-          description: Human-readable name of the role
-          type: string
-        roleType:
-          description: 'Type of role: system (predefined) or custom (organization-defined)'
-          type: string
-          enum:
-          - system
-          - custom
-    ApiKeyHashData:
-      properties:
-        keyIdHash:
-          description: 'Hash of the key ID. '
-          type: string
-        keyIdSuffix:
-          description: 'Last 4 digits of the key ID. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
-        keySecretHash:
-          description: 'Hash of the key secret. Algorithm: echo -n "yourpassword" | sha256sum | tr -d ''-'' | xxd -r -p | base64'
-          type: string
     ApiKeyPostRequest:
       properties:
         name:
@@ -554,23 +602,19 @@ components:
           description: List of IP addresses allowed to access the API using this key
           items:
             $ref: '#/components/schemas/IpAccessListEntry'
-    IpAccessListEntry:
-      properties:
-        source:
-          description: IP or CIDR
-          type: string
-        description:
-          description: Optional description of IPv4 address or IPv4 CIDR to allow access from
-          type: string
+      required:
+      - name
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -579,6 +623,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys

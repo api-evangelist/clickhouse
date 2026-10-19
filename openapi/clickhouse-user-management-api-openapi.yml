@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -13,6 +13,74 @@ security:
 tags:
 - name: User Management
 paths:
+  /v1/whoami:
+    get:
+      summary: Resolve the caller identity
+      description: '**Disclaimer:** This beta endpoint is evolving; the API contract may change.
+
+
+        Returns the identity of the authenticated caller. For a user (JWT or clickhousectl token) the result carries the user fields; for an organization API key it carries the key fields instead. Use `actorType` to tell the two apart.'
+      operationId: whoamiGet
+      parameters: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/Whoami'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      tags:
+      - User Management
+      x-badges:
+      - name: Beta
+        position: after
   /v1/organizations/{organizationId}/members:
     get:
       summary: List organization members
@@ -82,6 +150,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - User Management
   /v1/organizations/{organizationId}/members/{userId}:
@@ -158,6 +229,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - User Management
     patch:
@@ -238,6 +312,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - User Management
     delete:
@@ -311,6 +388,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - User Management
   /v1/organizations/{organizationId}/invitations:
@@ -382,6 +462,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - User Management
     post:
@@ -455,6 +538,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - User Management
   /v1/organizations/{organizationId}/invitations/{invitationId}:
@@ -531,6 +617,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - User Management
     delete:
@@ -604,10 +693,17 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - User Management
 components:
   schemas:
+    Whoami:
+      oneOf:
+      - $ref: '#/components/schemas/WhoamiUser'
+      - $ref: '#/components/schemas/WhoamiApiKey'
     InvitationPostRequest:
       properties:
         email:
@@ -626,6 +722,90 @@ components:
           description: List of role IDs to assign to the invited user when they accept the invitation
           items:
             type: string
+      required:
+      - email
+    WhoamiOrganization:
+      properties:
+        organizationId:
+          description: ID of the organization the user belongs to.
+          type: string
+          format: uuid
+        organizationName:
+          description: Name of the organization.
+          type: string
+      required:
+      - organizationId
+      - organizationName
+    MemberPatchRequest:
+      properties:
+        role:
+          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
+          type: string
+          enum:
+          - admin
+          - developer
+          deprecated: true
+        assignedRoleIds:
+          type: array
+          description: List of role IDs to assign to the member
+          items:
+            type: string
+    Member:
+      properties:
+        userId:
+          description: Unique user ID. If a user is a member in multiple organizations this ID will stay the same.
+          type: string
+        name:
+          description: Name of the member as set a personal user profile.
+          type: string
+        email:
+          description: Email of the member as set in personal user profile.
+          type: string
+          format: email
+        role:
+          description: DEPRECATED. Use `assignedRoles` instead. Role of the member in the organization. For organizations that have migrated to custom roles, this field is frozen at the pre-migration value and does not reflect current role assignments.
+          type: string
+          enum:
+          - admin
+          - developer
+          deprecated: true
+        joinedAt:
+          description: Timestamp the member joined the organization. ISO-8601.
+          type: string
+          format: date-time
+        assignedRoles:
+          type: array
+          description: Custom roles and System roles assigned to this member
+          items:
+            $ref: '#/components/schemas/AssignedRole'
+    WhoamiUser:
+      properties:
+        actorType:
+          description: Discriminator identifying the caller as a user (JWT or clickhousectl token).
+          type: string
+          const: user
+        userId:
+          description: Unique ID of the user.
+          type: string
+          format: uuid
+        email:
+          description: Email address of the user.
+          type: string
+          format: email
+        name:
+          description: Full name of the user.
+          type: string
+        organizations:
+          type: array
+          description: Organizations the user belongs to.
+          items:
+            $ref: '#/components/schemas/WhoamiOrganization'
+      required:
+      - actorType
+      - userId
+      - email
+      - name
+      - organizations
     Invitation:
       properties:
         role:
@@ -671,57 +851,38 @@ components:
           enum:
           - system
           - custom
-    MemberPatchRequest:
+    WhoamiApiKey:
       properties:
-        role:
-          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
+        actorType:
+          description: Discriminator identifying the caller as an organization API key.
           type: string
-          enum:
-          - admin
-          - developer
-          deprecated: true
-        assignedRoleIds:
-          type: array
-          description: List of role IDs to assign to the member
-          items:
-            type: string
-    Member:
-      properties:
-        userId:
-          description: Unique user ID. If a user is a member in multiple organizations this ID will stay the same.
+          const: apiKey
+        keyId:
+          description: Unique ID of the API key.
           type: string
         name:
-          description: Name of the member as set a personal user profile.
+          description: Name of the API key.
           type: string
-        email:
-          description: Email of the member as set in personal user profile.
+        organizationId:
+          description: ID of the organization that owns the API key.
           type: string
-          format: email
-        role:
-          description: DEPRECATED. Use `assignedRoles` instead. Role of the member in the organization. For organizations that have migrated to custom roles, this field is frozen at the pre-migration value and does not reflect current role assignments.
-          type: string
-          enum:
-          - admin
-          - developer
-          deprecated: true
-        joinedAt:
-          description: Timestamp the member joined the organization. ISO-8601.
-          type: string
-          format: date-time
-        assignedRoles:
-          type: array
-          description: Custom roles and System roles assigned to this member
-          items:
-            $ref: '#/components/schemas/AssignedRole'
+          format: uuid
+      required:
+      - actorType
+      - keyId
+      - name
+      - organizationId
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -730,6 +891,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys

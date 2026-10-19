@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -16,9 +16,21 @@ paths:
   /v1/organizations:
     get:
       summary: Get list of available organizations
-      description: Returns a list with a single organization associated with the API key in the request.
+      description: Returns the organizations available to the caller, oldest first. An API key resolves to the single organization it belongs to; a user token returns every organization the user is a member of. Results are capped at `limit` (default 250) per page; the server may return fewer and caps the value at its own maximum. Every response carries `limit` and `nextCursor`; pass `nextCursor` as the `cursor` query parameter to fetch the next page, repeating until it is null.
       operationId: organizationGetList
-      parameters: []
+      parameters:
+      - in: query
+        name: limit
+        description: Maximum number of results to return.
+        schema:
+          type: integer
+          minimum: 1
+          default: 250
+      - in: query
+        name: cursor
+        description: Opaque cursor from a previous response's `nextCursor`, marking where to resume the list.
+        schema:
+          type: string
       responses:
         '200':
           description: Successful response
@@ -39,6 +51,14 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Organization'
+                  limit:
+                    type: integer
+                    description: Maximum number of results returned in this page.
+                  nextCursor:
+                    type:
+                    - string
+                    - 'null'
+                    description: Cursor for the next page, to be sent as the `cursor` query parameter. Null on the last page.
         '400':
           description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
           content:
@@ -144,6 +164,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - Organization
     patch:
@@ -217,6 +240,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Organization
   /v1/organizations/{organizationId}/quotas:
@@ -291,6 +317,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - Organization
       x-badges:
@@ -372,6 +401,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - Organization
       x-badges:
@@ -458,6 +490,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-activities
       tags:
       - Organization
   /v1/organizations/{organizationId}/activities/{activityId}:
@@ -533,6 +568,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view-activities
       tags:
       - Organization
   /v1/organizations/{organizationId}/privateEndpointConfig:
@@ -614,6 +652,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       deprecated: true
       tags:
       - Organization
@@ -689,9 +730,179 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Organization
+  /v1/organizations/{organizationId}/byocInfrastructure/validate:
+    post:
+      summary: Validate BYOC infrastructure prerequisites
+      description: '**Disclaimer:** This beta endpoint is evolving; the API contract may change.
+
+
+        Preflight-validates that a cloud account is ready for BYOC infrastructure creation: simulates the cloud permissions ClickHouse needs (and, for BYO-VPC, checks the provided network resources) without creating anything. Takes the same parameters as infrastructure creation, so a payload that passes validation will not be rejected by create for the same inputs.'
+      operationId: organizationByocInfrastructureValidate
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ByocInfrastructureValidatePostRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/ByocInfrastructureValidation'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
+      tags:
+      - Organization
+      x-badges:
+      - name: Beta
+        position: after
   /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}:
+    get:
+      summary: Get BYOC infrastructure details
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Returns the full configuration of a BYOC infrastructure, including private link and load balancer state, network layout, and BYO-VPC settings read from the data plane.'
+      operationId: organizationByocInfrastructureGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: byocInfrastructureId
+        description: ID of the requested BYOC Infrastructure
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/ByocInfrastructureDetails'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
+      tags:
+      - Organization
+      x-badges:
+      - name: Beta
+        position: after
     delete:
       summary: Remove a BYOC infrastructure
       description: Removes a BYOC Infrastructure from the organization
@@ -763,11 +974,14 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Organization
     patch:
       summary: Update BYOC Infrastructure
-      description: Update configuration of the BYOC infrastructure. Returns the modified infrastructure
+      description: 'Update configuration of the BYOC infrastructure: rename it, toggle private link and load balancers, or replace its tags. The request is validated as a whole before anything is applied. If applying a field then fails in the data plane, client errors name the fields already applied, while internal errors return a generic message; retrying the same request is safe either way and converges the infrastructure to the requested state. Returns the modified infrastructure'
       operationId: organizationByocInfrastructureUpdate
       parameters:
       - in: path
@@ -843,121 +1057,286 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Organization
+  /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}/progress:
+    get:
+      summary: Get BYOC infrastructure provisioning progress
+      description: '**Disclaimer:** This beta endpoint is evolving; the API contract may change.
+
+
+        Returns the stage-by-stage provisioning progress of a BYOC infrastructure, more granular than the `state` field: overall status plus a tree of provisioning stages down to individual cloud resources.'
+      operationId: organizationByocInfrastructureProgressGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: byocInfrastructureId
+        description: ID of the requested BYOC Infrastructure
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/ByocInfrastructureProgress'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
+      tags:
+      - Organization
+      x-badges:
+      - name: Beta
+        position: after
+  /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}/tags:
+    get:
+      summary: Get BYOC infrastructure tags
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Returns the additional tags currently applied to the cloud resources of the BYOC infrastructure. Tags are replaced as a whole through the infrastructure update endpoint.'
+      operationId: organizationByocInfrastructureTagsGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: byocInfrastructureId
+        description: ID of the requested BYOC Infrastructure
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/ByocInfrastructureTagsResponse'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
+      tags:
+      - Organization
+      x-badges:
+      - name: Beta
+        position: after
+  /v1/organizations/{organizationId}/byocInfrastructure/{byocInfrastructureId}/privateEndpointConfig:
+    get:
+      summary: Get BYOC infrastructure private endpoint configuration
+      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
+
+
+        Returns the private link endpoint service details of a BYOC infrastructure. For BYOC organizations this replaces the deprecated organization-level `privateEndpointConfig` endpoint.'
+      operationId: organizationByocInfrastructurePrivateEndpointConfigGet
+      parameters:
+      - in: path
+        name: organizationId
+        description: ID of the requested organization.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: path
+        name: byocInfrastructureId
+        description: ID of the requested BYOC Infrastructure
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 200
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+                  result:
+                    $ref: '#/components/schemas/ByocInfrastructurePrivateEndpointConfig'
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: HTTP status code.
+                    example: 400
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                    example: 500
+                  error:
+                    type: string
+                    description: Detailed error description.
+                  requestId:
+                    type: string
+                    description: Unique id assigned to every request. UUIDv4
+                    format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
+      tags:
+      - Organization
+      x-badges:
+      - name: Beta
+        position: after
 components:
   schemas:
-    ByocConfig:
+    ByocInfrastructurePrivateEndpointConfig:
       properties:
-        id:
-          description: Unique identifier of the BYOC configuration
+        endpointName:
+          description: 'Cloud-provider identifier of the private link endpoint service of the infrastructure: VPC endpoint service name on AWS, Private Service Connect service attachment on GCP, or Private Link service on Azure'
           type: string
-        state:
-          description: State of the infrastructure
+        privateDnsHostname:
+          description: Private DNS hostname under which services of the infrastructure are reachable over private link
           type: string
-          enum:
-          - infra-ready
-          - infra-provisioning
-          - infra-terminated
-        accountName:
-          description: Name of the account
-          type: string
-        regionId:
-          description: Region for which the BYOC has been configured and where it is possible to create services
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        cloudProvider:
-          description: Cloud provider of the region
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        displayName:
-          description: Human readable name for infrastructure
-          type: string
-    ByocInfrastructurePostRequest:
-      properties:
-        regionId:
-          description: Region in which the BYOC infrastructure will be located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        accountId:
-          description: Cloud account ID the BYOC infrastructure is configured for
-          type: string
-        availabilityZoneSuffixes:
-          type: array
-          description: List of availability zone suffixes
-          items:
-            type: string
-            enum:
-            - a
-            - b
-            - c
-            - d
-            - e
-            - f
-        vpcCidrRange:
-          description: CIDR range for VPC
-          type: string
-        displayName:
-          description: Human readable name for infrastructure
-          type: string
-    OrganizationPatchPrivateEndpoint:
+      required:
+      - endpointName
+      - privateDnsHostname
+    OrganizationPrivateEndpoint:
       properties:
         id:
           description: Private endpoint identifier
           type: string
         description:
-          description: Optional description of private endpoint
+          description: Description of private endpoint
           type: string
         cloudProvider:
           description: Cloud provider in which the private endpoint is lcoated
@@ -994,78 +1373,10 @@ components:
           - westus3
           - germanywestcentral
           - centralus
-    OrganizationPrivateEndpointsPatch:
+    OrganizationCapabilities:
       properties:
-        add:
-          type: array
-          description: DEPRECATED. Elements to add. Executed after "remove" part is processed. Please use the `Update Service Basic Details` endpoint with the `privateEndpointIds` field instead to modify the private endpoints.
-          items:
-            $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
-          deprecated: true
-        remove:
-          type: array
-          description: Elements to remove. Executed before "add" part is processed.
-          items:
-            $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
-    ByocInfrastructurePatchRequest:
-      properties:
-        displayName:
-          description: Human readable name for infrastructure object
-          type: string
-    OrganizationQuota:
-      properties:
-        quotaCode:
-          description: Stable identifier of the quota. Use it to request a single quota by code.
-          type: string
-          enum:
-          - services-per-organization
-          - postgres-services-per-organization
-          - replicas-per-warehouse
-          - api-keys-per-organization
-          example: services-per-organization
-        name:
-          description: Human-readable name of the quota.
-          type: string
-          example: Services per organization
-        description:
-          description: Explanation of the resource the quota limits and how the limit is applied.
-          type: string
-        scope:
-          description: Granularity at which the limit is applied. For example, `replicas-per-warehouse` is an organization-wide setting that limits each warehouse individually.
-          type: string
-          enum:
-          - organization
-          - warehouse
-          example: organization
-        value:
-          description: Limit currently applied to the organization, including any adjustments made for the organization. The value can change when the billing status of the organization changes.
-          type: integer
-          minimum: 0
-          example: 20
-        usage:
-          description: Current consumption of the quota. Omitted for quotas that do not report usage. Usage can exceed `value` when a limit was lowered after resources were created; existing resources are not affected.
-          type: integer
-          minimum: 0
-          example: 3
-        adjustable:
-          description: Whether the limit can be raised for the organization by contacting ClickHouse support.
-          type: boolean
-      required:
-      - quotaCode
-      - name
-      - description
-      - scope
-      - value
-      - adjustable
-    OrganizationPatchRequest:
-      properties:
-        name:
-          description: Name of the organization.
-          type: string
-        privateEndpoints:
-          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+        snapshots:
+          description: Whether the organization is eligible to enable snapshots on its primary services.
           type: boolean
     Activity:
       properties:
@@ -1169,6 +1480,12 @@ components:
           - scim_group_update
           - scim_group_delete
           - organization_saml_connection_delete
+          - organization_update_saml_query_ownership_migration
+          - organization_approved_domain_verify
+          - organization_approved_domain_update
+          - organization_approved_domain_delete
+          - organization_approved_domain_auto_join
+          - organization_approved_domain_auto_invite
           - datadog_integration_create
           - datadog_integration_delete
           - organization_update_spend_alert
@@ -1176,6 +1493,10 @@ components:
           - organization_update_private_endpoints
           - organization_update_pci_compliance
           - organization_update_hipaa_status
+          - organization_security_contact_add
+          - organization_security_contact_remove
+          - organization_security_contact_replace
+          - organization_update_public_preview
           - transfer_credits_in
           - transfer_credits_out
           - promo_code_claim
@@ -1198,6 +1519,7 @@ components:
           - udf_update_services
           - udf_redeploy
           - udf_rebuild
+          - postgres_action
         actorType:
           description: 'Type of the actor: ''user'', ''support'', ''system'', ''api''.'
           type: string
@@ -1262,44 +1584,215 @@ components:
           description: 'For ''role_resources_delete'' activities: IDs of the deleted resources the roles referenced.'
           items:
             type: string
+    ByocInfrastructureValidatePostRequest:
+      properties:
+        regionId:
+          description: Region in which the BYOC infrastructure will be located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        availabilityZoneSuffixes:
+          type: array
+          description: List of availability zone suffixes
+          items:
+            type: string
+            enum:
+            - a
+            - b
+            - c
+            - d
+            - e
+            - f
+        vpcCidrRange:
+          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
+          type: string
+          example: 10.0.0.0/16
+        externalId:
+          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
+          type: string
+          example: ch-0a1b2c3d4e5f6789
+        tenantId:
+          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
+          type: string
+        servicePrincipalClientId:
+          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
+          type: string
+        vpcId:
+          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
+          type: string
+          example: vpc-0abc1234def567890
+        privateSubnetIds:
+          type: array
+          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
+          items:
+            type: string
+        publicSubnetIds:
+          type: array
+          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
+          items:
+            type: string
+        gcpPodCidrRangeNames:
+          type: array
+          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
+          items:
+            type: string
+        gcpSharedVpcHostProjectId:
+          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
+          type: string
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+      required:
+      - regionId
+      - accountId
+    ByocInfrastructureTags:
+      type: object
+      additionalProperties:
+        type: string
+      maxProperties: 50
+    ByocInfrastructureValidationCheck:
+      properties:
+        name:
+          description: Human readable name of the check
+          type: string
+          example: Create EKS cluster
+        action:
+          description: Cloud permission or action the check simulated
+          type: string
+          example: eks:CreateCluster
+        allowed:
+          description: Whether the account allowed the simulated action
+          type: boolean
+        reason:
+          description: Cloud-provider detail for a denied check, e.g. an IAM decision reason
+          type: string
+          example: implicitDeny
+        group:
+          description: Free-form grouping of related checks, e.g. base or vpc-write. Groupings may change as validations evolve
+          type: string
+    ByocInfrastructureValidation:
+      properties:
+        cloudProvider:
+          description: Cloud provider of the requested region
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        allPassed:
+          description: True when every check passed
+          type: boolean
+        anyPassed:
+          description: True when at least one check passed
+          type: boolean
+        supported:
+          description: Whether preflight validation is implemented for the requested cloud and configuration. When false, an empty check list means nothing was verified rather than everything passed
+          type: boolean
+        checks:
+          type: array
+          description: Individual permission checks with their outcomes
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureValidationCheck'
+    ByocConfig:
+      properties:
+        id:
+          description: Unique identifier of the BYOC configuration
+          type: string
+        state:
+          description: State of the infrastructure
+          type: string
+          enum:
+          - infra-provisioning
+          - infra-terminated
+          - infra-terminating
+          - infra-ready
+          - infra-degraded
+          - infra-upgrading
+          example: infra-ready
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is bound to: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        accountName:
+          description: DEPRECATED. Use `accountId` instead. Cloud account ID the BYOC infrastructure is bound to
+          type: string
+          deprecated: true
+        regionId:
+          description: Region for which the BYOC has been configured and where it is possible to create services
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        cloudProvider:
+          description: Cloud provider of the region
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
     OrganizationCloudRegionPrivateEndpointConfig:
       properties:
         endpointServiceId:
           description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name) or GCP(Target Service) resource
           type: string
-    Organization:
-      properties:
-        id:
-          description: Unique organization ID.
-          type: string
-          format: uuid
-        createdAt:
-          description: The timestamp the organization was created. ISO-8601.
-          type: string
-          format: date-time
-        name:
-          description: Name of the organization.
-          type: string
-        privateEndpoints:
-          type: array
-          description: List of private endpoints for organization
-          items:
-            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
-        byocConfig:
-          type: array
-          description: BYOC configuration for the organization
-          items:
-            $ref: '#/components/schemas/ByocConfig'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
-          type: boolean
-    OrganizationPrivateEndpoint:
+    OrganizationPatchPrivateEndpoint:
       properties:
         id:
           description: Private endpoint identifier
           type: string
         description:
-          description: Description of private endpoint
+          description: Optional description of private endpoint
           type: string
         cloudProvider:
           description: Cloud provider in which the private endpoint is lcoated
@@ -1336,15 +1829,385 @@ components:
           - westus3
           - germanywestcentral
           - centralus
+    OrganizationPrivateEndpointsPatch:
+      properties:
+        add:
+          type: array
+          description: DEPRECATED. Elements to add. Executed after "remove" part is processed. Please use the `Update Service Basic Details` endpoint with the `privateEndpointIds` field instead to modify the private endpoints.
+          items:
+            $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
+          deprecated: true
+        remove:
+          type: array
+          description: Elements to remove. Executed before "add" part is processed.
+          items:
+            $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
+    ByocInfrastructureDetails:
+      properties:
+        id:
+          description: Unique identifier of the BYOC infrastructure
+          type: string
+        state:
+          description: State of the infrastructure
+          type: string
+          enum:
+          - infra-provisioning
+          - infra-terminated
+          - infra-terminating
+          - infra-ready
+          - infra-degraded
+          - infra-upgrading
+          example: infra-ready
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is bound to: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        regionId:
+          description: Region the BYOC infrastructure is located in
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        cloudProvider:
+          description: Cloud provider of the region
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
+        enablePrivateLink:
+          description: Whether private link connectivity is enabled on the infrastructure
+          type: boolean
+        enablePrivateLoadBalancer:
+          description: Whether the private load balancer is enabled on the infrastructure
+          type: boolean
+        enablePublicLoadBalancer:
+          description: Whether the public load balancer is enabled on the infrastructure
+          type: boolean
+        vpcCidrRange:
+          description: CIDR range of the ClickHouse-managed VPC. Absent for BYO-VPC infrastructures
+          type: string
+          example: 10.0.0.0/16
+        vpcAvailabilityZoneList:
+          type: array
+          description: Availability zones the infrastructure spans
+          items:
+            type: string
+          example:
+          - us-east-1a
+          - us-east-1b
+          - us-east-1c
+        isByoVpc:
+          description: True when the infrastructure runs in a customer-provided VPC (BYO-VPC) instead of a ClickHouse-managed one
+          type: boolean
+        byoVpcId:
+          description: Customer VPC ID or network name (BYO-VPC only)
+          type: string
+          example: vpc-0abc1234def567890
+        byoVpcPrivateSubnetIds:
+          type: array
+          description: Customer private subnet IDs or names (BYO-VPC only; exactly one entry on GCP)
+          items:
+            type: string
+        byoVpcPodCidrRangeNames:
+          type: array
+          description: Secondary IP range names pinned for pod IPs (GCP BYO-VPC only). Absent when all secondary ranges are used
+          items:
+            type: string
+        byoVpcSharedVpcHostProjectId:
+          description: Shared VPC host project owning the VPC and subnet (GCP BYO-VPC only). Absent when the VPC lives in the service project
+          type: string
+        gcpPscSubnetId:
+          description: Customer-provided Private Service Connect NAT subnet name configured for private link (GCP BYO-VPC only)
+          type: string
+    ByocInfrastructurePatchRequest:
+      properties:
+        displayName:
+          description: Human readable name for infrastructure object
+          type: string
+        enablePrivateLink:
+          description: Enable or disable private link connectivity on the infrastructure. Disabling is rejected while any service in the organization has active private endpoints
+          type: boolean
+        gcpPscSubnetId:
+          description: 'GCP BYO-VPC only: customer-provided Private Service Connect NAT subnet name required to enable private link. Only accepted together with `enablePrivateLink: true`'
+          type: string
+        enablePrivateLoadBalancer:
+          description: Enable or disable the private (internal) load balancer of the infrastructure
+          type: boolean
+        enablePublicLoadBalancer:
+          description: Enable or disable the public (internet-facing) load balancer of the infrastructure
+          type: boolean
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+    ByocInfrastructureProgressStage:
+      properties:
+        name:
+          description: Name of the provisioning stage or resource
+          type: string
+          example: vpc
+        status:
+          description: Status of this stage
+          type: string
+          enum:
+          - not_started
+          - pending
+          - waiting
+          - in_progress
+          - ready
+          - failed
+          example: ready
+        updatedAt:
+          description: Timestamp the stage status last changed. ISO-8601
+          type: string
+          format: date-time
+        message:
+          description: Human readable detail for the current status, e.g. an error message
+          type: string
+        subStages:
+          type: array
+          description: Nested stages; leaf entries are individual cloud resources
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
+    OrganizationPatchRequest:
+      properties:
+        name:
+          description: Name of the organization.
+          type: string
+        privateEndpoints:
+          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          type: boolean
+    OrganizationQuota:
+      properties:
+        quotaCode:
+          description: Stable identifier of the quota. Use it to request a single quota by code.
+          type: string
+          enum:
+          - services-per-organization
+          - postgres-services-per-organization
+          - replicas-per-warehouse
+          - api-keys-per-organization
+          example: services-per-organization
+        name:
+          description: Human-readable name of the quota.
+          type: string
+          example: Services per organization
+        description:
+          description: Explanation of the resource the quota limits and how the limit is applied.
+          type: string
+        scope:
+          description: Granularity at which the limit is applied. For example, `replicas-per-warehouse` is an organization-wide setting that limits each warehouse individually.
+          type: string
+          enum:
+          - organization
+          - warehouse
+          example: organization
+        value:
+          description: Limit currently applied to the organization, including any adjustments made for the organization. The value can change when the billing status of the organization changes.
+          type: integer
+          minimum: 0
+          example: 20
+        usage:
+          description: Current consumption of the quota. Omitted for quotas that do not report usage. Usage can exceed `value` when a limit was lowered after resources were created; existing resources are not affected.
+          type: integer
+          minimum: 0
+          example: 3
+        adjustable:
+          description: Whether the limit can be raised for the organization by contacting ClickHouse support.
+          type: boolean
+      required:
+      - quotaCode
+      - name
+      - description
+      - scope
+      - value
+      - adjustable
+    ByocInfrastructureProgress:
+      properties:
+        id:
+          description: Unique identifier of the BYOC infrastructure
+          type: string
+        status:
+          description: Overall provisioning status of the infrastructure
+          type: string
+          enum:
+          - not_started
+          - pending
+          - waiting
+          - in_progress
+          - ready
+          - failed
+          example: in_progress
+        updatedAt:
+          description: Timestamp the overall status last changed. ISO-8601
+          type: string
+          format: date-time
+        stages:
+          type: array
+          description: Top-level provisioning stages with their nested resources
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
+    Organization:
+      properties:
+        id:
+          description: Unique organization ID.
+          type: string
+          format: uuid
+        createdAt:
+          description: The timestamp the organization was created. ISO-8601.
+          type: string
+          format: date-time
+        name:
+          description: Name of the organization.
+          type: string
+        privateEndpoints:
+          type: array
+          description: List of private endpoints for organization
+          items:
+            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
+        byocConfig:
+          type: array
+          description: BYOC configuration for the organization
+          items:
+            $ref: '#/components/schemas/ByocConfig'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          type: boolean
+        capabilities:
+          $ref: '#/components/schemas/OrganizationCapabilities'
+    ByocInfrastructureTagsResponse:
+      properties:
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+      required:
+      - tags
+    ByocInfrastructurePostRequest:
+      properties:
+        regionId:
+          description: Region in which the BYOC infrastructure will be located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        availabilityZoneSuffixes:
+          type: array
+          description: List of availability zone suffixes
+          items:
+            type: string
+            enum:
+            - a
+            - b
+            - c
+            - d
+            - e
+            - f
+        vpcCidrRange:
+          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
+          type: string
+          example: 10.0.0.0/16
+        externalId:
+          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
+          type: string
+          example: ch-0a1b2c3d4e5f6789
+        tenantId:
+          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
+          type: string
+        servicePrincipalClientId:
+          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
+          type: string
+        vpcId:
+          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
+          type: string
+          example: vpc-0abc1234def567890
+        privateSubnetIds:
+          type: array
+          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
+          items:
+            type: string
+        publicSubnetIds:
+          type: array
+          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
+          items:
+            type: string
+        gcpPodCidrRangeNames:
+          type: array
+          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
+          items:
+            type: string
+        gcpSharedVpcHostProjectId:
+          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
+          type: string
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
+      required:
+      - regionId
+      - accountId
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -1353,6 +2216,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys

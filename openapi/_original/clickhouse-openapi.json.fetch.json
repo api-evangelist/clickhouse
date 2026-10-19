@@ -1,0 +1,12 @@
+{
+ "url": "https://api.clickhouse.cloud/v1",
+ "final": "https://api.clickhouse.cloud/v1",
+ "status": 200,
+ "content_type": "application/json; charset=utf-8",
+ "bytes": 1507377,
+ "sha256": "d834f602767af9aacf65b142c23e63251710790855b4e42d9ce93eedcd63e04f",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

@@ -429,6 +429,46 @@ apis:
       https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations
   - type: Swagger
     url: https://clickhouse.com/docs/cloud/manage/api/swagger
+- aid: clickhouse:clickhouse-notifications-api
+  name: ClickHouse Notifications API
+  description: The Notifications API from ClickHouse — 2 operation(s) for notifications.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Notifications
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-notifications-api-openapi.yml
+- aid: clickhouse:clickhouse-query-api-endpoints-api
+  name: ClickHouse Query API endpoints API
+  description: The Query API endpoints API from ClickHouse — 2 operation(s) for query api endpoints.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Query API endpoints
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-query-api-endpoints-api-openapi.yml
+- aid: clickhouse:clickhouse-saved-queries-api
+  name: ClickHouse Saved queries API
+  description: The Saved queries API from ClickHouse — 2 operation(s) for saved queries.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Saved queries
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-saved-queries-api-openapi.yml
+- aid: clickhouse:clickhouse-snapshot-api
+  name: ClickHouse Snapshot API
+  description: The Snapshot API from ClickHouse — 3 operation(s) for snapshot.
+  humanURL: https://clickhouse.com/docs/en/interfaces/http
+  baseURL: https://{clickhouse-host}:8443
+  tags:
+  - Snapshot
+  properties:
+  - type: OpenAPI
+    url: openapi/clickhouse-snapshot-api-openapi.yml
 common:
 - type: FinOps
   url: finops/clickhouse-finops.yml

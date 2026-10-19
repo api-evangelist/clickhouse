@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -16,7 +16,16 @@ paths:
   /v1/organizations/{organizationId}/prometheus:
     get:
       summary: Get organization metrics
-      description: Deprecated. Use the Prometheus service discovery endpoint (/v1/organizations/{organizationId}/prometheus/discovery) instead. This endpoint is not available for new organizations; contact ClickHouse support to request access. Returns Prometheus metrics for the services in an organization that the caller is authorized to view. Services the caller lacks view access to are omitted.
+      description: '**Deprecated.** This endpoint is disabled on 1 January 2027. It is already disabled for new organizations.
+
+
+        Migrate before then to the service discovery endpoint, `GET /v1/organizations/{organizationId}/prometheus/discovery`. It returns one scrape target per service in the `http_sd` format, and Prometheus picks up new and deleted services automatically. The Prometheus integration guide has a `prometheus.yml` example.
+
+
+        If you need this endpoint after 1 January 2027, contact ClickHouse support to have it enabled for your organization.
+
+
+        Returns Prometheus metrics for the services in the organization. Only services the API key is authorized to view are included.'
       operationId: organizationPrometheusGet
       parameters:
       - in: path
@@ -80,14 +89,14 @@ paths:
       - Prometheus
   /v1/organizations/{organizationId}/prometheus/discovery:
     get:
-      summary: List Prometheus scrape targets
-      description: '**This endpoint is in beta.** API contract is stable, and no breaking changes are expected in the future.
-
-
-        Returns one Prometheus scrape target per service in the organization, in the HTTP service discovery (`http_sd`) format. Only services the API key is authorized to view are included; services that are being deleted or have been deleted are omitted.
+      summary: Get Prometheus service discovery targets
+      description: 'Returns one Prometheus scrape target per service in the organization, in the HTTP service discovery (`http_sd`) format. Only services the API key is authorized to view are included; services that are being deleted or have been deleted are omitted.
 
 
         Point an `http_sd_configs` job at this endpoint to discover and scrape all services in the organization automatically. Prometheus refreshes the target list on every discovery poll, so newly created and deleted services are picked up without configuration changes.
+
+
+        Filter targets in `relabel_configs` by `__meta_clickhouse_region`, `__meta_clickhouse_provider` or `__meta_clickhouse_tag_`. Invalid label name characters in tag keys become `_`. `__meta_clickhouse_tagpresent_` is `true` for every tag, including tags without a value.
 
 
         Discovered targets scrape with `filtered_metrics=true` by default; pass `?filtered_metrics=false` to this endpoint to discover unfiltered targets. See the Prometheus integration guide for more on the exported metrics.'
@@ -154,9 +163,6 @@ paths:
                     format: uuid
       tags:
       - Prometheus
-      x-badges:
-      - name: Beta
-        position: after
   /v1/organizations/{organizationId}/services/{serviceId}/prometheus:
     get:
       summary: Get service metrics
@@ -226,6 +232,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:view
       tags:
       - Prometheus
   /v1/organizations/{organizationId}/postgres/prometheus:
@@ -287,6 +296,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:view
       tags:
       - Prometheus
       x-badges:
@@ -358,6 +370,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:postgres-service:view
       tags:
       - Prometheus
       x-badges:
@@ -397,15 +412,25 @@ components:
         clickhouse_discovery_service_name:
           description: Service name.
           type: string
+        __meta_clickhouse_region:
+          description: Service region, for example `us-east-1`.
+          type: string
+        __meta_clickhouse_provider:
+          description: Cloud provider, for example `aws`.
+          type: string
+      additionalProperties:
+        type: string
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -414,6 +439,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys

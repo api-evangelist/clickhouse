@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -89,6 +89,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:view-backups
       tags:
       - Backup
   /v1/organizations/{organizationId}/services/{serviceId}/backups/{backupId}:
@@ -172,6 +175,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:view-backups
       tags:
       - Backup
   /v1/organizations/{organizationId}/services/{serviceId}/backupConfiguration:
@@ -248,6 +254,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:view-backups
       tags:
       - Backup
     patch:
@@ -328,6 +337,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:manage-backups
       tags:
       - Backup
   /v1/organizations/{organizationId}/services/{serviceId}/backupBucket:
@@ -407,6 +419,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:view-backups
       tags:
       - Backup
       x-badges:
@@ -493,6 +508,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:manage-backups
       tags:
       - Backup
       x-badges:
@@ -579,6 +597,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:manage-backups
       tags:
       - Backup
       x-badges:
@@ -658,6 +679,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:service:manage-backups
       tags:
       - Backup
       x-badges:
@@ -665,22 +689,37 @@ paths:
         position: after
 components:
   schemas:
-    GcpBackupBucket:
+    AwsBackupBucketPostRequestV1:
       properties:
-        id:
-          description: Unique backup bucket ID
-          type: string
-          format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
           enum:
-          - GCP
+          - AWS
         bucketPath:
           description: Bucket path
           type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
+        iamRoleArn:
+          description: AWS Role ARN
+          type: string
+        iamRoleSessionName:
+          description: AWS Role session name
+          type: string
+        iamRoleExternalId:
+          description: External ID the IAM role trust policy requires when the data plane assumes the role
+          type: string
+    AzureBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
           type: string
     GcpBackupBucketPostRequestV1:
       properties:
@@ -698,6 +737,48 @@ components:
         secretAccessKey:
           description: Secret Access Key (HMAC secret key)
           type: string
+    AzureBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    AzureBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID.
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    GcpBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    BackupBucketPatchRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
     GcpBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
@@ -714,6 +795,17 @@ components:
         secretAccessKey:
           description: Secret Access Key (HMAC secret key)
           type: string
+    BackupConfiguration:
+      properties:
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type: number
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type: number
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type: string
     AzureBackupBucketPostRequestV1:
       properties:
         bucketProvider:
@@ -727,35 +819,29 @@ components:
         connectionString:
           description: Connection String
           type: string
-    BackupBucket:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucket'
-      - $ref: '#/components/schemas/GcpBackupBucket'
-      - $ref: '#/components/schemas/AzureBackupBucket'
-    AzureBackupBucket:
+    AwsBackupBucket:
       properties:
         id:
-          description: Unique backup bucket ID.
+          description: Unique backup bucket ID
           type: string
           format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
           enum:
-          - AZURE
-        containerName:
-          description: Container Name
+          - AWS
+        bucketPath:
+          description: Bucket path
           type: string
-    BackupBucketPostRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
-    BackupBucketPatchRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
+        iamRoleArn:
+          description: AWS Role ARN
+          type: string
+        iamRoleSessionName:
+          description: AWS  Role session name
+          type: string
+        iamRoleExternalId:
+          description: External ID the IAM role trust policy requires when the data plane assumes the role
+          type: string
     Backup:
       properties:
         id:
@@ -801,57 +887,28 @@ components:
           - $ref: '#/components/schemas/AwsBackupBucketProperties'
           - $ref: '#/components/schemas/GcpBackupBucketProperties'
           - $ref: '#/components/schemas/AzureBackupBucketProperties'
-    AzureBackupBucketPatchRequestV1:
+    GcpBackupBucket:
       properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
         bucketProvider:
           description: Bucket provider
           type: string
           enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-        connectionString:
-          description: Connection String
-          type: string
-    BackupConfiguration:
-      properties:
-        backupPeriodInHours:
-          description: The interval in hours between each backup.
-          type: number
-        backupRetentionPeriodInHours:
-          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
-          type: number
-        backupStartTime:
-          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
-          type: string
-    AwsBackupBucketPostRequestV1:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AWS
+          - GCP
         bucketPath:
           description: Bucket path
           type: string
-        iamRoleArn:
-          description: AWS Role ARN
+        accessKeyId:
+          description: Access Key ID (HMAC key)
           type: string
-        iamRoleSessionName:
-          description: AWS Role session name
-          type: string
-    BackupConfigurationPatchRequest:
-      properties:
-        backupPeriodInHours:
-          description: The interval in hours between each backup.
-          type: number
-        backupRetentionPeriodInHours:
-          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
-          type: number
-        backupStartTime:
-          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
-          type: string
+    BackupBucket:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucket'
+      - $ref: '#/components/schemas/GcpBackupBucket'
+      - $ref: '#/components/schemas/AzureBackupBucket'
     AwsBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
@@ -867,6 +924,11 @@ components:
           type: string
         iamRoleSessionName:
           description: AWS IAM Role session name
+          type:
+          - string
+          - 'null'
+        iamRoleExternalId:
+          description: External ID the IAM role trust policy requires when the data plane assumes the role. Set to `null` to clear it.
           type:
           - string
           - 'null'
@@ -886,58 +948,42 @@ components:
         iamRoleSessionName:
           description: AWS IAM Role
           type: string
-    GcpBackupBucketProperties:
+        iamRoleExternalId:
+          description: External ID the IAM role trust policy requires when the data plane assumes the role
+          type: string
+    BackupConfigurationPatchRequest:
       properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-    AwsBackupBucket:
-      properties:
-        id:
-          description: Unique backup bucket ID
-          type: string
-          format: uuid
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AWS
-        bucketPath:
-          description: Bucket path
-          type: string
-        iamRoleArn:
-          description: AWS Role ARN
-          type: string
-        iamRoleSessionName:
-          description: AWS  Role session name
-          type: string
-    AzureBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type:
+          - number
+          - 'null'
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type:
+          - number
+          - 'null'
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type:
+          - string
+          - 'null'
+    BackupBucketPostRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -946,6 +992,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys

@@ -1,0 +1,1133 @@
+openapi: 3.2.0
+info:
+  title: OpenAPI spec for ClickHouse Cloud Saved queries API
+  version: '1.0'
+  contact:
+    name: ClickHouse Support
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
+    email: support@clickhouse.com
+servers:
+- url: https://api.clickhouse.cloud
+security:
+- basicAuth: []
+tags:
+- name: Saved queries
+paths:
+  /v1/organizations/{organizationId}/services/{serviceId}/saved-queries:
+    get:
+      operationId: savedQueryList
+      summary: List saved queries
+      description: Returns saved queries for the service.
+      tags:
+      - Saved queries
+      security:
+      - basicAuth:
+        - control-plane:service:view
+      parameters:
+      - in: path
+        name: organizationId
+        schema:
+          description: ID of the requested organization.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested organization.
+      - in: path
+        name: serviceId
+        schema:
+          description: ID of the requested service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested service.
+      - in: query
+        name: cursor
+        schema:
+          description: Cursor returned as `nextCursor` on the previous page.
+          type: string
+        description: Cursor returned as `nextCursor` on the previous page.
+      - in: query
+        name: limit
+        schema:
+          description: Maximum number of records to return per page. Defaults to 100. Maximum is 100.
+          default: 100
+          type: integer
+          exclusiveMinimum: 0
+          maximum: 100
+        description: Maximum number of records to return per page. Defaults to 100. Maximum is 100.
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    description: Saved queries for the service.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PublicSavedQueryListItem'
+                  limit:
+                    description: Maximum number of results returned in this page.
+                    type: integer
+                  totalCount:
+                    description: Total number of results across all pages. It has only informative value, thus is not guaranteed and it is provided on a best-effort basis. Null if the total count is unknown.
+                    anyOf:
+                    - type: integer
+                    - type: 'null'
+                  nextCursor:
+                    description: Cursor for the next page, to be sent as the `cursor` query parameter. Null on the last page.
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                  status:
+                    description: HTTP status code.
+                    example: 200
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - result
+                - limit
+                - totalCount
+                - nextCursor
+                - status
+                - requestId
+                additionalProperties: false
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  issues:
+                    description: Validation issues that caused the request to be rejected.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          description: Path to the invalid field.
+                          type: array
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                        code:
+                          description: Validation issue code.
+                          type: string
+                        message:
+                          description: Human-readable description of the issue.
+                          type: string
+                      required:
+                      - path
+                      - code
+                      - message
+                      additionalProperties: false
+                  status:
+                    description: HTTP status code.
+                    example: 400
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '403':
+          description: The request is forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 403
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '404':
+          description: Service not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 404
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 500
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: {}
+    post:
+      operationId: savedQueryCreate
+      summary: Create a saved query
+      description: Creates a saved query.
+      tags:
+      - Saved queries
+      security:
+      - basicAuth:
+        - control-plane:service:manage
+      parameters:
+      - in: path
+        name: organizationId
+        schema:
+          description: ID of the requested organization.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested organization.
+      - in: path
+        name: serviceId
+        schema:
+          description: ID of the requested service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested service.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicSavedQueryRequest'
+      responses:
+        '201':
+          description: The saved query was created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: HTTP status code.
+                    example: 201
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                  result:
+                    $ref: '#/components/schemas/PublicSavedQuery'
+                required:
+                - status
+                - requestId
+                - result
+                additionalProperties: false
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  issues:
+                    description: Validation issues that caused the request to be rejected.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          description: Path to the invalid field.
+                          type: array
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                        code:
+                          description: Validation issue code.
+                          type: string
+                        message:
+                          description: Human-readable description of the issue.
+                          type: string
+                      required:
+                      - path
+                      - code
+                      - message
+                      additionalProperties: false
+                  status:
+                    description: HTTP status code.
+                    example: 400
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '403':
+          description: The request is forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 403
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '404':
+          description: Service not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 404
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '409':
+          description: A saved query with this name already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 409
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 500
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: {}
+  /v1/organizations/{organizationId}/services/{serviceId}/saved-queries/{queryId}:
+    delete:
+      operationId: savedQueryDelete
+      summary: Delete a saved query
+      description: Deletes a saved query.
+      tags:
+      - Saved queries
+      security:
+      - basicAuth:
+        - control-plane:service:manage
+      parameters:
+      - in: path
+        name: organizationId
+        schema:
+          description: ID of the requested organization.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested organization.
+      - in: path
+        name: serviceId
+        schema:
+          description: ID of the requested service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested service.
+      - in: path
+        name: queryId
+        schema:
+          description: ID of the requested saved query.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested saved query.
+      responses:
+        '200':
+          description: The saved query was deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: HTTP status code.
+                    example: 200
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - status
+                - requestId
+                additionalProperties: false
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  issues:
+                    description: Validation issues that caused the request to be rejected.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          description: Path to the invalid field.
+                          type: array
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                        code:
+                          description: Validation issue code.
+                          type: string
+                        message:
+                          description: Human-readable description of the issue.
+                          type: string
+                      required:
+                      - path
+                      - code
+                      - message
+                      additionalProperties: false
+                  status:
+                    description: HTTP status code.
+                    example: 400
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '403':
+          description: The request is forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 403
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '404':
+          description: Saved query not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 404
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '409':
+          description: Saved query can not be managed via this API.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 409
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 500
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: {}
+    get:
+      operationId: savedQueryGet
+      summary: Get a saved query
+      description: Returns a saved query.
+      tags:
+      - Saved queries
+      security:
+      - basicAuth:
+        - control-plane:service:view
+      parameters:
+      - in: path
+        name: organizationId
+        schema:
+          description: ID of the requested organization.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested organization.
+      - in: path
+        name: serviceId
+        schema:
+          description: ID of the requested service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested service.
+      - in: path
+        name: queryId
+        schema:
+          description: ID of the requested saved query.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested saved query.
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: HTTP status code.
+                    example: 200
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                  result:
+                    $ref: '#/components/schemas/PublicSavedQuery'
+                required:
+                - status
+                - requestId
+                - result
+                additionalProperties: false
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  issues:
+                    description: Validation issues that caused the request to be rejected.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          description: Path to the invalid field.
+                          type: array
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                        code:
+                          description: Validation issue code.
+                          type: string
+                        message:
+                          description: Human-readable description of the issue.
+                          type: string
+                      required:
+                      - path
+                      - code
+                      - message
+                      additionalProperties: false
+                  status:
+                    description: HTTP status code.
+                    example: 400
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '403':
+          description: The request is forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 403
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '404':
+          description: Saved query not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 404
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 500
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: {}
+    put:
+      operationId: savedQueryUpdate
+      summary: Update a saved query
+      description: Updates a saved query.
+      tags:
+      - Saved queries
+      security:
+      - basicAuth:
+        - control-plane:service:manage
+      parameters:
+      - in: path
+        name: organizationId
+        schema:
+          description: ID of the requested organization.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested organization.
+      - in: path
+        name: serviceId
+        schema:
+          description: ID of the requested service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested service.
+      - in: path
+        name: queryId
+        schema:
+          description: ID of the requested saved query.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        required: true
+        description: ID of the requested saved query.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicSavedQueryRequest'
+      responses:
+        '200':
+          description: The saved query was updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    description: HTTP status code.
+                    example: 200
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                  result:
+                    $ref: '#/components/schemas/PublicSavedQuery'
+                required:
+                - status
+                - requestId
+                - result
+                additionalProperties: false
+        '400':
+          description: The request cannot be processed due to a client error. Please verify your request parameters and try again.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  issues:
+                    description: Validation issues that caused the request to be rejected.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          description: Path to the invalid field.
+                          type: array
+                          items:
+                            anyOf:
+                            - type: string
+                            - type: number
+                        code:
+                          description: Validation issue code.
+                          type: string
+                        message:
+                          description: Human-readable description of the issue.
+                          type: string
+                      required:
+                      - path
+                      - code
+                      - message
+                      additionalProperties: false
+                  status:
+                    description: HTTP status code.
+                    example: 400
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '403':
+          description: The request is forbidden.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 403
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '404':
+          description: Saved query not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 404
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '409':
+          description: Saved query can not be managed via this API, or a saved query with this name already exists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Human-readable error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 409
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: false
+        '500':
+          description: An internal server error has occurred. If this issue persists, please contact ClickHouse Cloud support for assistance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    description: Error message.
+                    type: string
+                  status:
+                    description: HTTP status code.
+                    example: 500
+                    type: integer
+                  requestId:
+                    description: Unique id assigned to every request. UUIDv4
+                    type: string
+                    format: uuid
+                    pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+                required:
+                - error
+                - status
+                - requestId
+                additionalProperties: {}
+components:
+  schemas:
+    PublicSavedQueryRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the saved query.
+          type: string
+          minLength: 1
+        sql:
+          description: Saved SQL query.
+          type: string
+          maxLength: 4194304
+        database:
+          description: Database used by the saved query.
+          type: string
+        parameters:
+          description: Default query parameters.
+          default: {}
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: string
+      required:
+      - name
+      - sql
+      - database
+    PublicSavedQuery:
+      type: object
+      properties:
+        id:
+          description: Unique ID of the saved query.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        name:
+          description: Name of the saved query.
+          type: string
+        sql:
+          description: Saved SQL query.
+          type: string
+          maxLength: 4194304
+        database:
+          description: Database used by the saved query.
+          type: string
+        parameters:
+          description: Query parameters.
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: string
+      required:
+      - id
+      - name
+      - sql
+      - database
+      - parameters
+      additionalProperties: false
+    PublicSavedQueryListItem:
+      type: object
+      properties:
+        id:
+          description: Unique ID of the saved query.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        name:
+          description: Name of the saved query.
+          type: string
+        database:
+          description: Database used by the saved query.
+          type: string
+      required:
+      - id
+      - name
+      - database
+      additionalProperties: false
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
+x-tagGroups:
+- name: Organization
+  tags:
+  - Organization
+  - Notifications
+  - Billing
+  - User management
+  - Role Management
+  - UDF
+- name: Service
+  tags:
+  - Service
+  - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
+- name: API keys
+  tags:
+  - API keys
+- name: Prometheus
+  tags:
+  - Prometheus
+- name: ClickPipes
+  tags:
+  - ClickPipes
+- name: ClickStack
+  tags:
+  - ClickStack
+- name: Postgres
+  tags:
+  - Postgres

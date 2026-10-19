@@ -4,7 +4,7 @@ info:
   version: '1.0'
   contact:
     name: ClickHouse Support
-    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1107336
+    url: https://clickhouse.com/docs/en/cloud/manage/openapi?referrer=openapi-1256081
     email: support@clickhouse.com
 servers:
 - url: https://api.clickhouse.cloud
@@ -82,6 +82,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Role Management
     post:
@@ -155,6 +158,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Role Management
   /v1/organizations/{organizationId}/roles/{roleId}:
@@ -231,6 +237,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Role Management
     patch:
@@ -311,6 +320,9 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Role Management
     delete:
@@ -384,25 +396,32 @@ paths:
                     type: string
                     description: Unique id assigned to every request. UUIDv4
                     format: uuid
+      security:
+      - basicAuth:
+        - control-plane:organization:manage
       tags:
       - Role Management
 components:
   schemas:
-    RoleUpdateRequest:
+    RoleCreateRequest:
       properties:
         name:
-          description: New name for the role
+          description: Name of the role
           type: string
         actors:
           type: array
-          description: New list of actor resource IDs (replaces existing actors)
+          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
           items:
             type: string
         policies:
           type: array
-          description: New list of policies (replaces existing policies)
+          description: List of policies to create for this role
           items:
             $ref: '#/components/schemas/RBACPolicyCreateRequest'
+      required:
+      - name
+      - actors
+      - policies
     RBACPolicyTags:
       properties:
         grants:
@@ -440,25 +459,6 @@ components:
       - allowDeny
       - permissions
       - resources
-    RoleCreateRequest:
-      properties:
-        name:
-          description: Name of the role
-          type: string
-        actors:
-          type: array
-          description: List of actor resource IDs to assign to this role (e.g., ["user/uuid", "apiKey/uuid"])
-          items:
-            type: string
-        policies:
-          type: array
-          description: List of policies to create for this role
-          items:
-            $ref: '#/components/schemas/RBACPolicyCreateRequest'
-      required:
-      - name
-      - actors
-      - policies
     RBACPolicy:
       properties:
         id:
@@ -488,6 +488,21 @@ components:
             type: string
         tags:
           $ref: '#/components/schemas/RBACPolicyTags'
+    RoleUpdateRequest:
+      properties:
+        name:
+          description: New name for the role
+          type: string
+        actors:
+          type: array
+          description: New list of actor resource IDs (replaces existing actors)
+          items:
+            type: string
+        policies:
+          type: array
+          description: New list of policies (replaces existing policies)
+          items:
+            $ref: '#/components/schemas/RBACPolicyCreateRequest'
     RBACRole:
       properties:
         id:
@@ -531,10 +546,12 @@ components:
       type: http
       scheme: basic
       description: 'Use key ID and key secret obtained in ClickHouse Cloud console: https://clickhouse.com/docs/cloud/manage/openapi'
+      x-permission-scopes: The scope list of a `security` requirement holds ClickHouse Cloud API key permission ids (for example `control-plane:organization:view`), not OAuth scopes. OpenAPI has no field for API key permissions, so this is the closest available place. A key must hold every permission listed on an operation to call it; an operation with no scopes needs none beyond a valid key. Every operation declares at most one requirement object, always for this scheme, so the list is only ever conjunctive — alternative sets of permissions are never expressed.
 x-tagGroups:
 - name: Organization
   tags:
   - Organization
+  - Notifications
   - Billing
   - User management
   - Role Management
@@ -543,6 +560,9 @@ x-tagGroups:
   tags:
   - Service
   - Backup
+  - Snapshot
+  - Query API endpoints
+  - Saved queries
 - name: API keys
   tags:
   - API keys
