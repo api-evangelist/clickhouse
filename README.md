@@ -1,4 +1,4 @@
-# ClickHouse (clickhouse)
+# ClickHouse
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,161 +66,215 @@
 
 ClickHouse is a fast open-source column-oriented database management system that enables real-time analytical reporting using SQL. ClickHouse exposes multiple interfaces - an HTTP interface for SQL queries, native TCP, MySQL and PostgreSQL wire-compatible interfaces, and a gRPC interface - and the ClickHouse Cloud management plane offers a public OpenAPI-described REST API for provisioning and managing services, organizations, members, API keys, backups, and private endpoints.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/clickhouse/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/clickhouse/refs/heads/main/apis.yml)
+**Areas:** ClickHouse · Analytics · Cloud Database · Column-Oriented · Database · OLAP · Open Source · Real-Time · SQL
 
-## Scope
+## ClickHouse on APIs.io
 
-- **Type:** Index
-- **Position:** Consumer
-- **Access:** 3rd-Party
+Everything profiled for ClickHouse is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/clickhouse/](https://apis.io/providers/clickhouse/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (21)
 
-- Analytics
-- Cloud Database
-- Column-Oriented
-- Database
-- OLAP
-- Open Source
-- Real-Time
-- SQL
+- [ClickHouse HTTP Interface](https://apis.io/apis/clickhouse/clickhouse-http-interface/) — HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse. Supports SELECT via GET, mutations via POST, multiple output…
+- [ClickHouse Native TCP Interface](https://apis.io/apis/clickhouse/clickhouse-native/) — Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between client and server (default port 9000).
+- [ClickHouse MySQL Interface](https://apis.io/apis/clickhouse/clickhouse-mysql/) — MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query ClickHouse without driver changes.
+- [ClickHouse PostgreSQL Interface](https://apis.io/apis/clickhouse/clickhouse-postgresql/) — PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients to ClickHouse.
+- [ClickHouse gRPC Interface](https://apis.io/apis/clickhouse/clickhouse-grpc/) — gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
+- [ClickHouse HTTP Interface API](https://apis.io/apis/clickhouse/clickhouse-clickhouse-http-interface-api/) — The ClickHouse HTTP Interface API from ClickHouse — 1 operation(s) for clickhouse http interface.
+- [ClickHouse Ping API](https://apis.io/apis/clickhouse/clickhouse-ping-api/) — The Ping API from ClickHouse — 1 operation(s) for ping.
+- [ClickHouse Play API](https://apis.io/apis/clickhouse/clickhouse-play-api/) — The Play API from ClickHouse — 1 operation(s) for play.
+- [ClickHouse Replicas Status API](https://apis.io/apis/clickhouse/clickhouse-replicas-status-api/) — The Replicas Status API from ClickHouse — 1 operation(s) for replicas status.
+- [ClickHouse API keys API](https://apis.io/apis/clickhouse/clickhouse-api-keys-api/) — The API keys API from ClickHouse — 2 operation(s) for api keys.
+- [ClickHouse Backup API](https://apis.io/apis/clickhouse/clickhouse-backup-api/) — The Backup API from ClickHouse — 4 operation(s) for backup.
+- [ClickHouse Billing API](https://apis.io/apis/clickhouse/clickhouse-billing-api/) — The Billing API from ClickHouse — 3 operation(s) for billing.
+- [ClickHouse Click Pipes API](https://apis.io/apis/clickhouse/clickhouse-clickpipes-api/) — The ClickPipes API from ClickHouse — 10 operation(s) for clickpipes.
+- [ClickHouse Click Stack API](https://apis.io/apis/clickhouse/clickhouse-clickstack-api/) — The ClickStack API from ClickHouse — 13 operation(s) for clickstack.
+- [ClickHouse Organization API](https://apis.io/apis/clickhouse/clickhouse-organization-api/) — The Organization API from ClickHouse — 9 operation(s) for organization.
+- [ClickHouse Postgres API](https://apis.io/apis/clickhouse/clickhouse-postgres-api/) — The Postgres API from ClickHouse — 12 operation(s) for postgres.
+- [ClickHouse Prometheus API](https://apis.io/apis/clickhouse/clickhouse-prometheus-api/) — The Prometheus API from ClickHouse — 5 operation(s) for prometheus.
+- [ClickHouse Role Management API](https://apis.io/apis/clickhouse/clickhouse-role-management-api/) — The Role Management API from ClickHouse — 2 operation(s) for role management.
+- [ClickHouse Service API](https://apis.io/apis/clickhouse/clickhouse-service-api/) — The Service API from ClickHouse — 15 operation(s) for service.
+- [ClickHouse UDF API](https://apis.io/apis/clickhouse/clickhouse-udf-api/) — The UDF API from ClickHouse — 7 operation(s) for udf.
+- [ClickHouse User management API](https://apis.io/apis/clickhouse/clickhouse-user-management-api/) — The User management API from ClickHouse — 4 operation(s) for user management.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2024-01-01
-- **Modified:** 2026-04-26
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (2)
 
-### ClickHouse HTTP Interface
+Event-driven and webhook contracts.
 
-HTTP interface (default port 8123, HTTPS 8443) for executing SQL queries against ClickHouse. Supports SELECT via GET, mutations via POST, multiple output formats (JSON, CSV, XML, TabSeparated), and authentication via HTTP Basic, URL parameters, or X-ClickHouse-User/X-ClickHouse-Key headers. Helper paths include /ping and /replicas_status.
+- [ClickHouse Kafka Table Engine (Consumer-Side Streaming)](https://apis.io/asyncapis/clickhouse/clickhouse-kafka-engine-asyncapi/)
+- [Clickhouse Webhooks](https://apis.io/asyncapis/clickhouse/clickhouse-webhooks/)
 
-- **Human URL:** [https://clickhouse.com/docs/en/interfaces/http](https://clickhouse.com/docs/en/interfaces/http)
-- **Base URL:** `http://localhost:8123`
+#### Event channels (1)
 
-#### Tags
+Individual events and webhooks the provider emits.
 
-- Database
-- HTTP
-- SQL
+- [{kafka_topic}](https://apis.io/channels/clickhouse/kafka-topic/)
 
-#### Properties
+#### MCP servers (1)
 
-- [Documentation](https://clickhouse.com/docs/en/interfaces/http)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Model Context Protocol servers that expose the API to agents.
 
-### ClickHouse Cloud API
+- [clickhouse-mcp.yml](https://apis.io/servers/clickhouse/clickhouse-mcp-yml/)
 
-OpenAPI 3.1-described REST API for managing ClickHouse Cloud organizations, services, API keys, members, backups, private endpoints, and ClickHouse settings. Endpoints under /v1 with consistent envelope responses (status, requestId, result, error) and authentication via API key.
+#### Agentic access (1)
 
-- **Human URL:** [https://clickhouse.com/docs/en/cloud/manage/api/api-overview](https://clickhouse.com/docs/en/cloud/manage/api/api-overview)
-- **Base URL:** `https://api.clickhouse.cloud`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Clickhouse Agentic Access](https://apis.io/agentic-access/clickhouse/clickhouse-agentic-access/)
 
-- Cloud
-- Management
-- REST
+#### JSON-LD (1)
 
-#### Properties
+Linked-data contexts for the provider's vocabulary.
 
-- [Documentation](https://clickhouse.com/docs/en/cloud/manage/api/api-overview)
-- [Swagger](https://clickhouse.com/docs/cloud/manage/api/swagger)
-- [OpenAPI](https://api.clickhouse.cloud/v1) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Clickhouse Context](https://apis.io/jsonld/clickhouse/clickhouse-context/)
 
-### ClickHouse Native TCP Interface
+#### Collections (9)
 
-Native binary TCP protocol used by ClickHouse client libraries for maximum throughput between client and server (default port 9000).
+Postman and Open Collection request collections.
 
-- **Human URL:** [https://clickhouse.com/docs/en/interfaces/tcp](https://clickhouse.com/docs/en/interfaces/tcp)
+- [ClickHouse HTTP Interface](https://apis.io/collections/clickhouse/open-clickhouse/)
+- [ClickHouse HTTP Interface API](https://apis.io/collections/clickhouse/open-clickhouse-clickhouse-http-interface-api/)
+- [ClickHouse HTTP Interface Ping API](https://apis.io/collections/clickhouse/open-clickhouse-ping-api/)
+- [ClickHouse HTTP Interface Play API](https://apis.io/collections/clickhouse/open-clickhouse-play-api/)
+- [ClickHouse HTTP Interface Replicas Status API](https://apis.io/collections/clickhouse/open-clickhouse-replicas-status-api/)
+- [ClickHouse HTTP Interface API](https://apis.io/collections/clickhouse/postman-clickhouse-clickhouse-http-interface-api/)
+- [ClickHouse HTTP Interface Ping API](https://apis.io/collections/clickhouse/postman-clickhouse-ping-api/)
+- [ClickHouse HTTP Interface Play API](https://apis.io/collections/clickhouse/postman-clickhouse-play-api/)
+- [ClickHouse HTTP Interface Replicas Status API](https://apis.io/collections/clickhouse/postman-clickhouse-replicas-status-api/)
 
-#### Tags
+#### Overlays (17)
 
-- Native
-- TCP
+OpenAPI overlays, including conversational phrasing for each operation.
 
-#### Properties
+- [Clickhouse Api Keys Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-api-keys-api-phrasing-overlay/)
+- [Clickhouse Backup Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-backup-api-phrasing-overlay/)
+- [Clickhouse Billing Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-billing-api-phrasing-overlay/)
+- [Clickhouse Clickhouse Http Interface Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-clickhouse-http-interface-api-phrasing-overlay/)
+- [Clickhouse Clickpipes Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-clickpipes-api-phrasing-overlay/)
+- [Clickhouse Clickstack Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-clickstack-api-phrasing-overlay/)
+- [Clickhouse Cloud Api Overlay](https://apis.io/overlays/clickhouse/clickhouse-cloud-api-overlay/)
+- [Clickhouse Organization Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-organization-api-phrasing-overlay/)
+- [Clickhouse Ping Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-ping-api-phrasing-overlay/)
+- [Clickhouse Play Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-play-api-phrasing-overlay/)
+- [Clickhouse Postgres Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-postgres-api-phrasing-overlay/)
+- [Clickhouse Prometheus Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-prometheus-api-phrasing-overlay/)
+- [Clickhouse Replicas Status Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-replicas-status-api-phrasing-overlay/)
+- [Clickhouse Role Management Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-role-management-api-phrasing-overlay/)
+- [Clickhouse Service Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-service-api-phrasing-overlay/)
+- [Clickhouse Udf Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-udf-api-phrasing-overlay/)
+- [Clickhouse User Management Api Phrasing Overlay](https://apis.io/overlays/clickhouse/clickhouse-user-management-api-phrasing-overlay/)
 
-- [Documentation](https://clickhouse.com/docs/en/interfaces/tcp)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Governance rules (2)
 
-### ClickHouse MySQL Interface
+Spectral rulesets for the provider's contracts.
 
-MySQL wire protocol compatibility allowing existing MySQL clients and BI tools to query ClickHouse without driver changes.
+- [ClickHouse — asyncapi rules](https://apis.io/rules/clickhouse/clickhouse-asyncapi-spectral-rules/)
+- [ClickHouse API Rules](https://apis.io/rules/clickhouse/clickhouse-rules/)
 
-- **Human URL:** [https://clickhouse.com/docs/en/interfaces/mysql](https://clickhouse.com/docs/en/interfaces/mysql)
+#### Security (4)
 
-#### Tags
+Authentication, trust centre, and vulnerability disclosure.
 
-- MySQL
-- Wire Protocol
+- [Clickhouse Authentication](https://apis.io/security/clickhouse/clickhouse-authentication/)
+- [Clickhouse Domain Security](https://apis.io/security/clickhouse/clickhouse-domain-security/)
+- [Clickhouse Trust Center](https://apis.io/security/clickhouse/clickhouse-trust-center/)
+- [Clickhouse Vulnerability Disclosure](https://apis.io/security/clickhouse/clickhouse-vulnerability-disclosure/)
 
-#### Properties
+#### OAuth scopes (1)
 
-- [Documentation](https://clickhouse.com/docs/en/interfaces/mysql)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+The permissions the API asks for.
 
-### ClickHouse PostgreSQL Interface
+- [Clickhouse Scopes](https://apis.io/scopes/clickhouse/clickhouse-scopes/)
 
-PostgreSQL wire protocol compatibility for connecting psql, JDBC and other PostgreSQL clients to ClickHouse.
+#### Plans and pricing (1)
 
-- **Human URL:** [https://clickhouse.com/docs/en/interfaces/postgresql](https://clickhouse.com/docs/en/interfaces/postgresql)
+Published plans, tiers and prices.
 
-#### Tags
+- [Clickhouse Plans Pricing](https://apis.io/plans/clickhouse/clickhouse-plans-pricing/)
 
-- PostgreSQL
-- Wire Protocol
+#### Rate limits (1)
 
-#### Properties
+Published request limits.
 
-- [Documentation](https://clickhouse.com/docs/en/interfaces/postgresql)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Clickhouse Rate Limits](https://apis.io/rate-limits/clickhouse/clickhouse-rate-limits/)
 
-### ClickHouse gRPC Interface
+#### FinOps (1)
 
-gRPC interface defined by clickhouse_grpc.proto for efficient binary communication.
+What the API costs to run, by operation.
 
-- **Human URL:** [https://clickhouse.com/docs/en/interfaces/grpc](https://clickhouse.com/docs/en/interfaces/grpc)
+- [Clickhouse Finops](https://apis.io/finops/clickhouse/clickhouse-finops/)
 
-#### Tags
+## Where to find this API
 
-- gRPC
-- Protocol Buffers
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-#### Properties
-
-- [Documentation](https://clickhouse.com/docs/en/interfaces/grpc)
-- [Protocol  Buffers](https://github.com/ClickHouse/ClickHouse/blob/master/src/Server/grpc_protos/clickhouse_grpc.proto)
-- [Postman Collection](collections/clickhouse.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/clickhouse.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [LinkedIn](https://www.linkedin.com/company/clickhouseinc)
 - [Website](https://clickhouse.com/)
 - [Documentation](https://clickhouse.com/docs)
-- [Getting Started](https://clickhouse.com/docs/en/getting-started)
-- [Git Hub](https://github.com/ClickHouse/ClickHouse)
-- [Blog](https://clickhouse.com/blog)
-- [Community](https://clickhouse.com/community)
-- [Slack](https://clickhouse.com/slack)
+- [Getting started](https://clickhouse.com/docs/quick-start)
+- [API reference](https://clickhouse.com/docs/products/cloud/api-reference/organization/get-list-of-available-organizations)
 - [Pricing](https://clickhouse.com/pricing)
+- [Sign up](https://console.clickhouse.cloud/signUp)
 - [Support](https://clickhouse.com/support)
-- [Status Page](https://status.clickhouse.com/)
-- [Privacy Policy](https://clickhouse.com/legal/privacy-policy)
-- [Terms of Service](https://clickhouse.com/legal/terms-of-service)
-- [JSON-LD](json-ld/clickhouse-context.jsonld) — [JSON-LD](https://www.w3.org/TR/json-ld11/)
-- [Spectral Rules](rules/clickhouse-rules.yml) — [Spectral](https://docs.stoplight.io/docs/spectral)
-- [Integrations](https://clickhouse.com/integrations)
+- [Blog](https://clickhouse.com/blog)
+- [Terms of service](https://clickhouse.com/legal/clickhouse-general-terms-and-conditions)
+- [Privacy policy](https://clickhouse.com/legal/privacy-policy)
+- [GitHub](https://github.com/ClickHouse)
+- [Status](https://status.clickhouse.com/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kinlane@gmail.com
+**Kin Score 72.0** — exemplar · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.7 |
+| Contract quality | 61.7 |
+| Contract governance | 15.9 |
+| Operational transparency | 73.7 |
+| Developer ergonomics | 83.3 |
+| Access clarity | 78.9 |
+
+**Agent readiness 58.4** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | verified |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | yes |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 45.1** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/clickhouse/](https://apis.io/providers/clickhouse/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for ClickHouse: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/clickhouse/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
