@@ -1,0 +1,109 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://clickhouse.com/pricing
+sources:
+- https://clickhouse.com/pricing
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T120612
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: usage-other
+delivery:
+  delivery: open-core
+  method: page
+  read: '2026-10-28'
+  evidence: Or download the forever-free open source distribution of ClickHouse ->
+  free_edition: ClickHouse
+  managed_tier: Basic
+published: true
+note: Also states data transfer egress starting at $0.1152 / GB public internet and $0.0312 / GB inter-region;
+  free trial $300 credits for 30 days; forever-free open source distribution offered.
+plan_count: 5
+currency: USD
+plans:
+- name: Basic
+  price_text: $0.2181 Per unit / hr
+  price: 0.2181
+  currency: USD
+  period: per-use
+  unit: compute unit / hr
+  included_quota: Up to 1 TB storage, 8-12 GiB total memory, backups every 24h retained 1 day, 1 availability
+    zone
+  overage: Storage $25.30 Per 1TB / mo
+- name: Scale
+  price_text: $0.2985 Per unit / hr
+  price: 0.2985
+  currency: USD
+  period: per-use
+  unit: compute unit / hr
+  included_quota: Unlimited storage, configurable memory, compute-compute separation, 2+ availability
+    zones
+  overage: Storage $25.30 Per 1TB / mo
+- name: Enterprise
+  price_text: $0.3903 Per unit / hr
+  price: 0.3903
+  currency: USD
+  period: per-use
+  unit: compute unit / hr
+  included_quota: Everything in Scale, plus SAML SSO, private regions, CMEK, HIPAA and PCI compliance
+  overage: Storage $25.30 Per 1TB / mo
+- name: ClickHouse Managed Postgres (Beta)
+  price_text: from $0.125 Per unit / hr
+  price: 0.125
+  currency: USD
+  period: per-use
+  unit: compute and storage unit / hr
+  included_quota: Available in Beta on all three plans; 50% off during beta
+- name: Bring Your Own Cloud
+  price_text: Get a custom quote
+  period: none
+  included_quota: Deployment within your own VPC
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - subscription
+  units: []
+  plans:
+  - name: Basic
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Scale
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Enterprise
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: ClickHouse Managed Postgres (Beta)
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Bring Your Own Cloud
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
