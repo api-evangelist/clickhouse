@@ -281,54 +281,39 @@ paths:
         position: after
 components:
   schemas:
-    CreditBalances:
+    ActiveBalance:
       properties:
-        totalRemainingCredits:
-          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
+        id:
+          description: Unique ID of the prepaid balance.
+          type: string
+          format: uuid
+        remainingPrepaidCredits:
+          description: Remaining credits available on this balance, in ClickHouse Credits (CHCs).
           type: number
-        balances:
+        totalAmount:
+          description: Total credits granted on this balance, in ClickHouse Credits (CHCs).
+          type: number
+        amountSpent:
+          description: Credits spent from this balance, in ClickHouse Credits (CHCs).
+          type: number
+        startDate:
+          description: Date the balance became active. ISO-8601, based on the UTC timezone.
+          type: string
+          format: date-time
+        expirationDate:
+          description: Date the balance expires. ISO-8601, based on the UTC timezone.
+          type: string
+          format: date-time
+    UsageCost:
+      properties:
+        grandTotalCHC:
+          description: Grand total cost of usage in ClickHouse Credits (CHCs).
+          type: number
+        costs:
           type: array
-          description: List of active balances for the organization. Empty when the organization has none.
+          description: List of daily, per-entity usage cost records.
           items:
-            $ref: '#/components/schemas/CreditBalance'
-    UsageCostRecord:
-      properties:
-        dataWarehouseId:
-          description: ID of the dataWarehouse this entity belongs to (or is).
-          type: string
-          format: uuid
-        serviceId:
-          description: ID of the service this entity belongs to (or is). Set to null for dataWarehouse entities.
-          type:
-          - string
-          - 'null'
-          format: uuid
-        date:
-          description: Date of the usage. ISO-8601 date, based on the UTC timezone.
-          type: string
-          format: date
-        entityType:
-          description: Type of the entity.
-          type: string
-          enum:
-          - datawarehouse
-          - service
-          - clickpipe
-        entityId:
-          description: Unique ID of the entity.
-          type: string
-          format: uuid
-        entityName:
-          description: Name of the entity.
-          type: string
-        metrics:
-          $ref: '#/components/schemas/UsageCostMetrics'
-        totalCHC:
-          description: Total cost of usage in ClickHouse Credits (CHCs) for this entity.
-          type: number
-        locked:
-          description: When true, the record is immutable. Unlocked records are subject to change until locked.
-          type: boolean
+            $ref: '#/components/schemas/UsageCostRecord'
     CreditBalance:
       properties:
         id:
@@ -390,39 +375,44 @@ components:
         interRegionTier4DataTransferCHC:
           description: Cost of tier4 inter-region data transfer in ClickHouse Credits (CHCs). Applies to service entities.
           type: number
-    UsageCost:
+    UsageCostRecord:
       properties:
-        grandTotalCHC:
-          description: Grand total cost of usage in ClickHouse Credits (CHCs).
-          type: number
-        costs:
-          type: array
-          description: List of daily, per-entity usage cost records.
-          items:
-            $ref: '#/components/schemas/UsageCostRecord'
-    ActiveBalance:
-      properties:
-        id:
-          description: Unique ID of the prepaid balance.
+        dataWarehouseId:
+          description: ID of the dataWarehouse this entity belongs to (or is).
           type: string
           format: uuid
-        remainingPrepaidCredits:
-          description: Remaining credits available on this balance, in ClickHouse Credits (CHCs).
-          type: number
-        totalAmount:
-          description: Total credits granted on this balance, in ClickHouse Credits (CHCs).
-          type: number
-        amountSpent:
-          description: Credits spent from this balance, in ClickHouse Credits (CHCs).
-          type: number
-        startDate:
-          description: Date the balance became active. ISO-8601, based on the UTC timezone.
+        serviceId:
+          description: ID of the service this entity belongs to (or is). Set to null for dataWarehouse entities.
+          type:
+          - string
+          - 'null'
+          format: uuid
+        date:
+          description: Date of the usage. ISO-8601 date, based on the UTC timezone.
           type: string
-          format: date-time
-        expirationDate:
-          description: Date the balance expires. ISO-8601, based on the UTC timezone.
+          format: date
+        entityType:
+          description: Type of the entity.
           type: string
-          format: date-time
+          enum:
+          - datawarehouse
+          - service
+          - clickpipe
+        entityId:
+          description: Unique ID of the entity.
+          type: string
+          format: uuid
+        entityName:
+          description: Name of the entity.
+          type: string
+        metrics:
+          $ref: '#/components/schemas/UsageCostMetrics'
+        totalCHC:
+          description: Total cost of usage in ClickHouse Credits (CHCs) for this entity.
+          type: number
+        locked:
+          description: When true, the record is immutable. Unlocked records are subject to change until locked.
+          type: boolean
     ActiveBalances:
       properties:
         totalRemainingPrepaidCredits:
@@ -433,6 +423,16 @@ components:
           description: List of active prepaid balances for the organization.
           items:
             $ref: '#/components/schemas/ActiveBalance'
+    CreditBalances:
+      properties:
+        totalRemainingCredits:
+          description: Total remaining credits across all active balances, in ClickHouse Credits (CHCs).
+          type: number
+        balances:
+          type: array
+          description: List of active balances for the organization. Empty when the organization has none.
+          items:
+            $ref: '#/components/schemas/CreditBalance'
   securitySchemes:
     basicAuth:
       type: http

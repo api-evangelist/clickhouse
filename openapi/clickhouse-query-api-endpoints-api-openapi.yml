@@ -921,110 +921,6 @@ paths:
                 additionalProperties: {}
 components:
   schemas:
-    PublicQueryApiEndpointListItem:
-      type: object
-      properties:
-        id:
-          description: Unique ID of the Query API endpoint.
-          type: string
-          format: uuid
-          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        name:
-          description: Name of the Query API endpoint.
-          type: string
-        database:
-          description: Database used by the Query API endpoint.
-          type: string
-        apiKeyIds:
-          description: API key IDs allowed to call the endpoint.
-          type: array
-          items:
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        roles:
-          description: Database roles used by the endpoint.
-          type: array
-          items:
-            type: string
-        allowedOrigins:
-          description: Origins allowed by the endpoint CORS policy.
-          type: array
-          items:
-            type: string
-        url:
-          description: Public URL used to execute the endpoint.
-          example: https://queries.clickhouse.cloud/run/00000000-0000-0000-0000-000000000000
-          type: string
-          format: uri
-        ownerType:
-          description: Owner type of the Query API endpoint. Endpoints with a user owned query cannot be updated or deleted through this API.
-          type: string
-          enum:
-          - user
-          - queryApiEndpoint
-      required:
-      - id
-      - name
-      - database
-      - apiKeyIds
-      - roles
-      - allowedOrigins
-      - url
-      - ownerType
-      additionalProperties: false
-    PublicQueryApiEndpointRequest:
-      type: object
-      properties:
-        name:
-          description: Name of the Query API endpoint.
-          type: string
-          minLength: 1
-          pattern: \S
-        sql:
-          description: SQL executed by the endpoint.
-          type: string
-          maxLength: 4194304
-          pattern: \S
-        database:
-          description: Database used by the Query API endpoint.
-          type: string
-          pattern: \S
-        parameters:
-          description: Default query parameters.
-          default: {}
-          type: object
-          propertyNames:
-            type: string
-          additionalProperties:
-            type: string
-        apiKeyIds:
-          description: API key IDs allowed to call the endpoint.
-          minItems: 1
-          type: array
-          items:
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        roles:
-          description: Database roles used by the endpoint.
-          minItems: 1
-          type: array
-          items:
-            type: string
-            minLength: 1
-        allowedOrigins:
-          description: Origins allowed by the endpoint CORS policy.
-          default: []
-          type: array
-          items:
-            type: string
-      required:
-      - name
-      - sql
-      - database
-      - apiKeyIds
-      - roles
     PublicQueryApiEndpoint:
       type: object
       properties:
@@ -1084,6 +980,110 @@ components:
       - sql
       - database
       - parameters
+      - apiKeyIds
+      - roles
+      - allowedOrigins
+      - url
+      - ownerType
+      additionalProperties: false
+    PublicQueryApiEndpointRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the Query API endpoint.
+          type: string
+          minLength: 1
+          pattern: \S
+        sql:
+          description: SQL executed by the endpoint.
+          type: string
+          maxLength: 4194304
+          pattern: \S
+        database:
+          description: Database used by the Query API endpoint.
+          type: string
+          pattern: \S
+        parameters:
+          description: Default query parameters.
+          default: {}
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: string
+        apiKeyIds:
+          description: API key IDs allowed to call the endpoint.
+          minItems: 1
+          type: array
+          items:
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        roles:
+          description: Database roles used by the endpoint.
+          minItems: 1
+          type: array
+          items:
+            type: string
+            minLength: 1
+        allowedOrigins:
+          description: Origins allowed by the endpoint CORS policy.
+          default: []
+          type: array
+          items:
+            type: string
+      required:
+      - name
+      - sql
+      - database
+      - apiKeyIds
+      - roles
+    PublicQueryApiEndpointListItem:
+      type: object
+      properties:
+        id:
+          description: Unique ID of the Query API endpoint.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        name:
+          description: Name of the Query API endpoint.
+          type: string
+        database:
+          description: Database used by the Query API endpoint.
+          type: string
+        apiKeyIds:
+          description: API key IDs allowed to call the endpoint.
+          type: array
+          items:
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        roles:
+          description: Database roles used by the endpoint.
+          type: array
+          items:
+            type: string
+        allowedOrigins:
+          description: Origins allowed by the endpoint CORS policy.
+          type: array
+          items:
+            type: string
+        url:
+          description: Public URL used to execute the endpoint.
+          example: https://queries.clickhouse.cloud/run/00000000-0000-0000-0000-000000000000
+          type: string
+          format: uri
+        ownerType:
+          description: Owner type of the Query API endpoint. Endpoints with a user owned query cannot be updated or deleted through this API.
+          type: string
+          enum:
+          - user
+          - queryApiEndpoint
+      required:
+      - id
+      - name
+      - database
       - apiKeyIds
       - roles
       - allowedOrigins

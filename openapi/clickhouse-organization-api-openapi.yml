@@ -1319,77 +1319,6 @@ paths:
         position: after
 components:
   schemas:
-    OrganizationPatchPrivateEndpoint:
-      properties:
-        id:
-          description: Private endpoint identifier
-          type: string
-        description:
-          description: Optional description of private endpoint
-          type: string
-        cloudProvider:
-          description: Cloud provider in which the private endpoint is lcoated
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        region:
-          description: Region in which the private endpoint is located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-    Organization:
-      properties:
-        id:
-          description: Unique organization ID.
-          type: string
-          format: uuid
-        createdAt:
-          description: The timestamp the organization was created. ISO-8601.
-          type: string
-          format: date-time
-        name:
-          description: Name of the organization.
-          type: string
-        privateEndpoints:
-          type: array
-          description: List of private endpoints for organization
-          items:
-            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
-        byocConfig:
-          type: array
-          description: BYOC configuration for the organization
-          items:
-            $ref: '#/components/schemas/ByocConfig'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
-          type: boolean
-        capabilities:
-          $ref: '#/components/schemas/OrganizationCapabilities'
     ByocInfrastructureDetails:
       properties:
         id:
@@ -1493,6 +1422,11 @@ components:
         gcpPscSubnetId:
           description: Customer-provided Private Service Connect NAT subnet name configured for private link (GCP BYO-VPC only)
           type: string
+    OrganizationCloudRegionPrivateEndpointConfig:
+      properties:
+        endpointServiceId:
+          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name) or GCP(Target Service) resource
+          type: string
     ByocInfrastructurePatchRequest:
       properties:
         displayName:
@@ -1512,6 +1446,453 @@ components:
           type: boolean
         tags:
           $ref: '#/components/schemas/ByocInfrastructureTags'
+    OrganizationCapabilities:
+      properties:
+        snapshots:
+          description: Whether the organization is eligible to enable snapshots on its primary services.
+          type: boolean
+    ByocInfrastructureProgressStage:
+      properties:
+        name:
+          description: Name of the provisioning stage or resource
+          type: string
+          example: vpc
+        status:
+          description: Status of this stage
+          type: string
+          enum:
+          - not_started
+          - pending
+          - waiting
+          - in_progress
+          - ready
+          - failed
+          example: ready
+        updatedAt:
+          description: Timestamp the stage status last changed. ISO-8601
+          type: string
+          format: date-time
+        message:
+          description: Human readable detail for the current status, e.g. an error message
+          type: string
+        subStages:
+          type: array
+          description: Nested stages; leaf entries are individual cloud resources
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
+    ByocInfrastructureTagsResponse:
+      properties:
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+      required:
+      - tags
+    ByocInfrastructurePostRequest:
+      properties:
+        regionId:
+          description: Region in which the BYOC infrastructure will be located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        availabilityZoneSuffixes:
+          type: array
+          description: List of availability zone suffixes
+          items:
+            type: string
+            enum:
+            - a
+            - b
+            - c
+            - d
+            - e
+            - f
+        vpcCidrRange:
+          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
+          type: string
+          example: 10.0.0.0/16
+        externalId:
+          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
+          type: string
+          example: ch-0a1b2c3d4e5f6789
+        tenantId:
+          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
+          type: string
+        servicePrincipalClientId:
+          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
+          type: string
+        vpcId:
+          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
+          type: string
+          example: vpc-0abc1234def567890
+        privateSubnetIds:
+          type: array
+          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
+          items:
+            type: string
+        publicSubnetIds:
+          type: array
+          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
+          items:
+            type: string
+        gcpPodCidrRangeNames:
+          type: array
+          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
+          items:
+            type: string
+        gcpSharedVpcHostProjectId:
+          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
+          type: string
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
+      required:
+      - regionId
+      - accountId
+    OrganizationPatchPrivateEndpoint:
+      properties:
+        id:
+          description: Private endpoint identifier
+          type: string
+        description:
+          description: Optional description of private endpoint
+          type: string
+        cloudProvider:
+          description: Cloud provider in which the private endpoint is lcoated
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        region:
+          description: Region in which the private endpoint is located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+    ByocConfig:
+      properties:
+        id:
+          description: Unique identifier of the BYOC configuration
+          type: string
+        state:
+          description: State of the infrastructure
+          type: string
+          enum:
+          - infra-provisioning
+          - infra-terminated
+          - infra-terminating
+          - infra-ready
+          - infra-degraded
+          - infra-upgrading
+          example: infra-ready
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is bound to: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        accountName:
+          description: DEPRECATED. Use `accountId` instead. Cloud account ID the BYOC infrastructure is bound to
+          type: string
+          deprecated: true
+        regionId:
+          description: Region for which the BYOC has been configured and where it is possible to create services
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        cloudProvider:
+          description: Cloud provider of the region
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        displayName:
+          description: Human readable name for infrastructure
+          type: string
+    ByocInfrastructureValidation:
+      properties:
+        cloudProvider:
+          description: Cloud provider of the requested region
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        allPassed:
+          description: True when every check passed
+          type: boolean
+        anyPassed:
+          description: True when at least one check passed
+          type: boolean
+        supported:
+          description: Whether preflight validation is implemented for the requested cloud and configuration. When false, an empty check list means nothing was verified rather than everything passed
+          type: boolean
+        checks:
+          type: array
+          description: Individual permission checks with their outcomes
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureValidationCheck'
+    Organization:
+      properties:
+        id:
+          description: Unique organization ID.
+          type: string
+          format: uuid
+        createdAt:
+          description: The timestamp the organization was created. ISO-8601.
+          type: string
+          format: date-time
+        name:
+          description: Name of the organization.
+          type: string
+        privateEndpoints:
+          type: array
+          description: List of private endpoints for organization
+          items:
+            $ref: '#/components/schemas/OrganizationPrivateEndpoint'
+        byocConfig:
+          type: array
+          description: BYOC configuration for the organization
+          items:
+            $ref: '#/components/schemas/ByocConfig'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
+          type: boolean
+        capabilities:
+          $ref: '#/components/schemas/OrganizationCapabilities'
+    OrganizationPrivateEndpoint:
+      properties:
+        id:
+          description: Private endpoint identifier
+          type: string
+        description:
+          description: Description of private endpoint
+          type: string
+        cloudProvider:
+          description: Cloud provider in which the private endpoint is lcoated
+          type: string
+          enum:
+          - gcp
+          - aws
+          - azure
+        region:
+          description: Region in which the private endpoint is located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+    ByocInfrastructureValidatePostRequest:
+      properties:
+        regionId:
+          description: Region in which the BYOC infrastructure will be located
+          type: string
+          enum:
+          - ap-northeast-1
+          - ap-northeast-2
+          - ap-south-1
+          - ap-southeast-1
+          - ap-southeast-2
+          - ca-central-1
+          - eu-central-1
+          - eu-west-1
+          - eu-west-2
+          - il-central-1
+          - us-east-1
+          - us-east-2
+          - us-west-2
+          - us-east1
+          - us-central1
+          - europe-west2
+          - europe-west4
+          - asia-southeast1
+          - asia-northeast1
+          - eastus
+          - eastus2
+          - westus3
+          - germanywestcentral
+          - centralus
+        accountId:
+          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
+          type: string
+          example: '123456789012'
+        availabilityZoneSuffixes:
+          type: array
+          description: List of availability zone suffixes
+          items:
+            type: string
+            enum:
+            - a
+            - b
+            - c
+            - d
+            - e
+            - f
+        vpcCidrRange:
+          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
+          type: string
+          example: 10.0.0.0/16
+        externalId:
+          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
+          type: string
+          example: ch-0a1b2c3d4e5f6789
+        tenantId:
+          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
+          type: string
+        servicePrincipalClientId:
+          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
+          type: string
+        vpcId:
+          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
+          type: string
+          example: vpc-0abc1234def567890
+        privateSubnetIds:
+          type: array
+          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
+          items:
+            type: string
+        publicSubnetIds:
+          type: array
+          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
+          items:
+            type: string
+        gcpPodCidrRangeNames:
+          type: array
+          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
+          items:
+            type: string
+        gcpSharedVpcHostProjectId:
+          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
+          type: string
+        tags:
+          $ref: '#/components/schemas/ByocInfrastructureTags'
+      required:
+      - regionId
+      - accountId
+    ByocInfrastructureValidationCheck:
+      properties:
+        name:
+          description: Human readable name of the check
+          type: string
+          example: Create EKS cluster
+        action:
+          description: Cloud permission or action the check simulated
+          type: string
+          example: eks:CreateCluster
+        allowed:
+          description: Whether the account allowed the simulated action
+          type: boolean
+        reason:
+          description: Cloud-provider detail for a denied check, e.g. an IAM decision reason
+          type: string
+          example: implicitDeny
+        group:
+          description: Free-form grouping of related checks, e.g. base or vpc-write. Groupings may change as validations evolve
+          type: string
+    ByocInfrastructurePrivateEndpointConfig:
+      properties:
+        endpointName:
+          description: 'Cloud-provider identifier of the private link endpoint service of the infrastructure: VPC endpoint service name on AWS, Private Service Connect service attachment on GCP, or Private Link service on Azure'
+          type: string
+        privateDnsHostname:
+          description: Private DNS hostname under which services of the infrastructure are reachable over private link
+          type: string
+      required:
+      - endpointName
+      - privateDnsHostname
     OrganizationQuota:
       properties:
         quotaCode:
@@ -1557,6 +1938,36 @@ components:
       - scope
       - value
       - adjustable
+    ByocInfrastructureTags:
+      type: object
+      additionalProperties:
+        type: string
+      maxProperties: 50
+    ByocInfrastructureProgress:
+      properties:
+        id:
+          description: Unique identifier of the BYOC infrastructure
+          type: string
+        status:
+          description: Overall provisioning status of the infrastructure
+          type: string
+          enum:
+          - not_started
+          - pending
+          - waiting
+          - in_progress
+          - ready
+          - failed
+          example: in_progress
+        updatedAt:
+          description: Timestamp the overall status last changed. ISO-8601
+          type: string
+          format: date-time
+        stages:
+          type: array
+          description: Top-level provisioning stages with their nested resources
+          items:
+            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
     Activity:
       properties:
         id:
@@ -1763,162 +2174,16 @@ components:
           description: 'For ''role_resources_delete'' activities: IDs of the deleted resources the roles referenced.'
           items:
             type: string
-    ByocInfrastructureTags:
-      type: object
-      additionalProperties:
-        type: string
-      maxProperties: 50
-    OrganizationCapabilities:
+    OrganizationPatchRequest:
       properties:
-        snapshots:
-          description: Whether the organization is eligible to enable snapshots on its primary services.
+        name:
+          description: Name of the organization.
+          type: string
+        privateEndpoints:
+          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
+        enableCoreDumps:
+          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
           type: boolean
-    ByocConfig:
-      properties:
-        id:
-          description: Unique identifier of the BYOC configuration
-          type: string
-        state:
-          description: State of the infrastructure
-          type: string
-          enum:
-          - infra-provisioning
-          - infra-terminated
-          - infra-terminating
-          - infra-ready
-          - infra-degraded
-          - infra-upgrading
-          example: infra-ready
-        accountId:
-          description: 'Cloud account ID the BYOC infrastructure is bound to: AWS account ID, GCP project ID, or Azure subscription ID'
-          type: string
-          example: '123456789012'
-        accountName:
-          description: DEPRECATED. Use `accountId` instead. Cloud account ID the BYOC infrastructure is bound to
-          type: string
-          deprecated: true
-        regionId:
-          description: Region for which the BYOC has been configured and where it is possible to create services
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        cloudProvider:
-          description: Cloud provider of the region
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        displayName:
-          description: Human readable name for infrastructure
-          type: string
-    OrganizationCloudRegionPrivateEndpointConfig:
-      properties:
-        endpointServiceId:
-          description: Unique identifier of the interface endpoint you created in your VPC with the AWS(Service Name) or GCP(Target Service) resource
-          type: string
-    ByocInfrastructureProgress:
-      properties:
-        id:
-          description: Unique identifier of the BYOC infrastructure
-          type: string
-        status:
-          description: Overall provisioning status of the infrastructure
-          type: string
-          enum:
-          - not_started
-          - pending
-          - waiting
-          - in_progress
-          - ready
-          - failed
-          example: in_progress
-        updatedAt:
-          description: Timestamp the overall status last changed. ISO-8601
-          type: string
-          format: date-time
-        stages:
-          type: array
-          description: Top-level provisioning stages with their nested resources
-          items:
-            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
-    ByocInfrastructurePrivateEndpointConfig:
-      properties:
-        endpointName:
-          description: 'Cloud-provider identifier of the private link endpoint service of the infrastructure: VPC endpoint service name on AWS, Private Service Connect service attachment on GCP, or Private Link service on Azure'
-          type: string
-        privateDnsHostname:
-          description: Private DNS hostname under which services of the infrastructure are reachable over private link
-          type: string
-      required:
-      - endpointName
-      - privateDnsHostname
-    OrganizationPrivateEndpoint:
-      properties:
-        id:
-          description: Private endpoint identifier
-          type: string
-        description:
-          description: Description of private endpoint
-          type: string
-        cloudProvider:
-          description: Cloud provider in which the private endpoint is lcoated
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        region:
-          description: Region in which the private endpoint is located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
     OrganizationPrivateEndpointsPatch:
       properties:
         add:
@@ -1932,271 +2197,6 @@ components:
           description: Elements to remove. Executed before "add" part is processed.
           items:
             $ref: '#/components/schemas/OrganizationPatchPrivateEndpoint'
-    ByocInfrastructureValidatePostRequest:
-      properties:
-        regionId:
-          description: Region in which the BYOC infrastructure will be located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        accountId:
-          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
-          type: string
-          example: '123456789012'
-        availabilityZoneSuffixes:
-          type: array
-          description: List of availability zone suffixes
-          items:
-            type: string
-            enum:
-            - a
-            - b
-            - c
-            - d
-            - e
-            - f
-        vpcCidrRange:
-          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
-          type: string
-          example: 10.0.0.0/16
-        externalId:
-          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
-          type: string
-          example: ch-0a1b2c3d4e5f6789
-        tenantId:
-          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
-          type: string
-        servicePrincipalClientId:
-          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
-          type: string
-        vpcId:
-          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
-          type: string
-          example: vpc-0abc1234def567890
-        privateSubnetIds:
-          type: array
-          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
-          items:
-            type: string
-        publicSubnetIds:
-          type: array
-          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
-          items:
-            type: string
-        gcpPodCidrRangeNames:
-          type: array
-          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
-          items:
-            type: string
-        gcpSharedVpcHostProjectId:
-          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
-          type: string
-        tags:
-          $ref: '#/components/schemas/ByocInfrastructureTags'
-      required:
-      - regionId
-      - accountId
-    ByocInfrastructureProgressStage:
-      properties:
-        name:
-          description: Name of the provisioning stage or resource
-          type: string
-          example: vpc
-        status:
-          description: Status of this stage
-          type: string
-          enum:
-          - not_started
-          - pending
-          - waiting
-          - in_progress
-          - ready
-          - failed
-          example: ready
-        updatedAt:
-          description: Timestamp the stage status last changed. ISO-8601
-          type: string
-          format: date-time
-        message:
-          description: Human readable detail for the current status, e.g. an error message
-          type: string
-        subStages:
-          type: array
-          description: Nested stages; leaf entries are individual cloud resources
-          items:
-            $ref: '#/components/schemas/ByocInfrastructureProgressStage'
-    ByocInfrastructureTagsResponse:
-      properties:
-        tags:
-          $ref: '#/components/schemas/ByocInfrastructureTags'
-      required:
-      - tags
-    ByocInfrastructureValidation:
-      properties:
-        cloudProvider:
-          description: Cloud provider of the requested region
-          type: string
-          enum:
-          - gcp
-          - aws
-          - azure
-        allPassed:
-          description: True when every check passed
-          type: boolean
-        anyPassed:
-          description: True when at least one check passed
-          type: boolean
-        supported:
-          description: Whether preflight validation is implemented for the requested cloud and configuration. When false, an empty check list means nothing was verified rather than everything passed
-          type: boolean
-        checks:
-          type: array
-          description: Individual permission checks with their outcomes
-          items:
-            $ref: '#/components/schemas/ByocInfrastructureValidationCheck'
-    ByocInfrastructurePostRequest:
-      properties:
-        regionId:
-          description: Region in which the BYOC infrastructure will be located
-          type: string
-          enum:
-          - ap-northeast-1
-          - ap-northeast-2
-          - ap-south-1
-          - ap-southeast-1
-          - ap-southeast-2
-          - ca-central-1
-          - eu-central-1
-          - eu-west-1
-          - eu-west-2
-          - il-central-1
-          - us-east-1
-          - us-east-2
-          - us-west-2
-          - us-east1
-          - us-central1
-          - europe-west2
-          - europe-west4
-          - asia-southeast1
-          - asia-northeast1
-          - eastus
-          - eastus2
-          - westus3
-          - germanywestcentral
-          - centralus
-        accountId:
-          description: 'Cloud account ID the BYOC infrastructure is configured for: AWS account ID, GCP project ID, or Azure subscription ID'
-          type: string
-          example: '123456789012'
-        availabilityZoneSuffixes:
-          type: array
-          description: List of availability zone suffixes
-          items:
-            type: string
-            enum:
-            - a
-            - b
-            - c
-            - d
-            - e
-            - f
-        vpcCidrRange:
-          description: CIDR range for the ClickHouse-managed VPC. Mutually exclusive with the BYO-VPC fields (`vpcId`, `privateSubnetIds`, `publicSubnetIds`)
-          type: string
-          example: 10.0.0.0/16
-        externalId:
-          description: 'AWS only: ExternalID baked into the ClickHouse management role trust policy in your account'
-          type: string
-          example: ch-0a1b2c3d4e5f6789
-        tenantId:
-          description: 'Azure only (required for Azure regions): Entra tenant ID of the subscription'
-          type: string
-        servicePrincipalClientId:
-          description: 'Azure only (required for Azure regions): client ID of the service principal ClickHouse uses to manage the infrastructure'
-          type: string
-        vpcId:
-          description: 'BYO-VPC only (AWS and GCP): ID or network name of the customer-provided VPC to deploy into. Requires `privateSubnetIds`'
-          type: string
-          example: vpc-0abc1234def567890
-        privateSubnetIds:
-          type: array
-          description: 'BYO-VPC only: private subnet IDs or names (1-6 entries on AWS, exactly one on GCP)'
-          items:
-            type: string
-        publicSubnetIds:
-          type: array
-          description: 'AWS BYO-VPC only: public subnet IDs (at most 6 entries)'
-          items:
-            type: string
-        gcpPodCidrRangeNames:
-          type: array
-          description: 'GCP BYO-VPC only: secondary IP range names on the subnet to use for pod IPs. Omitted: all secondary ranges are used'
-          items:
-            type: string
-        gcpSharedVpcHostProjectId:
-          description: 'GCP BYO-VPC only: Shared VPC host project owning the VPC and subnet, when different from `accountId`'
-          type: string
-        tags:
-          $ref: '#/components/schemas/ByocInfrastructureTags'
-        displayName:
-          description: Human readable name for infrastructure
-          type: string
-      required:
-      - regionId
-      - accountId
-    ByocInfrastructureValidationCheck:
-      properties:
-        name:
-          description: Human readable name of the check
-          type: string
-          example: Create EKS cluster
-        action:
-          description: Cloud permission or action the check simulated
-          type: string
-          example: eks:CreateCluster
-        allowed:
-          description: Whether the account allowed the simulated action
-          type: boolean
-        reason:
-          description: Cloud-provider detail for a denied check, e.g. an IAM decision reason
-          type: string
-          example: implicitDeny
-        group:
-          description: Free-form grouping of related checks, e.g. base or vpc-write. Groupings may change as validations evolve
-          type: string
-    OrganizationPatchRequest:
-      properties:
-        name:
-          description: Name of the organization.
-          type: string
-        privateEndpoints:
-          $ref: '#/components/schemas/OrganizationPrivateEndpointsPatch'
-        enableCoreDumps:
-          description: Whether crash reports (core dumps) collection is enabled for services in the organization. When disabled at the organization level, individual services cannot enable crash reports.
-          type: boolean
   securitySchemes:
     basicAuth:
       type: http

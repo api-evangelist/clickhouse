@@ -416,28 +416,6 @@ components:
         containerName:
           description: Container Name
           type: string
-    SnapshotConfigurationPatchRequest:
-      properties:
-        enabled:
-          description: Whether scheduled snapshots are enabled for the service.
-          type: boolean
-        gap:
-          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
-          type: number
-        timeFrame:
-          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
-          type: number
-    SnapshotConfiguration:
-      properties:
-        enabled:
-          description: Whether scheduled snapshots are enabled for the service.
-          type: boolean
-        gap:
-          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
-          type: number
-        timeFrame:
-          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
-          type: number
     Snapshot:
       properties:
         id:
@@ -483,6 +461,28 @@ components:
           - $ref: '#/components/schemas/AwsBackupBucketProperties'
           - $ref: '#/components/schemas/GcpBackupBucketProperties'
           - $ref: '#/components/schemas/AzureBackupBucketProperties'
+    SnapshotConfigurationPatchRequest:
+      properties:
+        enabled:
+          description: Whether scheduled snapshots are enabled for the service.
+          type: boolean
+        gap:
+          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
+          type: number
+        timeFrame:
+          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
+          type: number
+    SnapshotConfiguration:
+      properties:
+        enabled:
+          description: Whether scheduled snapshots are enabled for the service.
+          type: boolean
+        gap:
+          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
+          type: number
+        timeFrame:
+          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
+          type: number
     AwsBackupBucketProperties:
       properties:
         bucketProvider:
