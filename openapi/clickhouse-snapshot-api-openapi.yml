@@ -393,29 +393,6 @@ paths:
         position: after
 components:
   schemas:
-    GcpBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-    AzureBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
     Snapshot:
       properties:
         id:
@@ -461,28 +438,16 @@ components:
           - $ref: '#/components/schemas/AwsBackupBucketProperties'
           - $ref: '#/components/schemas/GcpBackupBucketProperties'
           - $ref: '#/components/schemas/AzureBackupBucketProperties'
-    SnapshotConfigurationPatchRequest:
+    AzureBackupBucketProperties:
       properties:
-        enabled:
-          description: Whether scheduled snapshots are enabled for the service.
-          type: boolean
-        gap:
-          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
-          type: number
-        timeFrame:
-          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
-          type: number
-    SnapshotConfiguration:
-      properties:
-        enabled:
-          description: Whether scheduled snapshots are enabled for the service.
-          type: boolean
-        gap:
-          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
-          type: number
-        timeFrame:
-          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
-          type: number
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
     AwsBackupBucketProperties:
       properties:
         bucketProvider:
@@ -502,6 +467,41 @@ components:
         iamRoleExternalId:
           description: External ID the IAM role trust policy requires when the data plane assumes the role
           type: string
+    GcpBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    SnapshotConfiguration:
+      properties:
+        enabled:
+          description: Whether scheduled snapshots are enabled for the service.
+          type: boolean
+        gap:
+          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
+          type: number
+        timeFrame:
+          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
+          type: number
+    SnapshotConfigurationPatchRequest:
+      properties:
+        enabled:
+          description: Whether scheduled snapshots are enabled for the service.
+          type: boolean
+        gap:
+          description: Interval between snapshots, in minutes. Set together with timeFrame; only supported preset pairs are accepted.
+          type: number
+        timeFrame:
+          description: Retention window the snapshots cover, in minutes. Set together with gap; only supported preset pairs are accepted.
+          type: number
   securitySchemes:
     basicAuth:
       type: http

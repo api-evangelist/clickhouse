@@ -2135,6 +2135,345 @@ paths:
                 additionalProperties: {}
 components:
   schemas:
+    UdfVersionCreateRequest:
+      oneOf:
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              $ref: '#/components/schemas/UdfArgument'
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          type:
+            type: string
+            const: executable
+          poolSize:
+            description: Always null — an executable UDF has no command pool.
+            default: null
+            anyOf:
+            - type: 'null'
+          maxCommandExecutionTime:
+            default: 10
+            anyOf:
+            - type: integer
+              exclusiveMinimum: 0
+            - type: 'null'
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              $ref: '#/components/schemas/UdfArgument'
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          type:
+            type: string
+            const: executable_pool
+          poolSize:
+            default: 3
+            type: integer
+            exclusiveMinimum: 0
+          maxCommandExecutionTime:
+            default: 10
+            type: integer
+            exclusiveMinimum: 0
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+      type: object
+    UdfAttachment:
+      type: object
+      properties:
+        functionName:
+          description: Name of the UDF.
+          type: string
+        serviceId:
+          description: ID of the attached service.
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        status:
+          description: Current attachment lifecycle state.
+          type: string
+          enum:
+          - deployed
+          - deprovisioning
+          - error
+          - provisioning
+          - standby
+        version:
+          description: Attached UDF version.
+          example: 1
+          type: integer
+          exclusiveMinimum: 0
+      required:
+      - functionName
+      - serviceId
+      - status
+      - version
+      additionalProperties: false
+    UdfCreateRequest:
+      oneOf:
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              $ref: '#/components/schemas/UdfArgument'
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          type:
+            type: string
+            const: executable
+          poolSize:
+            description: Always null — an executable UDF has no command pool.
+            default: null
+            anyOf:
+            - type: 'null'
+          maxCommandExecutionTime:
+            default: 10
+            anyOf:
+            - type: integer
+              exclusiveMinimum: 0
+            - type: 'null'
+          functionName:
+            type: string
+            pattern: ^[A-Za-z][A-Za-z0-9_]*$
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+        - functionName
+      - type: object
+        properties:
+          uploadId:
+            description: Identifier of the uploaded source archive.
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+          runtime:
+            type: string
+            enum:
+            - python3.11
+            - native
+          arguments:
+            type: array
+            items:
+              $ref: '#/components/schemas/UdfArgument'
+          returnType:
+            type: string
+          returnName:
+            default: null
+            anyOf:
+            - type: string
+              pattern: ^[A-Za-z][A-Za-z0-9_]*$
+            - type: 'null'
+          commandReadTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          commandWriteTimeout:
+            default: 10000
+            type: integer
+            exclusiveMinimum: 0
+          memoryLimitMib:
+            default: null
+            anyOf:
+            - type: integer
+              minimum: 1
+              maximum: 1048576
+            - type: 'null'
+          sendChunkHeader:
+            default: false
+            type: boolean
+          deterministic:
+            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
+            default: false
+            type: boolean
+          format:
+            default: TabSeparated
+            type: string
+          sandboxType:
+            default: basic
+            type: string
+            enum:
+            - basic
+            - netenable
+          type:
+            type: string
+            const: executable_pool
+          poolSize:
+            default: 3
+            type: integer
+            exclusiveMinimum: 0
+          maxCommandExecutionTime:
+            default: 10
+            type: integer
+            exclusiveMinimum: 0
+          functionName:
+            type: string
+            pattern: ^[A-Za-z][A-Za-z0-9_]*$
+        required:
+        - uploadId
+        - runtime
+        - arguments
+        - returnType
+        - type
+        - functionName
+      type: object
     UdfUploadSession:
       type: object
       properties:
@@ -2298,345 +2637,6 @@ components:
       required:
       - name
       - type
-    UdfCreateRequest:
-      oneOf:
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              $ref: '#/components/schemas/UdfArgument'
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          type:
-            type: string
-            const: executable
-          poolSize:
-            description: Always null — an executable UDF has no command pool.
-            default: null
-            anyOf:
-            - type: 'null'
-          maxCommandExecutionTime:
-            default: 10
-            anyOf:
-            - type: integer
-              exclusiveMinimum: 0
-            - type: 'null'
-          functionName:
-            type: string
-            pattern: ^[A-Za-z][A-Za-z0-9_]*$
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-        - functionName
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              $ref: '#/components/schemas/UdfArgument'
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          type:
-            type: string
-            const: executable_pool
-          poolSize:
-            default: 3
-            type: integer
-            exclusiveMinimum: 0
-          maxCommandExecutionTime:
-            default: 10
-            type: integer
-            exclusiveMinimum: 0
-          functionName:
-            type: string
-            pattern: ^[A-Za-z][A-Za-z0-9_]*$
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-        - functionName
-      type: object
-    UdfAttachment:
-      type: object
-      properties:
-        functionName:
-          description: Name of the UDF.
-          type: string
-        serviceId:
-          description: ID of the attached service.
-          type: string
-          format: uuid
-          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        status:
-          description: Current attachment lifecycle state.
-          type: string
-          enum:
-          - deployed
-          - deprovisioning
-          - error
-          - provisioning
-          - standby
-        version:
-          description: Attached UDF version.
-          example: 1
-          type: integer
-          exclusiveMinimum: 0
-      required:
-      - functionName
-      - serviceId
-      - status
-      - version
-      additionalProperties: false
-    UdfVersionCreateRequest:
-      oneOf:
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              $ref: '#/components/schemas/UdfArgument'
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          type:
-            type: string
-            const: executable
-          poolSize:
-            description: Always null — an executable UDF has no command pool.
-            default: null
-            anyOf:
-            - type: 'null'
-          maxCommandExecutionTime:
-            default: 10
-            anyOf:
-            - type: integer
-              exclusiveMinimum: 0
-            - type: 'null'
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-      - type: object
-        properties:
-          uploadId:
-            description: Identifier of the uploaded source archive.
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-          runtime:
-            type: string
-            enum:
-            - python3.11
-            - native
-          arguments:
-            type: array
-            items:
-              $ref: '#/components/schemas/UdfArgument'
-          returnType:
-            type: string
-          returnName:
-            default: null
-            anyOf:
-            - type: string
-              pattern: ^[A-Za-z][A-Za-z0-9_]*$
-            - type: 'null'
-          commandReadTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          commandWriteTimeout:
-            default: 10000
-            type: integer
-            exclusiveMinimum: 0
-          memoryLimitMib:
-            default: null
-            anyOf:
-            - type: integer
-              minimum: 1
-              maximum: 1048576
-            - type: 'null'
-          sendChunkHeader:
-            default: false
-            type: boolean
-          deterministic:
-            description: Marks the UDF as deterministic so ClickHouse can reuse cached query results. Only set this when the UDF always returns the same result for the same arguments.
-            default: false
-            type: boolean
-          format:
-            default: TabSeparated
-            type: string
-          sandboxType:
-            default: basic
-            type: string
-            enum:
-            - basic
-            - netenable
-          type:
-            type: string
-            const: executable_pool
-          poolSize:
-            default: 3
-            type: integer
-            exclusiveMinimum: 0
-          maxCommandExecutionTime:
-            default: 10
-            type: integer
-            exclusiveMinimum: 0
-        required:
-        - uploadId
-        - runtime
-        - arguments
-        - returnType
-        - type
-      type: object
     UdfArgumentOutput:
       type: object
       properties:

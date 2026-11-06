@@ -82,42 +82,6 @@ paths:
       x-operation-id-source: derived
 components:
   parameters:
-    SessionId:
-      name: session_id
-      in: query
-      schema:
-        type: string
-    SessionTimeout:
-      name: session_timeout
-      in: query
-      schema:
-        type: integer
-    DatabaseParam:
-      name: database
-      in: query
-      description: Default database
-      schema:
-        type: string
-    QueryParam:
-      name: query
-      in: query
-      description: SQL statement to execute
-      schema:
-        type: string
-    Compress:
-      name: compress
-      in: query
-      schema:
-        type: integer
-        enum:
-        - 0
-        - 1
-    Format:
-      name: default_format
-      in: query
-      description: Output format (TabSeparated, JSON, CSV, Pretty, etc.)
-      schema:
-        type: string
     Decompress:
       name: decompress
       in: query
@@ -126,6 +90,42 @@ components:
         enum:
         - 0
         - 1
+    Compress:
+      name: compress
+      in: query
+      schema:
+        type: integer
+        enum:
+        - 0
+        - 1
+    DatabaseParam:
+      name: database
+      in: query
+      description: Default database
+      schema:
+        type: string
+    Format:
+      name: default_format
+      in: query
+      description: Output format (TabSeparated, JSON, CSV, Pretty, etc.)
+      schema:
+        type: string
+    SessionTimeout:
+      name: session_timeout
+      in: query
+      schema:
+        type: integer
+    QueryParam:
+      name: query
+      in: query
+      description: SQL statement to execute
+      schema:
+        type: string
+    SessionId:
+      name: session_id
+      in: query
+      schema:
+        type: string
   securitySchemes:
     basicAuth:
       type: http

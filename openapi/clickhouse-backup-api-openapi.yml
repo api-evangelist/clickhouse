@@ -689,71 +689,6 @@ paths:
         position: after
 components:
   schemas:
-    AzureBackupBucket:
-      properties:
-        id:
-          description: Unique backup bucket ID.
-          type: string
-          format: uuid
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-    GcpBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-    GcpBackupBucket:
-      properties:
-        id:
-          description: Unique backup bucket ID
-          type: string
-          format: uuid
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-    BackupBucketPatchRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
-    GcpBackupBucketPatchRequestV1:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - GCP
-        bucketPath:
-          description: Bucket path
-          type: string
-        accessKeyId:
-          description: Access Key ID (HMAC key)
-          type: string
-        secretAccessKey:
-          description: Secret Access Key (HMAC secret key)
-          type: string
     Backup:
       properties:
         id:
@@ -799,16 +734,11 @@ components:
           - $ref: '#/components/schemas/AwsBackupBucketProperties'
           - $ref: '#/components/schemas/GcpBackupBucketProperties'
           - $ref: '#/components/schemas/AzureBackupBucketProperties'
-    AzureBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
+    BackupBucketPatchRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPatchRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPatchRequestV1'
     AwsBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
@@ -832,6 +762,55 @@ components:
           type:
           - string
           - 'null'
+    BackupBucket:
+      oneOf:
+      - $ref: '#/components/schemas/AwsBackupBucket'
+      - $ref: '#/components/schemas/GcpBackupBucket'
+      - $ref: '#/components/schemas/AzureBackupBucket'
+    GcpBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+    BackupConfiguration:
+      properties:
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type: number
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type: number
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type: string
+    GcpBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+        secretAccessKey:
+          description: Secret Access Key (HMAC secret key)
+          type: string
     AzureBackupBucketPatchRequestV1:
       properties:
         bucketProvider:
@@ -845,39 +824,83 @@ components:
         connectionString:
           description: Connection String
           type: string
-    BackupConfigurationPatchRequest:
+    AzureBackupBucketProperties:
       properties:
-        backupPeriodInHours:
-          description: The interval in hours between each backup.
-          type:
-          - number
-          - 'null'
-        backupRetentionPeriodInHours:
-          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
-          type:
-          - number
-          - 'null'
-        backupStartTime:
-          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
-          type:
-          - string
-          - 'null'
-    BackupConfiguration:
-      properties:
-        backupPeriodInHours:
-          description: The interval in hours between each backup.
-          type: number
-        backupRetentionPeriodInHours:
-          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
-          type: number
-        backupStartTime:
-          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+        bucketProvider:
+          description: Bucket provider
           type: string
-    BackupBucket:
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    AzureBackupBucketPostRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+        connectionString:
+          description: Connection String
+          type: string
+    GcpBackupBucketPatchRequestV1:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - GCP
+        bucketPath:
+          description: Bucket path
+          type: string
+        accessKeyId:
+          description: Access Key ID (HMAC key)
+          type: string
+        secretAccessKey:
+          description: Secret Access Key (HMAC secret key)
+          type: string
+    AzureBackupBucket:
+      properties:
+        id:
+          description: Unique backup bucket ID.
+          type: string
+          format: uuid
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AZURE
+        containerName:
+          description: Container Name
+          type: string
+    AwsBackupBucketProperties:
+      properties:
+        bucketProvider:
+          description: Bucket provider
+          type: string
+          enum:
+          - AWS
+        bucketPath:
+          description: Bucket path
+          type: string
+        iamRoleArn:
+          description: AWS IAM Role
+          type: string
+        iamRoleSessionName:
+          description: AWS IAM Role
+          type: string
+        iamRoleExternalId:
+          description: External ID the IAM role trust policy requires when the data plane assumes the role
+          type: string
+    BackupBucketPostRequest:
       oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucket'
-      - $ref: '#/components/schemas/GcpBackupBucket'
-      - $ref: '#/components/schemas/AzureBackupBucket'
+      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
+      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
     AwsBackupBucketPostRequestV1:
       properties:
         bucketProvider:
@@ -897,12 +920,7 @@ components:
         iamRoleExternalId:
           description: External ID the IAM role trust policy requires when the data plane assumes the role
           type: string
-    BackupBucketPostRequest:
-      oneOf:
-      - $ref: '#/components/schemas/AwsBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/GcpBackupBucketPostRequestV1'
-      - $ref: '#/components/schemas/AzureBackupBucketPostRequestV1'
-    GcpBackupBucketPostRequestV1:
+    GcpBackupBucketProperties:
       properties:
         bucketProvider:
           description: Bucket provider
@@ -914,9 +932,6 @@ components:
           type: string
         accessKeyId:
           description: Access Key ID (HMAC key)
-          type: string
-        secretAccessKey:
-          description: Secret Access Key (HMAC secret key)
           type: string
     AwsBackupBucket:
       properties:
@@ -941,38 +956,23 @@ components:
         iamRoleExternalId:
           description: External ID the IAM role trust policy requires when the data plane assumes the role
           type: string
-    AzureBackupBucketPostRequestV1:
+    BackupConfigurationPatchRequest:
       properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AZURE
-        containerName:
-          description: Container Name
-          type: string
-        connectionString:
-          description: Connection String
-          type: string
-    AwsBackupBucketProperties:
-      properties:
-        bucketProvider:
-          description: Bucket provider
-          type: string
-          enum:
-          - AWS
-        bucketPath:
-          description: Bucket path
-          type: string
-        iamRoleArn:
-          description: AWS IAM Role
-          type: string
-        iamRoleSessionName:
-          description: AWS IAM Role
-          type: string
-        iamRoleExternalId:
-          description: External ID the IAM role trust policy requires when the data plane assumes the role
-          type: string
+        backupPeriodInHours:
+          description: The interval in hours between each backup.
+          type:
+          - number
+          - 'null'
+        backupRetentionPeriodInHours:
+          description: The minimum duration in hours for which the backups are available. Must be a whole number of days between 24 (1 day) and 1080 (45 days) — i.e. a multiple of 24.
+          type:
+          - number
+          - 'null'
+        backupStartTime:
+          description: The time in HH:MM format for the backups to be performed (evaluated in UTC timezone). When defined the backup period resets to every 24 hours.
+          type:
+          - string
+          - 'null'
   securitySchemes:
     basicAuth:
       type: http

@@ -700,78 +700,14 @@ paths:
       - User Management
 components:
   schemas:
-    Whoami:
-      oneOf:
-      - $ref: '#/components/schemas/WhoamiUser'
-      - $ref: '#/components/schemas/WhoamiApiKey'
-    WhoamiUser:
+    InvitationPostRequest:
       properties:
-        actorType:
-          description: Discriminator identifying the caller as a user (JWT or clickhousectl token).
-          type: string
-          const: user
-        userId:
-          description: Unique ID of the user.
-          type: string
-          format: uuid
         email:
-          description: Email address of the user.
+          description: Email of the invited user. Only a user with this email can join using the invitation. The email is stored in a lowercase form.
           type: string
           format: email
-        name:
-          description: Full name of the user.
-          type: string
-        organizations:
-          type: array
-          description: Organizations the user belongs to.
-          items:
-            $ref: '#/components/schemas/WhoamiOrganization'
-      required:
-      - actorType
-      - userId
-      - email
-      - name
-      - organizations
-    WhoamiApiKey:
-      properties:
-        actorType:
-          description: Discriminator identifying the caller as an organization API key.
-          type: string
-          const: apiKey
-        keyId:
-          description: Unique ID of the API key.
-          type: string
-        name:
-          description: Name of the API key.
-          type: string
-        organizationId:
-          description: ID of the organization that owns the API key.
-          type: string
-          format: uuid
-      required:
-      - actorType
-      - keyId
-      - name
-      - organizationId
-    AssignedRole:
-      properties:
-        roleId:
-          description: Unique identifier of the role
-          type: string
-          format: uuid
-        roleName:
-          description: Human-readable name of the role
-          type: string
-        roleType:
-          description: 'Type of role: system (predefined) or custom (organization-defined)'
-          type: string
-          enum:
-          - system
-          - custom
-    MemberPatchRequest:
-      properties:
         role:
-          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
+          description: DEPRECATED. Use `assignedRoleIds` instead. Role to assign to the invited user in the organization.
           type: string
           enum:
           - admin
@@ -779,9 +715,11 @@ components:
           deprecated: true
         assignedRoleIds:
           type: array
-          description: List of role IDs to assign to the member
+          description: List of role IDs to assign to the invited user when they accept the invitation
           items:
             type: string
+      required:
+      - email
     WhoamiOrganization:
       properties:
         organizationId:
@@ -824,6 +762,56 @@ components:
           description: Custom roles and System roles that will be assigned to the user when they accept the invitation
           items:
             $ref: '#/components/schemas/AssignedRole'
+    AssignedRole:
+      properties:
+        roleId:
+          description: Unique identifier of the role
+          type: string
+          format: uuid
+        roleName:
+          description: Human-readable name of the role
+          type: string
+        roleType:
+          description: 'Type of role: system (predefined) or custom (organization-defined)'
+          type: string
+          enum:
+          - system
+          - custom
+    MemberPatchRequest:
+      properties:
+        role:
+          description: DEPRECATED. Use `assignedRoleIds` instead. Role of the member in the organization.
+          type: string
+          enum:
+          - admin
+          - developer
+          deprecated: true
+        assignedRoleIds:
+          type: array
+          description: List of role IDs to assign to the member
+          items:
+            type: string
+    WhoamiApiKey:
+      properties:
+        actorType:
+          description: Discriminator identifying the caller as an organization API key.
+          type: string
+          const: apiKey
+        keyId:
+          description: Unique ID of the API key.
+          type: string
+        name:
+          description: Name of the API key.
+          type: string
+        organizationId:
+          description: ID of the organization that owns the API key.
+          type: string
+          format: uuid
+      required:
+      - actorType
+      - keyId
+      - name
+      - organizationId
     Member:
       properties:
         userId:
@@ -852,26 +840,38 @@ components:
           description: Custom roles and System roles assigned to this member
           items:
             $ref: '#/components/schemas/AssignedRole'
-    InvitationPostRequest:
+    Whoami:
+      oneOf:
+      - $ref: '#/components/schemas/WhoamiUser'
+      - $ref: '#/components/schemas/WhoamiApiKey'
+    WhoamiUser:
       properties:
+        actorType:
+          description: Discriminator identifying the caller as a user (JWT or clickhousectl token).
+          type: string
+          const: user
+        userId:
+          description: Unique ID of the user.
+          type: string
+          format: uuid
         email:
-          description: Email of the invited user. Only a user with this email can join using the invitation. The email is stored in a lowercase form.
+          description: Email address of the user.
           type: string
           format: email
-        role:
-          description: DEPRECATED. Use `assignedRoleIds` instead. Role to assign to the invited user in the organization.
+        name:
+          description: Full name of the user.
           type: string
-          enum:
-          - admin
-          - developer
-          deprecated: true
-        assignedRoleIds:
+        organizations:
           type: array
-          description: List of role IDs to assign to the invited user when they accept the invitation
+          description: Organizations the user belongs to.
           items:
-            type: string
+            $ref: '#/components/schemas/WhoamiOrganization'
       required:
+      - actorType
+      - userId
       - email
+      - name
+      - organizations
   securitySchemes:
     basicAuth:
       type: http

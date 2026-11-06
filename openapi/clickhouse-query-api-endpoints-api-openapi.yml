@@ -986,58 +986,6 @@ components:
       - url
       - ownerType
       additionalProperties: false
-    PublicQueryApiEndpointRequest:
-      type: object
-      properties:
-        name:
-          description: Name of the Query API endpoint.
-          type: string
-          minLength: 1
-          pattern: \S
-        sql:
-          description: SQL executed by the endpoint.
-          type: string
-          maxLength: 4194304
-          pattern: \S
-        database:
-          description: Database used by the Query API endpoint.
-          type: string
-          pattern: \S
-        parameters:
-          description: Default query parameters.
-          default: {}
-          type: object
-          propertyNames:
-            type: string
-          additionalProperties:
-            type: string
-        apiKeyIds:
-          description: API key IDs allowed to call the endpoint.
-          minItems: 1
-          type: array
-          items:
-            type: string
-            format: uuid
-            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
-        roles:
-          description: Database roles used by the endpoint.
-          minItems: 1
-          type: array
-          items:
-            type: string
-            minLength: 1
-        allowedOrigins:
-          description: Origins allowed by the endpoint CORS policy.
-          default: []
-          type: array
-          items:
-            type: string
-      required:
-      - name
-      - sql
-      - database
-      - apiKeyIds
-      - roles
     PublicQueryApiEndpointListItem:
       type: object
       properties:
@@ -1090,6 +1038,58 @@ components:
       - url
       - ownerType
       additionalProperties: false
+    PublicQueryApiEndpointRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the Query API endpoint.
+          type: string
+          minLength: 1
+          pattern: \S
+        sql:
+          description: SQL executed by the endpoint.
+          type: string
+          maxLength: 4194304
+          pattern: \S
+        database:
+          description: Database used by the Query API endpoint.
+          type: string
+          pattern: \S
+        parameters:
+          description: Default query parameters.
+          default: {}
+          type: object
+          propertyNames:
+            type: string
+          additionalProperties:
+            type: string
+        apiKeyIds:
+          description: API key IDs allowed to call the endpoint.
+          minItems: 1
+          type: array
+          items:
+            type: string
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000)$
+        roles:
+          description: Database roles used by the endpoint.
+          minItems: 1
+          type: array
+          items:
+            type: string
+            minLength: 1
+        allowedOrigins:
+          description: Origins allowed by the endpoint CORS policy.
+          default: []
+          type: array
+          items:
+            type: string
+      required:
+      - name
+      - sql
+      - database
+      - apiKeyIds
+      - roles
   securitySchemes:
     basicAuth:
       type: http

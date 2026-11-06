@@ -380,6 +380,15 @@ paths:
         position: after
 components:
   schemas:
+    PrometheusDiscoveryTargetGroup:
+      properties:
+        targets:
+          type: array
+          description: Host (and port) of the ClickHouse Cloud API.
+          items:
+            type: string
+        labels:
+          $ref: '#/components/schemas/PrometheusDiscoveryLabels'
     PrometheusDiscoveryLabels:
       properties:
         __scheme__:
@@ -411,15 +420,6 @@ components:
           type: string
       additionalProperties:
         type: string
-    PrometheusDiscoveryTargetGroup:
-      properties:
-        targets:
-          type: array
-          description: Host (and port) of the ClickHouse Cloud API.
-          items:
-            type: string
-        labels:
-          $ref: '#/components/schemas/PrometheusDiscoveryLabels'
   securitySchemes:
     basicAuth:
       type: http
